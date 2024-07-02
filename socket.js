@@ -10,7 +10,7 @@ const fs = require('fs');
 const contact = require('./sockets/contact');
 
 const { state, saveCreds } = useMultiFileAuthState('./auth_info_multi.json');
-const store = makeInMemoryStore({ logger: P().child({ level: 'debug', stream: 'store' }) });
+const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
 store.readFromFile('./lib/baileys_store_multi.json');
 setInterval(() => {
     store.writeToFile('./lib/baileys_store_multi.json');
@@ -20,7 +20,7 @@ async function waveWhatsApp() {
     const { version, isLatest } = await fetchLatestBaileysVersion();
     const Astrid = makeWASocket({
         version,
-        logger: P({ level: 'debug' }),
+        logger: P({ level: 'silent' }),
         printQRInTerminal: true,
         auth: state,
         msgRetryCounterMap: {},
