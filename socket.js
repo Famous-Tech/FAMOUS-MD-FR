@@ -1,15 +1,15 @@
 const { 
     makeWASocket, 
     DisconnectReason, 
-    useSingleFileAuthState, 
+    useMultiFileAuthState, 
     fetchLatestBaileysVersion, 
     makeInMemoryStore 
 } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const fs = require('fs');
-const contact = require('./sockets/contact');
+const contact = require('./lib/contact');
 
-const { state, saveCreds } = useMultiFileAuthState('./auth_info_multi.json');
+const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
 store.readFromFile('./lib/baileys_store_multi.json');
 setInterval(() => {
@@ -61,11 +61,11 @@ async function waveWhatsApp() {
             const logo = fs.readFileSync('./lib/media/group_add.png');
             for (const participant of participants) {
                 await Astrid.sendMessage(id, {
-                    text: `Welcome @${participant.split('@')[0]}!`,
+                    text: `Welcome @${participant.split('@')[0]}🖐️`,
                     mentions: [participant],
                     image: { 
                         url: './lib/media/group_add.png', 
-                        caption: `Welcome @${participant.split('@')[0]}!`
+                        caption: `Welcome @${participant.split('@')[0]}🖐️`
                     }
                 });
             }
@@ -73,25 +73,25 @@ async function waveWhatsApp() {
             const logo = fs.readFileSync('./lib/media/group_left.png');
             for (const participant of participants) {
                 await Astrid.sendMessage(id, {
-                    text: `Goodbye @${participant.split('@')[0]}!`,
+                    text: `Goodbye @${participant.split('@')[0]}😔`,
                     mentions: [participant],
                     image: { 
                         url: './lib/media/group_left.png', 
-                        caption: `Goodbye @${participant.split('@')[0]}!`
+                        caption: `Goodbye @${participant.split('@')[0]}😔`
                     }
                 });
             }
         } else if (action === 'promote') {
             for (const participant of participants) {
                 await Astrid.sendMessage(id, { 
-                    text: `Congratulations @${participant.split('@')[0]}, you have been promoted to admin!`,
+                    text: `Congratulations @${participant.split('@')[0]}, you have been promoted as admin`,
                     mentions: [participant]
                 });
             }
         } else if (action === 'demote') {
             for (const participant of participants) {
                 await Astrid.sendMessage(id, { 
-                    text: `@${participant.split('@')[0]} has been demoted from admin.`,
+                    text: `@${participant.split('@')[0]} has been demoted from admin`,
                     mentions: [participant]
                 });
             }
