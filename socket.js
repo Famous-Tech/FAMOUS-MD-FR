@@ -37,8 +37,8 @@ async function waveWhatsApp() {
             }
 
             if (msg.message && msg.message.extendedTextMessage) {
-                const messageText = msg.message.extendedTextMessage.text;
-                console.log(messageText);
+                const TextRegx = msg.message.extendedTextMessage.text;
+                console.log(TextRegx);
             }
         }
     });
