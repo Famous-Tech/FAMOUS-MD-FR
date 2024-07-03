@@ -42,8 +42,8 @@ async function waveWhatsApp() {
                 const TextRegx = msg.message.extendedTextMessage.text;
                 console.log(TextRegx);
             }
-            const body = serialize(JSON.parse(JSON.stringify(msg)), sock); 
-            const { isGroup = false, sender = '', chat = '', body = '', pushname = '' } = body;
+            const msg = serialize(JSON.parse(JSON.stringify(msg)), sock); 
+            const { isGroup = false, sender = '', chat = '', body = '', pushname = '' } = msg;
 
             const metadata = await (isGroup ? sock.groupMetadata(chat) : Promise.resolve({}));
             const participants = isGroup ? metadata.participants : [sock.sender];
