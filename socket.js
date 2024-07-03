@@ -8,6 +8,7 @@ const {
 const P = require('pino');
 const fs = require('fs');
 const contact = require('./lib/contact');
+const control = require('./lib/commands');
 
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
@@ -46,7 +47,20 @@ async function waveWhatsApp() {
     const body = serialize(JSON.parse(JSON.stringify(message)), Astrid); 
     const budy = typeof msg.text === "string" ? msg.text : "";
     const botNum = await Astrid(decodeJid.user.id);
-    const [isCmd, cmdName] = body.startsWith(config.PREFIX) ? [true, body.slice(config.PREFIX.length).trim().split(/\s+/).shift().toLowerCase()] : [false, ''];
+
+const [isCmd, cmdName] = body.startsWith(config.PREFIX) ? 
+    [true, body.slice(config.PREFIX.length).trim().split(/\s+/).shift().toLowerCase()] : 
+    [false, ''];
+
+if (isCmd) {
+    const findCommand = cmdName => control.commands.find(cmd =>
+        cmd.pattern === cmdName || 
+        (cmd.alias && cmd.alias.includes(cmdName)) || 
+        cmd.commandName === cmdName
+    );
+
+    const cmd = findCommand(cmdName);
+}
 
 });
 
