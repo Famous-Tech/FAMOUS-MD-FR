@@ -171,6 +171,24 @@ function waveWhatsApp() {
                     sendPromote(sock, id, participant, groupName, ProfilePicture);
                 } else if (action === 'demote' && demoteEnabled) {
                     sendDemote(sock, id, participant, groupName, ProfilePicture);
+               } else if (action === 'add' && welcomeEnabled) {
+                    sock.sendMessage(id, {
+                        text: `Welcome @${participant.split('@')[0]}🖐️`,
+                        mentions: [participant],
+                        image: {
+                            url: './lib/media/group_add.png',
+                            caption: `Welcome @${participant.split('@')[0]}🖐️`
+                        }
+                    });
+                } else if (action === 'remove' && goodbyeEnabled) {
+                    sock.sendMessage(id, {
+                        text: `Goodbye @${participant.split('@')[0]}😔`,
+                        mentions: [participant],
+                        image: {
+                            url: './lib/media/group_left.png',
+                            caption: `Goodbye @${participant.split('@')[0]}😔`
+                        }
+                    });
                 }
             }
         });
