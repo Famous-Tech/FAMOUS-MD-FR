@@ -9,6 +9,7 @@ const P = require('pino');
 const fs = require('fs');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
+const { serialize } = require('./lib/serialize.js');
 
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
@@ -19,7 +20,7 @@ setInterval(() => {
 
 async function waveWhatsApp() {
     const { version, isLatest } = await fetchLatestBaileysVersion();
-    const Astrid = makeWASocket({
+    const Sock = makeWASocket({
         version,
         logger: P({ level: 'silent' }),
         printQRInTerminal: true,
@@ -28,65 +29,73 @@ async function waveWhatsApp() {
         generateHighQualityLinkPreview: true
     });
 
-    store.bind(Astrid.ev);
-    Astrid.ev.on('creds.update', saveCreds);
+    store.bind(Sock.ev);
+    Sock.ev.on('creds.update', saveCreds);
 
-    Astrid.ev.on('messages.upsert', async ({ messages, type }) => {
-    for (const msg of messages) {
-        if (msg.key && msg.key.remoteJid === 'status@broadcast') {
-            continue;
+    Sock.ev.on('messages.upsert', async ({ messages, type }) => {
+        for (const msg of messages) {
+            if (msg.key && msg.key.remoteJid === 'status@broadcast') {
+                continue;
+            }
+
+            if (msg.message && msg.message.extendedTextMessage) {
+                const TextRegx = msg.message.extendedTextMessage.text;
+                console.log(TextRegx);
+            }
+
+            const body = serialize(JSON.parse(JSON.stringify(msg)), Sock); 
+            const args = body.startsWith(config.PREFIX) ? body.slice(config.PREFIX.length).trim().split(/\s+/).slice(1) : [];
+            const cmdName = args.shift().toLowerCase();
+
+            const cmd = control.commands.find(command =>
+                command.pattern === cmdName ||
+                (command.alias && command.alias.includes(cmdName)) ||
+                command.commandName === cmdName
+            );
+
+            if (cmd) {
+                try {
+                    await cmd.function(Sock, msg, { args });
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            if (msg.mimeType === "imageMessage") {
+                control.commands.forEach(async (command) => {
+                    if (command.on === "image") {
+                        try {
+                            await command.function(Sock, msg, { args });
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+            } else if (msg.mimeType === "stickerMessage") {
+                control.commands.forEach(async (command) => {
+                    if (command.on === "sticker") {
+                        try {
+                            await command.function(Sock, msg, { args });
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+            } else if (msg.message && msg.message.conversation) {
+                control.commands.forEach(async (command) => {
+                    if (command.on === "text") {
+                        try {
+                            await command.function(Sock, msg, { args });
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+            }
         }
+    });
 
-        if (msg.message && msg.message.extendedTextMessage) {
-            const TextRegx = msg.message.extendedTextMessage.text;
-            console.log(TextRegx);
-        }
-    }
-
-    const message = messages[0];
-    const body = serialize(JSON.parse(JSON.stringify(message)), Astrid); 
-    const budy = typeof msg.text === "string" ? msg.text : "";
-    const botNum = await Astrid(decodeJid.user.id);
-    const [isCmd, cmdName] = body.startsWith(config.PREFIX) ?
-     [true, body.slice(config.PREFIX.length).trim().split(/\s+/).shift().toLowerCase()] :
-     [false, ''];
-
-if (isCmd) {
-    const findCommand = cmdName => control.commands.find(cmd =>
-        cmd.pattern === cmdName ||
-        (cmd.alias && cmd.alias.includes(cmdName)) ||
-        cmd.commandName === cmdName
-    );
-
-    const cmd = findCommand(cmdName);
-
-    if (cmd) {
-        try {
-            const args = body.slice(config.PREFIX.length).trim().split(/\s+/).slice(1);
-            cmd.function(Sock, msg, { text, body, args,mime,quoted });
-        } catch (error) {
-            console.error(error);
-        }
-    } else {
-        }
-}
-
-control.commands.map(async (command) => {
-    try {
-        if (command.on === "image" && msg.mimeType === "imageMessage") {
-            await command.function(Sock, msg, { text,body,args,mime,quoted});
-        } else if (command.on === "sticker" && msg.mimeType === "stickerMessage") {
-            await command.function(Sock, msg, { text, body,args,mime,quoted});
-        }
-
-    } catch (error) {
-        console.error(error);
-    }
-})
-
-});
-
-    Astrid.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+    Sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
         if (connection === 'close') {
             const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
             console.log('Connection closed, reconnecting:', shouldReconnect);
@@ -96,18 +105,18 @@ control.commands.map(async (command) => {
         }
     });
 
-    Astrid.ev.on('contacts.update', async (update) => await contact.saveContacts(update, Astrid));
-    Astrid.ev.on('group-participants.update', async (update) => {
+    Sock.ev.on('contacts.update', async (update) => await contact.saveContacts(update, Sock));
+    Sock.ev.on('group-participants.update', async (update) => {
         const { id, participants, action } = update;
 
         if (action === 'add') {
             const logo = fs.readFileSync('./lib/media/group_add.png');
             for (const participant of participants) {
-                await Astrid.sendMessage(id, {
+                await Sock.sendMessage(id, {
                     text: `Welcome @${participant.split('@')[0]}🖐️`,
                     mentions: [participant],
-                    image: { 
-                        url: './lib/media/group_add.png', 
+                    image: {
+                        url: './lib/media/group_add.png',
                         caption: `Welcome @${participant.split('@')[0]}🖐️`
                     }
                 });
@@ -115,25 +124,25 @@ control.commands.map(async (command) => {
         } else if (action === 'remove') {
             const logo = fs.readFileSync('./lib/media/group_left.png');
             for (const participant of participants) {
-                await Astrid.sendMessage(id, {
+                await Sock.sendMessage(id, {
                     text: `Goodbye @${participant.split('@')[0]}😔`,
                     mentions: [participant],
-                    image: { 
-                        url: './lib/media/group_left.png', 
+                    image: {
+                        url: './lib/media/group_left.png',
                         caption: `Goodbye @${participant.split('@')[0]}😔`
                     }
                 });
             }
         } else if (action === 'promote') {
             for (const participant of participants) {
-                await Astrid.sendMessage(id, { 
+                await Sock.sendMessage(id, {
                     text: `Congratulations @${participant.split('@')[0]}, you have been promoted as admin`,
                     mentions: [participant]
                 });
             }
         } else if (action === 'demote') {
             for (const participant of participants) {
-                await Astrid.sendMessage(id, { 
+                await Sock.sendMessage(id, {
                     text: `@${participant.split('@')[0]} has been demoted from admin`,
                     mentions: [participant]
                 });
@@ -143,11 +152,11 @@ control.commands.map(async (command) => {
 
     process.on('SIGINT', () => {
         console.log('Closing...');
-        Astrid.end(new Error('Process terminated'));
+        Sock.end(new Error('Process terminated'));
         process.exit(0);
     });
 
-    return Astrid;
+    return Sock;
 }
 
 setTimeout(() => {
