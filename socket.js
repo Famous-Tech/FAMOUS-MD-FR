@@ -42,7 +42,7 @@ async function waveWhatsApp() {
             }
         }
     });
-    const botNum =  await  (decodeJid.user.id);
+    const botNum =  await Astrid(decodeJid.user.id);
 
     Astrid.ev.on('connection.update', ({ connection, lastDisconnect }) => {
         if (connection === 'close') {
