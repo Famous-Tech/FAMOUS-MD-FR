@@ -31,18 +31,23 @@ async function waveWhatsApp() {
     Astrid.ev.on('creds.update', saveCreds);
 
     Astrid.ev.on('messages.upsert', async ({ messages, type }) => {
-        for (const msg of messages) {
-            if (msg.key && msg.key.remoteJid === 'status@broadcast') {
-                continue;
-            }
-
-            if (msg.message && msg.message.extendedTextMessage) {
-                const TextRegx = msg.message.extendedTextMessage.text;
-                console.log(TextRegx);
-            }
+    for (const msg of messages) {
+        if (msg.key && msg.key.remoteJid === 'status@broadcast') {
+            continue;
         }
-    });
-    const botNum =  await Astrid(decodeJid.user.id);
+
+        if (msg.message && msg.message.extendedTextMessage) {
+            const TextRegx = msg.message.extendedTextMessage.text;
+            console.log(TextRegx);
+        }
+    }
+
+    const message = messages[0];
+    const body = serialize(JSON.parse(JSON.stringify(message)), Astrid); 
+    const budy = typeof msg.text === "string" ? msg.text : "";
+
+    const botNum = await Astrid(decodeJid.user.id);
+});
 
     Astrid.ev.on('connection.update', ({ connection, lastDisconnect }) => {
         if (connection === 'close') {
