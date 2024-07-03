@@ -173,12 +173,12 @@ function waveWhatsApp() {
                     sendDemote(sock, id, participant, groupName, ProfilePicture);
                } else if (action === 'add' && welcomeEnabled) {
                     sock.sendMessage(id, {
-                     text: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`,
-                     mentions: [participant],
-                     image: {
+                     text: `Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`,
+                    mentions: [participant],
+                    image: {
                         url: groupProfile,
-                        caption: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`
-                    }
+                        caption: `Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`
+                      }
                     });
                 } else if (action === 'remove' && goodbyeEnabled) {
                     sock.sendMessage(id, {
