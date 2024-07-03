@@ -20,7 +20,7 @@ setInterval(() => {
 
 async function waveWhatsApp() {
     const { version, isLatest } = await fetchLatestBaileysVersion();
-    const Sock = makeWASocket({
+    const sock = makeWASocket({
         version,
         logger: P({ level: 'silent' }),
         printQRInTerminal: true,
@@ -29,10 +29,10 @@ async function waveWhatsApp() {
         generateHighQualityLinkPreview: true
     });
 
-    store.bind(Sock.ev);
-    Sock.ev.on('creds.update', saveCreds);
+    store.bind(sock.ev);
+    sock.ev.on('creds.update', saveCreds);
 
-    Sock.ev.on('messages.upsert', async ({ messages, type }) => {
+    sock.ev.on('messages.upsert', async ({ messages, type }) => {
         for (const msg of messages) {
             if (msg.key && msg.key.remoteJid === 'status@broadcast') {
                 continue;
@@ -42,8 +42,9 @@ async function waveWhatsApp() {
                 const TextRegx = msg.message.extendedTextMessage.text;
                 console.log(TextRegx);
             }
-
-            const body = serialize(JSON.parse(JSON.stringify(msg)), Sock); 
+            const body = serialize(JSON.parse(JSON.stringify(msg)), sock); 
+            const { isGroup = false, sender = '', chat = '', body = '', pushname = '' } = body;
+          
             const args = body.startsWith(config.PREFIX) ? body.slice(config.PREFIX.length).trim().split(/\s+/).slice(1) : [];
             const cmdName = args.shift().toLowerCase();
 
