@@ -9,6 +9,7 @@ const P = require('pino');
 const fs = require('fs');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
+const global = require('./config.js');
 const { serialize } = require('./lib/serialize.js');
 
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
@@ -17,6 +18,14 @@ store.readFromFile('./lib/baileys_store_multi.json');
 setInterval(() => {
     store.writeToFile('./lib/baileys_store_multi.json');
 }, 10000);
+
+const config = {
+    PREFIX: global.PREFIX;
+    welcomeEnabled: true,
+    goodbyeEnabled: true,
+    promoteEnabled: true,
+    demoteEnabled: true
+};
 
 async function waveWhatsApp() {
     const { version, isLatest } = await fetchLatestBaileysVersion();
@@ -38,73 +47,27 @@ async function waveWhatsApp() {
                 continue;
             }
 
-            if (msg.message && msg.message.extendedTextMessage) {
-                const TextRegx = msg.message.extendedTextMessage.text;
-                console.log(TextRegx);
-            }
-            const msg = serialize(JSON.parse(JSON.stringify(msg)), sock); 
-            const { isGroup = false, sender = '', chat = '', body = '', pushname = '' } = msg;
+            const serializedMsg = serialize(JSON.parse(JSON.stringify(msg)), sock); 
+            const { isGroup = false, sender = '', chat = '', body = '', pushname = '' } = serializedMsg;
 
-            const metadata = await (isGroup ? sock.groupMetadata(chat) : Promise.resolve({}));
-            const participants = isGroup ? metadata.participants : [sock.sender];
-            const groupName = isGroup ? metadata.subject : "";
-            const groupAdmin = participants.filter(participant => participant.isAdmin);
-            const botNumber = (await sock.decodeJid(sock.user.id))?.user;
-            const isBotAdmin = isGroup && groupAdmin.some(admin => admin.id === botNumber);
-            const isowner = "27686881509";
-            const isDev = [botNumber,isowner, ...config.MODS].some(id => id.replace(/\D+/g, '') + '@s.whatsapp.net' === sock.sender);
-            const args = body.startsWith(config.PREFIX) ? body.slice(config.PREFIX.length).trim().split(/\s+/).slice(1) : [];
+            if (!isGroup) continue;
+
+            const args = body.startsWith(config.PREFIX) ? body.slice(config.PREFIX.length).trim().split(/\s+/) : [];
             const cmdName = args.shift().toLowerCase();
 
-            const cmd = control.commands.find(command =>
-                command.pattern === cmdName ||
-                (command.alias && command.alias.includes(cmdName)) ||
-                command.commandName === cmdName
-            );
-
-            if (cmd) {
-                try {
-                    await cmd.function(Sock, msg, { args });
-                } catch (error) {
-                    console.error(error);
+            if (cmdName === 'toggle') {
+                const feature = args[0];
+                if (['welcome', 'goodbye', 'promote', 'demote'].includes(feature)) {
+                    config[`${feature}Enabled`] = !config[`${feature}Enabled`];
+                    await sock.sendMessage(chat, {
+                        text: `${feature.charAt(0).toUpperCase() + feature.slice(1)} messages are now ${config[`${feature}Enabled`] ? 'enabled' : 'disabled'}.`
+                    });
                 }
-            }
-
-            if (msg.mimeType === "imageMessage") {
-                control.commands.forEach(async (command) => {
-                    if (command.on === "image") {
-                        try {
-                            await command.function(Sock, msg, { args });
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    }
-                });
-            } else if (msg.mimeType === "stickerMessage") {
-                control.commands.forEach(async (command) => {
-                    if (command.on === "sticker") {
-                        try {
-                            await command.function(Sock, msg, { args });
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    }
-                });
-            } else if (msg.message && msg.message.conversation) {
-                control.commands.forEach(async (command) => {
-                    if (command.on === "text") {
-                        try {
-                            await command.function(Sock, msg, { args });
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    }
-                });
             }
         }
     });
 
-    Sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+    sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
         if (connection === 'close') {
             const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
             console.log('Connection closed, reconnecting:', shouldReconnect);
@@ -114,46 +77,63 @@ async function waveWhatsApp() {
         }
     });
 
-    Sock.ev.on('contacts.update', async (update) => await contact.saveContacts(update, Sock));
-    Sock.ev.on('group-participants.update', async (update) => {
+    sock.ev.on('contacts.update', async (update) => await contact.saveContacts(update, sock));
+    sock.ev.on('group-participants.update', async (update) => {
         const { id, participants, action } = update;
+        const metadata = await sock.groupMetadata(id);
+        const groupName = metadata.subject;
 
-        if (action === 'add') {
-            const logo = fs.readFileSync('./lib/media/group_add.png');
-            for (const participant of participants) {
-                await Sock.sendMessage(id, {
-                    text: `Welcome @${participant.split('@')[0]}🖐️`,
+        let groupProfilePictureUrl = '';
+
+        try {
+            groupProfilePictureUrl = await sock.profilePictureUrl(id, 'image');
+        } catch (err) {
+            console.error(`Failed to fetch group profile picture: ${err}`);
+        }
+
+        for (const participant of participants) {
+            let userProfilePictureUrl = '';
+            try {
+                userProfilePictureUrl = await sock.profilePictureUrl(participant, 'image');
+            } catch (err) {
+                console.error(`Failed to fetch user profile picture: ${err}`);
+            }
+
+            if (action === 'add' && config.welcomeEnabled) {
+                await sock.sendMessage(id, {
+                    text: `🎉 Welcome @${participant.split('@')[0]} to ${groupName}! 🎉\nWe're glad to have you here!`,
                     mentions: [participant],
                     image: {
-                        url: './lib/media/group_add.png',
-                        caption: `Welcome @${participant.split('@')[0]}🖐️`
+                        url: groupProfilePictureUrl,
+                        caption: `🎉 Welcome @${participant.split('@')[0]} to ${groupName}! 🎉\nWe're glad to have you here!`
                     }
                 });
-            }
-        } else if (action === 'remove') {
-            const logo = fs.readFileSync('./lib/media/group_left.png');
-            for (const participant of participants) {
-                await Sock.sendMessage(id, {
-                    text: `Goodbye @${participant.split('@')[0]}😔`,
+            } else if (action === 'remove' && config.goodbyeEnabled) {
+                await sock.sendMessage(id, {
+                    text: `😢 Goodbye @${participant.split('@')[0]} from ${groupName}. We'll miss you!`,
                     mentions: [participant],
                     image: {
-                        url: './lib/media/group_left.png',
-                        caption: `Goodbye @${participant.split('@')[0]}😔`
+                        url: groupProfilePictureUrl,
+                        caption: `😢 Goodbye @${participant.split('@')[0]} from ${groupName}. We'll miss you!`
                     }
                 });
-            }
-        } else if (action === 'promote') {
-            for (const participant of participants) {
-                await Sock.sendMessage(id, {
-                    text: `Congratulations @${participant.split('@')[0]}, you have been promoted as admin`,
-                    mentions: [participant]
+            } else if (action === 'promote' && config.promoteEnabled) {
+                await sock.sendMessage(id, {
+                    text: `🔝 Elevation Alert!\n\nCongratulations @${participant.split('@')[0]}! You are now an admin in ${groupName}.\n\nPOSITION: Admin`,
+                    mentions: [participant],
+                    image: {
+                        url: userProfilePictureUrl,
+                        caption: `🔝 Elevation Alert!\n\nCongratulations @${participant.split('@')[0]}! You are now an admin in ${groupName}.\n\nPOSITION: Admin`
+                    }
                 });
-            }
-        } else if (action === 'demote') {
-            for (const participant of participants) {
-                await Sock.sendMessage(id, {
-                    text: `@${participant.split('@')[0]} has been demoted from admin`,
-                    mentions: [participant]
+            } else if (action === 'demote' && config.demoteEnabled) {
+                await sock.sendMessage(id, {
+                    text: `⚠️ Demotion Notice!\n\n@${participant.split('@')[0]}, you have been demoted from admin in ${groupName}.\n\nPOSITION: Admin`,
+                    mentions: [participant],
+                    image: {
+                        url: userProfilePictureUrl,
+                        caption: `⚠️ Demotion Notice!\n\n@${participant.split('@')[0]}, you have been demoted from admin in ${groupName}.\n\nPOSITION: Admin`
+                    }
                 });
             }
         }
@@ -161,11 +141,11 @@ async function waveWhatsApp() {
 
     process.on('SIGINT', () => {
         console.log('Closing...');
-        Sock.end(new Error('Process terminated'));
+        sock.end(new Error('Process terminated'));
         process.exit(0);
     });
 
-    return Sock;
+    return sock;
 }
 
 setTimeout(() => {
