@@ -173,21 +173,21 @@ function waveWhatsApp() {
                     sendDemote(sock, id, participant, groupName, ProfilePicture);
                } else if (action === 'add' && welcomeEnabled) {
                     sock.sendMessage(id, {
-                        text: `Welcome @${participant.split('@')[0]}🖐️`,
-                        mentions: [participant],
-                        image: {
-                            url: './lib/media/group_add.png',
-                            caption: `Welcome @${participant.split('@')[0]}🖐️`
-                        }
+                     text: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`,
+                     mentions: [participant],
+                     image: {
+                        url: groupProfile,
+                        caption: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`
+                    }
                     });
                 } else if (action === 'remove' && goodbyeEnabled) {
                     sock.sendMessage(id, {
-                        text: `Goodbye @${participant.split('@')[0]}😔`,
-                        mentions: [participant],
-                        image: {
-                            url: './lib/media/group_left.png',
-                            caption: `Goodbye @${participant.split('@')[0]}😔`
-                        }
+                        text: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`,
+                     mentions: [participant],
+                     image: {
+                        url: groupProfile,
+                        caption: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`
+                       }
                     });
                 }
             }
