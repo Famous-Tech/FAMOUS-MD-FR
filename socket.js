@@ -20,7 +20,7 @@ setInterval(() => {
 }, 10000);
 
 const config = {
-    PREFIX: global.PREFIX;
+    PREFIX: global.PREFIX,
     welcomeEnabled: true,
     goodbyeEnabled: true,
     promoteEnabled: true,
@@ -83,56 +83,54 @@ async function waveWhatsApp() {
         const metadata = await sock.groupMetadata(id);
         const groupName = metadata.subject;
 
-        let groupProfilePictureUrl = '';
+        let groupProfile = '';
 
         try {
-            groupProfilePictureUrl = await sock.profilePictureUrl(id, 'image');
+            groupProfile = await sock.profilePictureUrl(id, 'image');
         } catch (err) {
-            console.error(`Failed to fetch group profile picture: ${err}`);
-        }
+    }
 
         for (const participant of participants) {
-            let userProfilePictureUrl = '';
+            let ProfilePicture = '';
             try {
-                userProfilePictureUrl = await sock.profilePictureUrl(participant, 'image');
+                ProfilePicture = await sock.profilePictureUrl(participant, 'image');
             } catch (err) {
-                console.error(`Failed to fetch user profile picture: ${err}`);
-            }
+        }
 
             if (action === 'add' && config.welcomeEnabled) {
                 await sock.sendMessage(id, {
-                    text: `🎉 Welcome @${participant.split('@')[0]} to ${groupName}! 🎉\nWe're glad to have you here!`,
+                    text: `🎉 Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`,
                     mentions: [participant],
                     image: {
-                        url: groupProfilePictureUrl,
-                        caption: `🎉 Welcome @${participant.split('@')[0]} to ${groupName}! 🎉\nWe're glad to have you here!`
+                        url: groupProfile,
+                        caption: `🎉 Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`
                     }
                 });
             } else if (action === 'remove' && config.goodbyeEnabled) {
                 await sock.sendMessage(id, {
-                    text: `😢 Goodbye @${participant.split('@')[0]} from ${groupName}. We'll miss you!`,
+                    text: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`,
                     mentions: [participant],
                     image: {
-                        url: groupProfilePictureUrl,
-                        caption: `😢 Goodbye @${participant.split('@')[0]} from ${groupName}. We'll miss you!`
+                        url: groupProfile,
+                        caption: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`
                     }
                 });
             } else if (action === 'promote' && config.promoteEnabled) {
                 await sock.sendMessage(id, {
-                    text: `🔝 Elevation Alert!\n\nCongratulations @${participant.split('@')[0]}! You are now an admin in ${groupName}.\n\nPOSITION: Admin`,
+                    text: `🔝 Elevation Alert\n\nCongratulations @${participant.split('@')[0]}\nFOR: You have been promoted\nPOSITION: Admin`,
                     mentions: [participant],
                     image: {
-                        url: userProfilePictureUrl,
-                        caption: `🔝 Elevation Alert!\n\nCongratulations @${participant.split('@')[0]}! You are now an admin in ${groupName}.\n\nPOSITION: Admin`
+                        url: ProfilePicture,
+                        caption: `🔝 Elevation Alert\n\nCongratulations @${participant.split('@')[0]}\nFOR: You have been promoted\nPOSITION: Admin`
                     }
                 });
             } else if (action === 'demote' && config.demoteEnabled) {
                 await sock.sendMessage(id, {
-                    text: `⚠️ Demotion Notice!\n\n@${participant.split('@')[0]}, you have been demoted from admin in ${groupName}.\n\nPOSITION: Admin`,
+                    text: `⚠️ Demotion Notice\n\n@${participant.split('@')[0]}, you have been demoted\nPOSITION: Admin`,
                     mentions: [participant],
                     image: {
-                        url: userProfilePictureUrl,
-                        caption: `⚠️ Demotion Notice!\n\n@${participant.split('@')[0]}, you have been demoted from admin in ${groupName}.\n\nPOSITION: Admin`
+                        url: ProfilePicture,
+                        caption: `⚠️ Demotion Notice\n\n@${participant.split('@')[0]}, you have been demoted\nPOSITION: Admin`
                     }
                 });
             }
