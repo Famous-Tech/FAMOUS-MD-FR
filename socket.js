@@ -44,7 +44,15 @@ async function waveWhatsApp() {
             }
             const body = serialize(JSON.parse(JSON.stringify(msg)), sock); 
             const { isGroup = false, sender = '', chat = '', body = '', pushname = '' } = body;
-          
+
+            const metadata = await (isGroup ? sock.groupMetadata(chat) : Promise.resolve({}));
+            const participants = isGroup ? metadata.participants : [sock.sender];
+            const groupName = isGroup ? metadata.subject : "";
+            const groupAdmin = participants.filter(participant => participant.isAdmin);
+            const botNumber = (await sock.decodeJid(sock.user.id))?.user;
+            const isBotAdmin = isGroup && groupAdmin.some(admin => admin.id === botNumber);
+            const isowner = "27686881509";
+            const isDev = [botNumber,isowner, ...config.MODS].some(id => id.replace(/\D+/g, '') + '@s.whatsapp.net' === sock.sender);
             const args = body.startsWith(config.PREFIX) ? body.slice(config.PREFIX.length).trim().split(/\s+/).slice(1) : [];
             const cmdName = args.shift().toLowerCase();
 
