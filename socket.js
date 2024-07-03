@@ -45,8 +45,9 @@ async function waveWhatsApp() {
     const message = messages[0];
     const body = serialize(JSON.parse(JSON.stringify(message)), Astrid); 
     const budy = typeof msg.text === "string" ? msg.text : "";
-
     const botNum = await Astrid(decodeJid.user.id);
+    const [isCmd, cmdName] = body.startsWith(config.PREFIX) ? [true, body.slice(config.PREFIX.length).trim().split(/\s+/).shift().toLowerCase()] : [false, ''];
+
 });
 
     Astrid.ev.on('connection.update', ({ connection, lastDisconnect }) => {
