@@ -47,20 +47,42 @@ async function waveWhatsApp() {
     const body = serialize(JSON.parse(JSON.stringify(message)), Astrid); 
     const budy = typeof msg.text === "string" ? msg.text : "";
     const botNum = await Astrid(decodeJid.user.id);
-
-const [isCmd, cmdName] = body.startsWith(config.PREFIX) ? 
-    [true, body.slice(config.PREFIX.length).trim().split(/\s+/).shift().toLowerCase()] : 
-    [false, ''];
+    const [isCmd, cmdName] = body.startsWith(config.PREFIX) ?
+     [true, body.slice(config.PREFIX.length).trim().split(/\s+/).shift().toLowerCase()] :
+     [false, ''];
 
 if (isCmd) {
     const findCommand = cmdName => control.commands.find(cmd =>
-        cmd.pattern === cmdName || 
-        (cmd.alias && cmd.alias.includes(cmdName)) || 
+        cmd.pattern === cmdName ||
+        (cmd.alias && cmd.alias.includes(cmdName)) ||
         cmd.commandName === cmdName
     );
 
     const cmd = findCommand(cmdName);
+
+    if (cmd) {
+        try {
+            const args = body.slice(config.PREFIX.length).trim().split(/\s+/).slice(1);
+            cmd.function(Sock, msg, { text, body, args,mime,quoted });
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        }
 }
+
+control.commands.map(async (command) => {
+    try {
+        if (command.on === "image" && msg.mimeType === "imageMessage") {
+            await command.function(Sock, msg, { text,body,args,mime,quoted});
+        } else if (command.on === "sticker" && msg.mimeType === "stickerMessage") {
+            await command.function(Sock, msg, { text, body,args,mime,quoted});
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+})
 
 });
 
