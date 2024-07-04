@@ -1,7 +1,7 @@
 {
   "name": "wave",
   "version": "3.0.0",
-  "description": "Description of your project",
+  "description": "_",
   "main": "socket.js",
   "scripts": {
     "start": "node socket.js",
