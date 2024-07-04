@@ -1,4 +1,4 @@
-const { defineCommand } = require('../commands.js'); 
+const { defineCommand } = require('../../lib/commands.js'); 
 
 defineCommand({
     pattern: 'ping',
