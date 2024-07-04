@@ -7,10 +7,6 @@
     "start": "node socket.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "whatsapp",
-    "wavebot"
-  ],
   "author": "Diegoson",
   "license": "MIT",
   "dependencies": {
