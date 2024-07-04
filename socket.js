@@ -133,7 +133,34 @@ function waveWhatsApp() {
             });
         });
 
-        sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+const { exec } = require('child_process');
+const commandsDirectory = './contents/commands';
+fs.readdir(commandsDirectory, (err, files) => {
+    if (err) {
+        console.error(`Error reading directory ${commandsDirectory}: ${err}`);
+        return;
+    }
+    files.filter(file => file.endsWith('.js')).forEach(file => {
+        const filePath = `${commandsDirectory}/${file}`;
+        const commands = fs.readFileSync(filePath, 'utf8').split('\n');
+        
+        commands.forEach(command => {
+            if (command.trim().startsWith('start')) {
+                console.log(`Executing command`);
+                exec(command.trim(), (error, stdout, stderr) => {
+                    if (error) {
+                 return;
+                    }
+                    if (stderr) {
+                        console.error(`${stderr}`);
+                        return;
+                    }
+                });
+            }
+        });
+    });
+});
+     sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
             if (connection === 'close') {
                 const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
                 console.log('Connection closed, reconnecting:', shouldReconnect);
