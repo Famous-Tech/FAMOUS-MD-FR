@@ -43,6 +43,8 @@ if (mongoUrl) {
 }
 
 function waveWhatsApp() {
+    const getConnect = new Authentication(`${global.SESSION}`);
+    
     fetchLatestBaileysVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
             version,
