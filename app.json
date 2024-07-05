@@ -1,1 +1,46 @@
+{
+  "name": "wave@3.0.0",
+  "description": "",
+  "repository": "https://github.com/your-username/your-repo",
+  "keywords": ["baileys"],
+  "scripts": {
+    "start": "node index.js"
+  },
+  "env": {
+    "MONGODB_URL": {
+      "description": "MongoDB connection string",
+      "required": true
+    },
+    "PREFIX": {
+      "description": "Command prefix handler",
+      "required": true,
+      "value": "!"
+    },
+    "SESSION": {
+      "description": "Session key for your qr",
+      "required": true
+    },
+    "MODS": {
+      "description": "Admin of moderator to ur bot",
+      "required": true,
+      "value": "['27686881509@s.whatsapp.net']"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [
+    {
+      "plan": "mongolab:sandbox"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
 
