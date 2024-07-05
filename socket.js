@@ -47,7 +47,7 @@ function waveWhatsApp() {
         const sock = makeWASocket({
             version,
             logger: P({ level: 'silent' }),
-            session: 
+            session: global.SESSION,
             printQRInTerminal: true,
             auth: state,
             msgRetryCounterMap: {},
