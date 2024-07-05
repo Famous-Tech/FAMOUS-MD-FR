@@ -48,7 +48,7 @@ function waveWhatsApp() {
             version,
             logger: P({ level: 'silent' }),
             session: global.SESSION,
-            printQRInTerminal: true,
+            printQRInTerminal: false,
             auth: state,
             msgRetryCounterMap: {},
             generateHighQualityLinkPreview: true
