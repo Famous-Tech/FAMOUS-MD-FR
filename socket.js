@@ -11,6 +11,7 @@ const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
 const { MongoClient } = require('mongodb');
+const Authentication = require ('./contents/asserts/auth');
 
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
@@ -44,7 +45,7 @@ if (mongoUrl) {
 
 function waveWhatsApp() {
     const getConnect = new Authentication(`${global.SESSION}`);
-    const { saveCreds, clearState, state } = await getConnect.singleFileAuth();
+    const { saveCreds, clearState, state } = await getConnect.MultiAuth();
     
   fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
