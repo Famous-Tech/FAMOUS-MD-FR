@@ -145,9 +145,12 @@ async function waveWhatsApp() {
             });
         });
 
-        sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+        sock.ev.on('connection.update', ({ connection, lastDisconnect, qr }) => {
             if (connection === 'close') {
                 const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
+                if(qr)
+                    config.session.qr = imageSync(qr)
+                console.log('Qr code as been generated');
                 console.log('Connection closed, reconnecting:', shouldReconnect);
                 if (shouldReconnect) waveWhatsApp();
             } else if (connection === 'open') {
