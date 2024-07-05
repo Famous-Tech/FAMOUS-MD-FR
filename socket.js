@@ -10,9 +10,6 @@ const fs = require('fs');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
-const { MongoClient } = require('mongodb');
-const Authentication = require ('./contents/asserts/auth');
-
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
 store.readFromFile('./lib/baileys_store_multi.json');
@@ -20,37 +17,11 @@ setInterval(() => {
     store.writeToFile('./lib/baileys_store_multi.json');
 }, 10000);
 
-let welcomeEnabled = true;
-let promoteEnabled = true;
-let demoteEnabled = true;
-
-const mongoUrl = global.MONGODB;
-let db;
-if (mongoUrl) {
-    const client = new MongoClient(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-    client.connect()
-        .then(() => {
-            console.log('Connected to MongoDB');
-            db = client.db(); 
-        })
-        .catch(err => {
-            console.error(err);
-            process.exit(1); 
-        });
-} else {
-    console.error('MongoDB URL not provided/Provide mongo url');
-    process.exit(1); 
-}
-
-async function waveWhatsApp() {
-    const getConnect = new Authentication(`${global.SESSION}`);
-    const { saveCreds, clearState, state } = await getConnect.MultiAuth();
-    
+async function waveWhatsApp() { 
     fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
             version,
             logger: P({ level: 'silent' }),
-            session: global.SESSION,
             printQRInTerminal: false,
             auth: state,
             msgRetryCounterMap: {},
@@ -58,12 +29,6 @@ async function waveWhatsApp() {
         });
 
         store.bind(sock.ev);
-        if (!sock.authState.creds.registered) {
-            setTimeout(async () => {
-                let code = await sock.requestPairingCode(process.argv[2]);
-                console.log(`Pair Code: ${code}`);
-            }, 4000);
-        }
         sock.ev.on('creds.update', saveCreds);
 
         sock.ev.on('messages.upsert', ({ messages, type }) => {
@@ -232,24 +197,6 @@ async function waveWhatsApp() {
             }
         });
 
-        process.on('SIGINT', () => {
-            console.log('Shutting down gracefully...');
-            if (client) {
-                client.close();
-            }
-            process.exit(0);
-        });
-
-        process.on('SIGTERM', () => {
-            console.log('Shutting down gracefully...');
-            if (client) {
-                client.close();
-            }
-            process.exit(0);
-        });
-    });
-}
-
 function sendPromote(sock, id, participant, groupName, ProfilePicture) {
     sock.sendMessage(id, {
         text: `🎉 Promotion Alert\n\nHello @${participant.split('@')[0]}\nFOR: You've been promoted`,
@@ -271,60 +218,5 @@ function sendDemote(sock, id, participant, groupName, ProfilePicture) {
         }
     });
 }
-
-control.commands.push({
-    pattern: 'welcome',
-    function: (sock, msg, { args,isDev }) => {
-       // const isDev = msg.sender === ownerNumber;
-        if (!isDev) {
-            sock.sendMessage(msg.chat, 'Only the owner can enable or disable welcome messages');
-            return;
-        }
-
-        if (args.length > 0 && args[0] === 'off') {
-            welcomeEnabled = false;
-            sock.sendMessage(msg.chat, 'Welcome messages turned off');
-        } else if (args.length > 0 && args[0] === 'on') {
-            welcomeEnabled = true;
-            sock.sendMessage(msg.chat, 'Welcome messages turned on');
-        }
-    }
-});
-
-control.commands.push({
-    pattern: 'promote',
-    function: (sock, msg, { args,isDev }) => {
-        if (!isDev) {
-            sock.sendMessage(msg.chat, 'Only the owner can enable or disable promotion messages');
-            return;
-        }
-
-        if (args.length > 0 && args[0] === 'off') {
-            promoteEnabled = false;
-            sock.sendMessage(msg.chat, 'Promotion messages turned off');
-        } else if (args.length > 0 && args[0] === 'on') {
-            promoteEnabled = true;
-            sock.sendMessage(msg.chat, 'Promotion messages turned on');
-        }
-    }
-});
-
-control.commands.push({
-    pattern: 'demote',
-    function: (sock, msg, { args,isDev }) => {
-     if (!isDev) {
-            sock.sendMessage(msg.chat, 'Only the owner can enable or disable demotion messages');
-            return;
-        }
-
-        if (args.length > 0 && args[0] === 'off') {
-            demoteEnabled = false;
-            sock.sendMessage(msg.chat, 'Demotion messages turned off');
-        } else if (args.length > 0 && args[0] === 'on') {
-            demoteEnabled = true;
-            sock.sendMessage(msg.chat, 'Demotion messages turned on');
-        }
-    }
-});
 
 waveWhatsApp();
