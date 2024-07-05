@@ -9,6 +9,7 @@ const P = require('pino');
 const fs = require('fs');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
+const global = require('./config');
 const { serialize } = require('./lib/serialize.js');
 const { MongoClient } = require('mongodb');
 const Authentication = require ('./contents/asserts/auth');
