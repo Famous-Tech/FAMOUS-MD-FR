@@ -10,4 +10,4 @@ RUN apt-get update && \
 RUN git clone https://github.com/Diegoson/WaveBot.git /wavebot
 WORKDIR /wavebot
 RUN npm install
-CMD ["node", "socket.js"]
+CMD ["npm", "start"]
