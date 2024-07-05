@@ -44,6 +44,7 @@ if (mongoUrl) {
 
 function waveWhatsApp() {
     const getConnect = new Authentication(`${global.SESSION}`);
+    const { saveCreds, clearState, state } = await getConnect.singleFileAuth();
     
   fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
