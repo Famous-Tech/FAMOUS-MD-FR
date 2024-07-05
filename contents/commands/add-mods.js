@@ -4,7 +4,7 @@ const config = require('../../config');
 defineCommand({
     pattern: /^add-mod (.+)/i,
     category: 'admin',
-    handler: async (sock, msg, match, isDev) => {
+    handler: async (sock, msg, match, {isDev}) => {
         try {
             if(!isDev) {
               return msg.reply('This is for my owner');
