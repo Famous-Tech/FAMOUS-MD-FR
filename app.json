@@ -1,11 +1,7 @@
 {
   "name": "wave@3.0.0",
   "description": "",
-  "repository": "https://github.com/your-username/your-repo",
   "keywords": ["baileys"],
-  "scripts": {
-    "start": "node index.js"
-  },
   "env": {
     "MONGODB_URL": {
       "description": "MongoDB connection string",
