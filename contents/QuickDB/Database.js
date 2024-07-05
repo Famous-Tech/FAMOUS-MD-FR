@@ -1,5 +1,5 @@
 const { Database } = require('quick-db');
-const { MongoDatabase } = require('quick-mongo');
+const { MongoDatabase } = require('quickmongo');
 const config = require('../../config');
 
 let db = null;
