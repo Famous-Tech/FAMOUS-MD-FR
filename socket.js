@@ -18,8 +18,8 @@ setInterval(() => {
 }, 10000);
 
 async function waveWhatsApp() { 
-    const database = new DatabaseHandler(config)
-    await database.connect()
+    const db = new QuickDatabase(config)
+    await db.connect()
     const { useDatabaseAuth } = new AuthenticationFromDatabase(config.session, database)
     const authSession = await useDatabaseAuth()
     new (config, authSession, log, database, {
