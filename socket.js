@@ -127,6 +127,7 @@ async function WaSock() {
                     console.log('QR code has been generated');
                 }
                 console.log('Connection closed, reconnecting:', shouldReconnect);
+                await withTimeout(SessionMulti.clearState(), 5000);
                 if (shouldReconnect) await WaSock();
             } else if (connection === 'open') {
                 const app = require('express')();
@@ -140,8 +141,7 @@ async function WaSock() {
 
         sock.ev.on('creds.update', async () => {
             try {
-                await withTimeout(SessionMulti.saveState(), 5000);
-                console.log('Credentials saved successfully');
+                await SessionMulti.saveState();
             } catch (error) {
                 console.error(error.message);
             }
@@ -150,8 +150,7 @@ async function WaSock() {
         sock.ev.on('contacts.update', async (update) => {
             try {
                 await contact.saveContacts(update, sock);
-                console.log('Contacts saved successfully');
-            } catch (error) {
+               } catch (error) {
                 console.error(error.message);
             }
         });
