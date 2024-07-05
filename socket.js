@@ -20,9 +20,9 @@ setInterval(() => {
 async function waveWhatsApp() { 
     const db = new QuickDatabase(config)
     await mongoDB.connect()
-    const { useDatabaseAuth } = new AuthenticationFromDatabase(config.session, database)
-    const authSession = await useDatabaseAuth()
-    new (config, authSession, log, database, {
+    const { DatabaseMulti } = new Authentication(config.session, db)
+    const SessionMulti= await DatabaseMulti()
+    new (config, SessionMulti,db, {
         
     fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
