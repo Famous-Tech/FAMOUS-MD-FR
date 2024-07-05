@@ -14,12 +14,8 @@ const { serialize } = require('./lib/serialize.js');
 const { QuickDatabase, mongoDB, db } = require('./contents/QuickDB/Database');
 const Authentication = require('./contents/QuickDB/Schema');
 const config = require('./config');
-const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
+const { getCommands } = require('./lib/getCommands');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
-store.readFromFile('./lib/baileys_store_multi.json');
-setInterval(() => {
-    store.writeToFile('./lib/baileys_store_multi.json');
-}, 10000);
 
 async function WaSock() {
     const db = new QuickDatabase(config);
@@ -147,13 +143,15 @@ async function WaSock() {
                     console.log('QR code has been generated');
                 }
                 console.log('Connection closed, reconnecting:', shouldReconnect);
-                if (shouldReconnect) waveWhatsApp();
+                await Session.clearState() and timeot ())
+                if (shouldReconnect) WaSock();
             } else if (connection === 'open') {
                 const app = require('express')();
                 app.get('/', (req, res) => {
                     res.status(200).setHeader('Content-Type', 'image/png').send(config.session.qr);
                 });
                 console.log('Connected');
+                await getCommands();
             }
         });
         sock.ev.on('creds.update', async() => {
