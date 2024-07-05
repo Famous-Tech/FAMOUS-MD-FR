@@ -9,7 +9,6 @@ const P = require('pino');
 const fs = require('fs');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
-const global = require('./config');
 const { serialize } = require('./lib/serialize.js');
 const { MongoClient } = require('mongodb');
 const Authentication = require ('./contents/asserts/auth');
@@ -26,7 +25,6 @@ let promoteEnabled = true;
 let demoteEnabled = true;
 
 const mongoUrl = global.MONGODB;
-
 let db;
 if (mongoUrl) {
     const client = new MongoClient(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -44,11 +42,11 @@ if (mongoUrl) {
     process.exit(1); 
 }
 
-function waveWhatsApp() {
+async function waveWhatsApp() {
     const getConnect = new Authentication(`${global.SESSION}`);
     const { saveCreds, clearState, state } = await getConnect.MultiAuth();
     
-  fetchLatestWaWebVersion().then(({ version, isLatest }) => {
+    fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
             version,
             logger: P({ level: 'silent' }),
@@ -60,12 +58,12 @@ function waveWhatsApp() {
         });
 
         store.bind(sock.ev);
-      if (!sock.authState.creds.registered) {
-      setTimeout(async () => {
-        let code = await sock.requestPairingCode(process.argv[2]);
-        console.log(`Pair Code: ${code}`);
-      }, 4000);
-      }
+        if (!sock.authState.creds.registered) {
+            setTimeout(async () => {
+                let code = await sock.requestPairingCode(process.argv[2]);
+                console.log(`Pair Code: ${code}`);
+            }, 4000);
+        }
         sock.ev.on('creds.update', saveCreds);
 
         sock.ev.on('messages.upsert', ({ messages, type }) => {
@@ -104,7 +102,7 @@ function waveWhatsApp() {
 
                     if (cmd) {
                         try {
-                            cmd.function(sock, serializedMsg, { args });
+                            cmd.function(sock, serializedMsg, { args,isDev });
                         } catch (error) {
                             console.error(error);
                         }
@@ -114,7 +112,7 @@ function waveWhatsApp() {
                         control.commands.forEach(command => {
                             if (command.on === "image") {
                                 try {
-                                    command.function(sock, serializedMsg, { args });
+                                    command.function(sock, serializedMsg, { args,isDev });
                                 } catch (error) {
                                     console.error(error);
                                 }
@@ -124,7 +122,7 @@ function waveWhatsApp() {
                         control.commands.forEach(command => {
                             if (command.on === "sticker") {
                                 try {
-                                    command.function(sock, serializedMsg, { args });
+                                    command.function(sock, serializedMsg, { args,isDev });
                                 } catch (error) {
                                     console.error(error);
                                 }
@@ -134,7 +132,7 @@ function waveWhatsApp() {
                         control.commands.forEach(command => {
                             if (command.on === "text") {
                                 try {
-                                    command.function(sock, serializedMsg, { args });
+                                    command.function(sock, serializedMsg, { args,isDev });
                                 } catch (error) {
                                     console.error(error);
                                 }
@@ -145,34 +143,35 @@ function waveWhatsApp() {
             });
         });
 
-const { exec } = require('child_process');
-const commandsDirectory = './contents/commands';
-fs.readdir(commandsDirectory, (err, files) => {
-    if (err) {
-        console.error(`Error reading directory ${commandsDirectory}: ${err}`);
-        return;
-    }
-    files.filter(file => file.endsWith('.js')).forEach(file => {
-        const filePath = `${commandsDirectory}/${file}`;
-        const commands = fs.readFileSync(filePath, 'utf8').split('\n');
-        
-        commands.forEach(command => {
-            if (command.trim().startsWith('start')) {
-                console.log(`Executing command`);
-                exec(command.trim(), (error, stdout, stderr) => {
-                    if (error) {
-                 return;
-                    }
-                    if (stderr) {
-                        console.error(`${stderr}`);
-                        return;
+        const { exec } = require('child_process');
+        const commandsDirectory = './contents/commands';
+        fs.readdir(commandsDirectory, (err, files) => {
+            if (err) {
+                console.error(`Error reading directory ${commandsDirectory}: ${err}`);
+                return;
+            }
+            files.filter(file => file.endsWith('.js')).forEach(file => {
+                const filePath = `${commandsDirectory}/${file}`;
+                const commands = fs.readFileSync(filePath, 'utf8').split('\n');
+                
+                commands.forEach(command => {
+                    if (command.trim().startsWith('start')) {
+                        console.log(`Executing command`);
+                        exec(command.trim(), (error, stdout, stderr) => {
+                            if (error) {
+                                return;
+                            }
+                            if (stderr) {
+                                console.error(`${stderr}`);
+                                return;
+                            }
+                        });
                     }
                 });
-            }
+            });
         });
-    });
-});
-     sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
+
+        sock.ev.on('connection.update', ({ connection, lastDisconnect }) => {
             if (connection === 'close') {
                 const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
                 console.log('Connection closed, reconnecting:', shouldReconnect);
@@ -196,77 +195,92 @@ fs.readdir(commandsDirectory, (err, files) => {
             try {
                 groupProfile = await sock.profilePictureUrl(id, 'image');
             } catch (err) {
-      }
+            
+            }
 
             for (const participant of participants) {
                 let ProfilePicture = '';
                 try {
                     ProfilePicture = await sock.profilePictureUrl(participant, 'image');
                 } catch (err) {
-                
+                    
                 }
 
                 if (action === 'promote' && promoteEnabled) {
                     sendPromote(sock, id, participant, groupName, ProfilePicture);
                 } else if (action === 'demote' && demoteEnabled) {
                     sendDemote(sock, id, participant, groupName, ProfilePicture);
-               } else if (action === 'add' && welcomeEnabled) {
+                } else if (action === 'add' && welcomeEnabled) {
                     sock.sendMessage(id, {
-                     text: `Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`,
-                    mentions: [participant],
-                    image: {
-                        url: groupProfile,
-                        caption: `Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`
-                      }
+                        text: `Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`,
+                        mentions: [participant],
+                        image: {
+                            url: groupProfile,
+                            caption: `Welcome @${participant.split('@')[0]}\nGroup: ${groupName}\nWe're glad to have you here`
+                        }
                     });
                 } else if (action === 'remove' && goodbyeEnabled) {
                     sock.sendMessage(id, {
                         text: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`,
-                     mentions: [participant],
-                     image: {
-                        url: groupProfile,
-                        caption: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`
-                       }
+                        mentions: [participant],
+                        image: {
+                            url: groupProfile,
+                            caption: `😢 Goodbye @${participant.split('@')[0]}\nWe'll miss you`
+                        }
                     });
                 }
             }
         });
 
         process.on('SIGINT', () => {
-            console.log('Closing...');
-            sock.end(new Error('Process terminated'));
+            console.log('Shutting down gracefully...');
+            if (client) {
+                client.close();
+            }
             process.exit(0);
         });
 
-        return sock;
+        process.on('SIGTERM', () => {
+            console.log('Shutting down gracefully...');
+            if (client) {
+                client.close();
+            }
+            process.exit(0);
+        });
     });
 }
 
 function sendPromote(sock, id, participant, groupName, ProfilePicture) {
     sock.sendMessage(id, {
-        text: `🔝 Elevation Alert\n\nCongratulations @${participant.split('@')[0]}\nFOR: You had been promoted\nPOSITION: Admin`,
+        text: `🎉 Promotion Alert\n\nHello @${participant.split('@')[0]}\nFOR: You've been promoted`,
         mentions: [participant],
         image: {
             url: ProfilePicture,
-            caption: `🔝 Elevation Alert\n\nCongratulations @${participant.split('@')[0]}\nFOR: You  have been promoted\nPOSITION: Admin`
+            caption: `🎉 Promotion Alert\n\nHello @${participant.split('@')[0]}\nFOR: You've been promoted`
         }
     });
 }
 
 function sendDemote(sock, id, participant, groupName, ProfilePicture) {
     sock.sendMessage(id, {
-        text: `⚠️ Demotion Notice\n\n@${participant.split('@')[0]}, you have been demoted\nPOSITION: Admin`,
+        text: `🔻 Demotion Alert\n\nHello @${participant.split('@')[0]}\nFOR: You have been demoted`,
         mentions: [participant],
         image: {
             url: ProfilePicture,
-            caption: `⚠️ Demotion Notice\n\n@${participant.split('@')[0]}, you have been demoted\nPOSITION: Admin`
+            caption: `🔻 Demotion Alert\n\nHello @${participant.split('@')[0]}\nFOR: You have been demoted`
         }
     });
 }
 
 control.commands.push({
     pattern: 'welcome',
-    function: (sock, msg, { args }) => {
+    function: (sock, msg, { args,isDev }) => {
+       // const isDev = msg.sender === ownerNumber;
+        if (!isDev) {
+            sock.sendMessage(msg.chat, 'Only the owner can enable or disable welcome messages');
+            return;
+        }
+
         if (args.length > 0 && args[0] === 'off') {
             welcomeEnabled = false;
             sock.sendMessage(msg.chat, 'Welcome messages turned off');
@@ -279,7 +293,12 @@ control.commands.push({
 
 control.commands.push({
     pattern: 'promote',
-    function: (sock, msg, { args }) => {
+    function: (sock, msg, { args,isDev }) => {
+        if (!isDev) {
+            sock.sendMessage(msg.chat, 'Only the owner can enable or disable promotion messages');
+            return;
+        }
+
         if (args.length > 0 && args[0] === 'off') {
             promoteEnabled = false;
             sock.sendMessage(msg.chat, 'Promotion messages turned off');
@@ -292,7 +311,12 @@ control.commands.push({
 
 control.commands.push({
     pattern: 'demote',
-    function: (sock, msg, { args }) => {
+    function: (sock, msg, { args,isDev }) => {
+     if (!isDev) {
+            sock.sendMessage(msg.chat, 'Only the owner can enable or disable demotion messages');
+            return;
+        }
+
         if (args.length > 0 && args[0] === 'off') {
             demoteEnabled = false;
             sock.sendMessage(msg.chat, 'Demotion messages turned off');
@@ -303,7 +327,4 @@ control.commands.push({
     }
 });
 
-setTimeout(() => {
-    waveWhatsApp();
-}, 8000);
-    
+waveWhatsApp();
