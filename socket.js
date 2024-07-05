@@ -7,6 +7,7 @@ const {
 } = require('baileys');
 const P = require('pino');
 const fs = require('fs');
+const { imageSync } = require('qr-image');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
