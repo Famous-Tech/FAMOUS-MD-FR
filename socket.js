@@ -11,7 +11,7 @@ const { imageSync } = require('qr-image');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
-const { QuickDatabase, mongoDB } = require('./contents/QuickDB/Database');
+const { QuickDatabase, mongoDB, db } = require('./contents/QuickDB/Database');
 const Authentication = require('./contents/QuickDB/Schema');
 const config = require('./config');
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
@@ -31,15 +31,14 @@ async function WaSock() {
         const sock = makeWASocket({
             version,
             logger: P({ level: 'silent' }),
-            printQRInTerminal: false,
-            auth: state,
+            printQRInTerminal: true,
+            auth: SessionMulti,
             msgRetryCounterMap: {},
             generateHighQualityLinkPreview: true
         });
 
         store.bind(sock.ev);
         sock.ev.on('creds.update', saveCreds);
-
         sock.ev.on('messages.upsert', ({ messages, type }) => {
             messages.forEach(async msg => {
                 if (msg.key && msg.key.remoteJid === 'status@broadcast') {
@@ -159,10 +158,8 @@ async function WaSock() {
             }
         });
 
-        sock.ev.on('contacts.update', async (update) => {
-            if (config.welcomeEnabled) await contact.saveContacts(update, sock);
+        sock.ev.on('contacts.update', async (update) => await contact.saveContacts(update, sock);
         });
-
         sock.ev.on('group-participants.update', async (update) => {
             const { id, participants, action } = update;
             const metadata = await sock.groupMetadata(id);
