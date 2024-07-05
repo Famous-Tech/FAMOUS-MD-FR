@@ -28,7 +28,7 @@ async function WaSock() {
             version,
             logger: P({ level: 'silent' }),
             printQRInTerminal: true,
-            auth: SessionMulti,
+            auth: SessionMulti.state,
             msgRetryCounterMap: {},
             generateHighQualityLinkPreview: true
         });
