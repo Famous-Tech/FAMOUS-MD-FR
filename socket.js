@@ -38,7 +38,6 @@ async function WaSock() {
         });
 
         store.bind(sock.ev);
-        sock.ev.on('creds.update', saveCreds);
         sock.ev.on('messages.upsert', ({ messages, type }) => {
             messages.forEach(async msg => {
                 if (msg.key && msg.key.remoteJid === 'status@broadcast') {
@@ -157,7 +156,9 @@ async function WaSock() {
                 console.log('Connected');
             }
         });
-
+        sock.ev.on('creds.update', async() => {
+        await SessionMulti.saveState()
+        })
         sock.ev.on('contacts.update', async (update) => await contact.saveContacts(update, sock);
         });
         sock.ev.on('group-participants.update', async (update) => {
