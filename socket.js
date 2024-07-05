@@ -58,6 +58,12 @@ function waveWhatsApp() {
         });
 
         store.bind(sock.ev);
+      if (!sock.authState.creds.registered) {
+      setTimeout(async () => {
+        let code = await sock.requestPairingCode(process.argv[2]);
+        console.log(`Pair Code: ${code}`);
+      }, 4000);
+      }
         sock.ev.on('creds.update', saveCreds);
 
         sock.ev.on('messages.upsert', ({ messages, type }) => {
