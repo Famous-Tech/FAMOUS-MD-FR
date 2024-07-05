@@ -2,7 +2,7 @@ const {
     makeWASocket, 
     DisconnectReason, 
     useMultiFileAuthState, 
-    fetchLatestBaileysVersion, 
+    fetchLatestWaWebVersion,
     makeInMemoryStore 
 } = require('baileys');
 const P = require('pino');
@@ -45,7 +45,7 @@ if (mongoUrl) {
 function waveWhatsApp() {
     const getConnect = new Authentication(`${global.SESSION}`);
     
-    fetchLatestBaileysVersion().then(({ version, isLatest }) => {
+  fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
             version,
             logger: P({ level: 'silent' }),
