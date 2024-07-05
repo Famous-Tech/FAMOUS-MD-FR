@@ -10,6 +10,8 @@ const fs = require('fs');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
+const { QuickDatabase, db,.mongoDB } = require('./contents/QuickDB/Database');
+const Authentication = require('./contents/QuickDB/Schema');
 const { state, saveCreds } = useMultiFileAuthState('./lib/auth_info_multi');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
 store.readFromFile('./lib/baileys_store_multi.json');
