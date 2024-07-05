@@ -18,6 +18,12 @@ setInterval(() => {
 }, 10000);
 
 async function waveWhatsApp() { 
+    const database = new DatabaseHandler(config)
+    await database.connect()
+    const { useDatabaseAuth } = new AuthenticationFromDatabase(config.session, database)
+    const authSession = await useDatabaseAuth()
+    new (config, authSession, log, database, {
+        
     fetchLatestWaWebVersion().then(({ version, isLatest }) => {
         const sock = makeWASocket({
             version,
