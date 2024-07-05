@@ -1,3 +1,4 @@
+const WASocket = require('bailyes');
 const Authentication = (sessionId, database, WASocket) => {
     let credentials = null;
     let keys = {};
