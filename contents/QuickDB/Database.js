@@ -1,4 +1,4 @@
-const { Database } = require('quick-db');
+const { Database } = require('quick.db');
 const { MongoDatabase } = require('quickmongo');
 const config = require('../../config');
 
