@@ -1,4 +1,4 @@
-const WASocket = require('bailyes');
+const WASocket = require('@whiskeysockets/baileys');
 const Authentication = (sessionId, database, WASocket) => {
     let credentials = null;
     let keys = {};
