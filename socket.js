@@ -30,8 +30,8 @@ async function WaSock() {
         process.exit(1);
     }
 
-    const db = new QuickDatabase(config);
-    await mongoDB.connect();
+    const db = await QuickDatabase();
+    await mongoDB().connect();
     const DatabaseMulti = new Authentication(config.session, db);
     const SessionMulti = await DatabaseMulti();
     
@@ -178,4 +178,3 @@ async function WaSock() {
 }
 
 WaSock();
-                                                     
