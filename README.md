@@ -1,4 +1,4 @@
 # WaveBot
 
-> [!TIP]
+> [!NOTE]
 > wave bot made using whiskeysockets baileys
