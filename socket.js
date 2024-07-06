@@ -4,7 +4,7 @@ const {
     useMultiFileAuthState, 
     fetchLatestWaWebVersion,
     makeInMemoryStore 
-} = require('baileys');
+} = require('@whiskeysockets/baileys');
 const P = require('pino');
 const fs = require('fs');
 const { imageSync } = require('qr-image');
