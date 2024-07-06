@@ -8,14 +8,14 @@ let session = null;
 
 async function QuickDatabase() {
     try {
-     const mongo = config.MONGODB_URL; 
+        const mongo = config.MONGODB_URL; 
         if (!mongo) {
             console.log('MongoDB URL is required');
         }
 
         mongoDB = new MongoDatabase(mongo);
-         await mongoDB.connect();
-         console.log('Connected to Database');
+        await mongoDB.connect();
+        console.log('Connected to Database');
         session = mongoDB.session();
         db = new Database(mongoDB, { session });
 
@@ -31,4 +31,3 @@ module.exports = {
     mongoDB: () => mongoDB,
     session: () => session 
 };
-  
