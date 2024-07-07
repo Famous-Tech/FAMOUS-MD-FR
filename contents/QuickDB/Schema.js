@@ -1,4 +1,5 @@
 const WASocket = require('@whiskeysockets/baileys');
+
 const Authentication = (sessionId, database, WASocket) => {
     let credentials = null;
     let keys = {};
@@ -16,6 +17,19 @@ const Authentication = (sessionId, database, WASocket) => {
     };
 
     const DatabaseMulti = async () => {
+        if (!database) {
+            throw new Error('Database object is undefined.');
+        }
+
+        if (typeof database.getSession !== 'function') {
+            throw new Error('getSession method is not defined on the database object.');
+        }
+
+        console.log('Database object:', database);
+        console.log('Database getSession method:', database.getSession);
+        console.log('Database setSession method:', database.setSession);
+        console.log('Database deleteSession method:', database.deleteSession);
+
         const sessionData = await database.getSession(sessionId);
 
         if (sessionData && sessionData.session) {
@@ -73,3 +87,4 @@ const Authentication = (sessionId, database, WASocket) => {
 };
 
 module.exports = Authentication;
+
