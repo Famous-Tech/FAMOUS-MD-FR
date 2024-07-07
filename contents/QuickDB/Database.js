@@ -1,5 +1,5 @@
+const { MongoClient } = require('mongodb');
 const { Database } = require('quick.db');
-const { MongoDatabase } = require('quickmongo');
 const config = require('../../config');
 
 let db = null;
@@ -8,15 +8,16 @@ let session = null;
 
 async function QuickDatabase() {
     try {
-        const mongo = config.MONGODB_URL; 
+        const mongo = config.MONGODB_URL;
         if (!mongo) {
             console.log('MongoDB URL is required');
+            return;
         }
 
-        mongoDB = new MongoDatabase(mongo);
+        mongoDB = new MongoClient(mongo, { useNewUrlParser: true, useUnifiedTopology: true });
         await mongoDB.connect();
         console.log('Connected to Database');
-        session = mongoDB.session();
+        session = mongoDB.startSession();
         db = new Database(mongoDB, { session });
 
         return db;
@@ -29,5 +30,5 @@ module.exports = {
     QuickDatabase,
     db: () => db,
     mongoDB: () => mongoDB,
-    session: () => session 
+    session: () => session
 };
