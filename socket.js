@@ -2,6 +2,7 @@ const {
     makeWASocket,
     DisconnectReason,
     useMultiFileAuthState,
+    WASocket,
     fetchLatestWaWebVersion,
     makeInMemoryStore
 } = require('@whiskeysockets/baileys');
