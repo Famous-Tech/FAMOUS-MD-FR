@@ -1,9 +1,9 @@
-const { 
-    makeWASocket, 
-    DisconnectReason, 
-    useMultiFileAuthState, 
+const {
+    makeWASocket,
+    DisconnectReason,
+    useMultiFileAuthState,
     fetchLatestWaWebVersion,
-    makeInMemoryStore 
+    makeInMemoryStore
 } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const fs = require('fs');
@@ -32,8 +32,8 @@ async function WaSock() {
 
     const db = await QuickDatabase();
     await mongoDB().connect();
-    const DatabaseMulti = new Authentication(config.session, db);
-    const SessionMulti = await DatabaseMulti();
+    const databaseMultiInstance = Authentication(config.session, db, WASocket);
+    const SessionMulti = await databaseMultiInstance.DatabaseMulti();
     
     fetchLatestWaWebVersion().then(async ({ version, isLatest }) => {
         const sock = makeWASocket({
@@ -150,7 +150,7 @@ async function WaSock() {
         sock.ev.on('contacts.update', async (update) => {
             try {
                 await contact.saveContacts(update, sock);
-               } catch (error) {
+            } catch (error) {
                 console.error(error.message);
             }
         });
