@@ -12,8 +12,6 @@ const { imageSync } = require('qr-image');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
-const { QuickDatabase, mongoDB } = require('./contents/QuickDB/Database');
-const Authentication = require('./contents/QuickDB/Schema');
 const config = require('./config');
 const { getCommands } = require('./lib/getCommands');
 const store = makeInMemoryStore({ logger: P().child({ level: 'silent', stream: 'store' }) });
@@ -30,18 +28,13 @@ async function WaSock() {
         console.log('Mongodb URL not provided');
         process.exit(1);
     }
-
-    const db = await QuickDatabase();
-    await mongoDB().connect();
-    const databaseMultiInstance = Authentication(config.session, db, WASocket);
-    const SessionMulti = await databaseMultiInstance.DatabaseMulti();
     
     fetchLatestWaWebVersion().then(async ({ version, isLatest }) => {
         const sock = makeWASocket({
             version,
             logger: P({ level: 'silent' }),
             printQRInTerminal: true,
-            auth: SessionMulti.state,
+            auth: state,
             msgRetryCounterMap: {},
             generateHighQualityLinkPreview: true
         });
