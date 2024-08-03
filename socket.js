@@ -8,7 +8,6 @@ const {
 } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const fs = require('fs');
-const { imageSync } = require('qr-image');
 const contact = require('./lib/contact');
 const control = require('./lib/commands');
 const { serialize } = require('./lib/serialize.js');
@@ -124,10 +123,6 @@ async function WaSock() {
                 await withTimeout(SessionMulti.clearState(), 5000);
                 if (shouldReconnect) await WaSock();
             } else if (connection === 'open') {
-                const app = require('express')();
-                app.get('/', (req, res) => {
-                    res.status(200).setHeader('Content-Type', 'image/png').send(config.session.qr);
-                });
                 console.log('Connected');
                 await getCommands();
             }
