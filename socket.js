@@ -112,14 +112,10 @@ async function WaSock() {
             }
         });
 
-        sock.ev.on('connection.update', async ({ connection, lastDisconnect, qr }) => {
+        sock.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
             if (connection === 'close') {
                 const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-                if (qr) {
-                    config.session.qr = imageSync(qr);
-                    console.log('QR code has been generated');
-                }
-                console.log('Connection closed, reconnecting:', shouldReconnect);
+                 console.log('Connection closed, reconnecting:', shouldReconnect);
                 await withTimeout(SessionMulti.clearState(), 5000);
                 if (shouldReconnect) await WaSock();
             } else if (connection === 'open') {
