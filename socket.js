@@ -10,7 +10,7 @@ const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
 async function Connect_Session() {
     if (fs.existsSync(SESSION_FILE)) return;
 
-    const sessionId = config.sessionName.replace(/Socket;;;/g, "");
+    const sessionId = config.SESSION_ID.replace(/Socket;;;/g, "");
     let sessionData = sessionId;
 
     if (sessionId.length < 30) {
