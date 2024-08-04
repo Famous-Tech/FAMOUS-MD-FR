@@ -1,11 +1,10 @@
-require('config.js');
 const { default: makeWASocket, useSingleFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const { Boom } = require('@hapi/boom');
 const P = require('pino');
 const chalk = require('chalk');
+const { serializeMessage, decodeJid } = require('./utils');
 
 const { state, saveCreds } = useSingleFileAuthState('./auth_info.json');
-
 async function startBot() {
     const sock = makeWASocket({
         logger: P({ level: 'silent' }),
@@ -16,15 +15,13 @@ async function startBot() {
     sock.ev.on('creds.update', saveCreds);
 
     const store = { contacts: {} };
+
     sock.ev.on('messages.upsert', async (m) => {
         const msg = m.messages[0];
         if (!msg.message) return; 
-        if (msg.key.fromMe) return; 
-
-        const from = msg.key.remoteJid;
-        const messageContent = msg.message.conversation || msg.message.extendedTextMessage?.text;
-
- });
+        if (msg.key.fromMe) return;
+        await serializeMessage(msg, sock);
+    });
 
     sock.ev.on('group-participants.update', async (event) => {
         const { id, participants, action } = event;
@@ -33,19 +30,19 @@ async function startBot() {
         const time = new Date().toLocaleString();        
 
         for (let participant of participants) {
-            const Name = participant.split('@')[0];
+            const name = participant.split('@')[0];
 
             let message;
             if (action === 'add') {
                 message = `┌────\n` +
-                          `│ *Welcome* @${Name}\n` +
+                          `│ *Welcome* @${name}\n` +
                           `│ *Group*: ${groupName}\n` +
                           `│ *Time*: ${time}\n` +
                           `│ *We are excited X3*\n` +
                           `└─────────────┘`;
             } else if (action === 'remove') {
                 message = `┌────\n` +
-                          `│ *Goodbye*, @${Name}\n` +
+                          `│ *Goodbye*, @${name}\n` +
                           `│ *Group*: ${groupName}\n` +
                           `│ *Time*: ${time}\n` +
                           `│ *Will be missed*\n` +
@@ -69,14 +66,6 @@ async function startBot() {
         }
     });
 
-    function decodeJid(jid) {
-        if (!jid) return jid;
-        if (/:\d+@/gi.test(jid)) {
-            let parts = jid.split(':');
-            return parts.length === 3 ? parts[1] : jid;
-        } else return jid;
-    }
-
     sock.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update;
 
@@ -94,4 +83,3 @@ async function startBot() {
 }
 
 startBot();
-    
