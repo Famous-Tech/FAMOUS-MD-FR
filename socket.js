@@ -2,10 +2,31 @@ const { default: makeWASocket, useSingleFileAuthState, DisconnectReason } = requ
 const { Boom } = require('@hapi/boom');
 const P = require('pino');
 const chalk = require('chalk');
-const { serializeMessage, decodeJid } = require('./utils');
+const fs = require('fs');
+const axios = require('axios');
+const path = require('path');
 
-const { state, saveCreds } = useSingleFileAuthState('./auth_info.json');
+const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
+async function Connect_Session() {
+    if (fs.existsSync(SESSION_FILE)) return;
+
+    const sessionId = config.sessionName.replace(/Socket;;;/g, "");
+    let sessionData = sessionId;
+
+    if (sessionId.length < 30) {
+        const { data } = await axios.get(`https://privatebin.net/${sessionId}`);
+        sessionData = Buffer.from(data, 'base64').toString('utf8');
+    }
+
+    fs.writeFileSync(SESSION_FILE, sessionData, 'utf8');
+}
+
+const { serialised, decodeJid } = require('./lib/serialize');
+
 async function startBot() {
+    await Connect_Session(); 
+
+    const { state, saveCreds } = useSingleFileAuthState(SESSION_FILE);
     const sock = makeWASocket({
         logger: P({ level: 'silent' }),
         printQRInTerminal: true,
@@ -20,7 +41,8 @@ async function startBot() {
         const msg = m.messages[0];
         if (!msg.message) return; 
         if (msg.key.fromMe) return;
-        await serializeMessage(msg, sock);
+        await serialied(msg, sock);
+
     });
 
     sock.ev.on('group-participants.update', async (event) => {
@@ -83,3 +105,4 @@ async function startBot() {
 }
 
 startBot();
+            
