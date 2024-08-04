@@ -3,7 +3,7 @@ const { Boom } = require('@hapi/boom');
 const P = require('pino');
 const chalk = require('chalk');
 
-const { state, saveState } = useSingleFileAuthState('./auth_info.json');
+const { state, saveCreds } = useSingleFileAuthState('./auth_info.json');
 
 async function startBot() {
     const sock = makeWASocket({
