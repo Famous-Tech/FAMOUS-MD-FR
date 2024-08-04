@@ -1,3 +1,4 @@
+require('config.js');
 const { default: makeWASocket, useSingleFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const { Boom } = require('@hapi/boom');
 const P = require('pino');
@@ -23,10 +24,13 @@ async function startBot() {
         const from = msg.key.remoteJid;
         const messageContent = msg.message.conversation || msg.message.extendedTextMessage?.text;
 
-    });
+ });
 
     sock.ev.on('group-participants.update', async (event) => {
         const { id, participants, action } = event;
+        const groupMetadata = await sock.groupMetadata(id);
+        const groupName = groupMetadata.subject;
+        const time = new Date().toLocaleString();        
 
         for (let participant of participants) {
             const Name = participant.split('@')[0];
@@ -34,12 +38,16 @@ async function startBot() {
             let message;
             if (action === 'add') {
                 message = `┌────\n` +
-                          `│ Welcome: @${Name}\n` +
-                          `│ We are excited X3.\n` +
+                          `│ *Welcome* @${Name}\n` +
+                          `│ *Group*: ${groupName}\n` +
+                          `│ *Time*: ${time}\n` +
+                          `│ *We are excited X3*\n` +
                           `└─────────────┘`;
             } else if (action === 'remove') {
                 message = `┌────\n` +
                           `│ *Goodbye*, @${Name}\n` +
+                          `│ *Group*: ${groupName}\n` +
+                          `│ *Time*: ${time}\n` +
                           `│ *Will be missed*\n` +
                           `└─────────────┘`;
             }
@@ -52,14 +60,13 @@ async function startBot() {
         for (let contact of update) {
             let id = decodeJid(contact.id);
 
-           if (store && store.contacts) {
+            if (store && store.contacts) {
                 store.contacts[id] = {
                     id,
                     name: contact.notify || 'No Name',
                 };
             }
-
-         }
+        }
     });
 
     function decodeJid(jid) {
@@ -81,9 +88,10 @@ async function startBot() {
                 startBot();
             }
         } else if (connection === 'open') {
-            console.log(chalk.magneta('Connected'));
+            console.log(chalk.magenta('Connected'));
         }
     });
 }
 
 startBot();
+    
