@@ -38,10 +38,9 @@ async function startBot() {
     const store = { contacts: {} };
 
     sock.ev.on('messages.upsert', async (m) => {
-        const msg = m.messages[0];
+        const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), msg, sock);
         if (!msg.message) return; 
         if (msg.key.fromMe) return;
-        await serialied(msg, sock);
 
     });
 
