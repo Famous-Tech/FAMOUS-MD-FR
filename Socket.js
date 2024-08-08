@@ -1,4 +1,4 @@
-const { default: makeWASocket, useSingleFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const chalk = require('chalk');
 const fs = require('fs');
@@ -26,10 +26,10 @@ async function Connect_Session() {
 async function startBot() {
     await Connect_Session();
 
-    const { state, saveCreds } = useSingleFileAuthState(SESSION_FILE);
+    const { state, saveCreds } = await useMultiFileAuthState(SESSION_FILE);
     const sock = makeWASocket({
         logger: P({ level: 'silent' }),
-        printQRInTerminal: true,
+        printQRInTerminal: false,
         auth: state,
     });
 
