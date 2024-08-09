@@ -1,13 +1,9 @@
 {
-  "name": "wave@3.0.0",
+  "name": "x-astral@3.0.0",
   "description": "",
   "keywords": ["baileys"],
   "env": {
-    "MONGODB_URL": {
-      "description": "MongoDB connection string",
-      "required": true
-    },
-    "PREFIX": {
+      "PREFIX": {
       "description": "Command prefix handler",
       "required": true,
       "value": "!"
