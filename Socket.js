@@ -1,4 +1,4 @@
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, Browsers } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const chalk = require('chalk');
 const fs = require('fs');
@@ -30,6 +30,7 @@ async function startBot() {
     const sock = makeWASocket({
         logger: P({ level: 'silent' }),
         printQRInTerminal: false,
+        browser: Browsers.windows('Firefox'),
         auth: state,
     });
 
