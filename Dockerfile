@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/Diegoson/WaveBot.git /wavebot
-WORKDIR /wavebot
+RUN git clone https://github.com/Diegoson/X-Astral.git /X-Astral
+WORKDIR /X-Astral
 RUN npm install
-CMD ["node", "socket.js"]
+CMD ["node", "Socket.js"]
