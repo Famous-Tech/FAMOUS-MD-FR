@@ -73,22 +73,24 @@ async function startBot() {
             console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Sender: ${msg.sender}`));
         }
 
-        const isBotAdmin = msg.sender === sock.user.id; 
+        const isBotAdmin = msg.sender === sock.user.id;
         const mode_locked = config.MODS.includes(msg.sender); 
 
         if (config.MODE === 'private') {
                 if (!isBotAdmin && !mode_locked) return;
         }
-         if (command.fromMe && !isBotAdmin) {
+
+        if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
               return;
         }
-         if (body.startsWith(config.prefix)) {
+
+        if (body.startsWith(config.prefix)) {
             commands.forEach(async (command) => {
                 if (body.match(command.command)) {
-                    const match_args = body.match(command.command);
-                    const prefix = matchResult[0];
-                    const matched = match_args[1];
-                    const args = match_args.slice(2);
+                    const match_cmd = body.match(command.command);
+                    const prefix = match_cmd[0];
+                    const matched = match_cmd[1];
+                    const args = match_cmd.slice(2);
 
                     await command.handler({
                         sock,
@@ -162,4 +164,3 @@ async function startBot() {
 }
 
 startBot();
-        
