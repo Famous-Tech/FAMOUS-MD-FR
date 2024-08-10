@@ -10,6 +10,8 @@ const { serialised, decodeJid } = require('./lib/serialize');
 
 const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
 
+let action_add = true;
+let action_remove = true;
 async function Connect_Session() {
     if (fs.existsSync(SESSION_FILE)) return;
 
@@ -74,17 +76,31 @@ async function startBot() {
         }
 
         const isBotAdmin = msg.sender === sock.user.id;
-        const mode_locked = config.MODS.includes(msg.sender); 
+        const mode_locked = config.MODS.includes(msg.sender);
 
         if (config.MODE === 'private') {
-                if (!isBotAdmin && !mode_locked) return;
+            if (!isBotAdmin && !mode_locked) return;
         }
 
         if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
-              return;
+            return;
         }
 
-        if (body.startsWith(config.prefix)) {
+        if (body.startsWith(config.PREFIX)) {
+            if (body.startsWith(`${config.PREFIX}welcome true`)) {
+                action_add = true;
+                sock.sendMessage(from, { text: 'Welcome_enabled' });
+            } else if (body.startsWith(`${config.PEFIX}welcome false`)) {
+                action_add = false;
+                sock.sendMessage(from, { text: 'Welcome_disabled' });
+            } else if (body.startsWith(`${config.PREFIX}goodbye true`)) {
+                action_remove = true;
+                sock.sendMessage(from, { text: 'Goodbye_enabled' });
+            } else if (body.startsWith(`${config.PREFIX}goodbye false`)) {
+                action_remove = false;
+                sock.sendMessage(from, { text: 'Goodbye_disabled' });
+            }
+
             commands.forEach(async (command) => {
                 if (body.match(command.command)) {
                     const match_cmd = body.match(command.command);
@@ -108,12 +124,12 @@ async function startBot() {
         const { id, participants, action } = event;
         const groupMetadata = await sock.groupMetadata(id);
         const groupName = groupMetadata.subject;
-        const time = new Date().toLocaleString();        
+        const time = new Date().toLocaleString();
 
         for (let participant of participants) {
             const name = participant.split('@')[0];
             let message;
-            if (action === 'add') {
+            if (action === 'add' && action_add) {
                 message = `┌────\n` +
                           `│ *Welcome* @${name}\n` +
                           `│ *Group*: ${groupName}\n` +
@@ -121,14 +137,14 @@ async function startBot() {
                           `│ *We are excited X3*\n` +
                           `└─────────────┘`;
                 console.log(chalk.rgb(0, 255, 0)(`[${time}] ${groupName}: @${name}`));
-            } else if (action === 'remove') {
+            } else if (action === 'remove' && action_remove) {
                 message = `┌────\n` +
                           `│ *Goodbye*, @${name}\n` +
                           `│ *Group*: ${groupName}\n` +
                           `│ *Time*: ${time}\n` +
                           `│ *Will be missed*\n` +
                           `└─────────────┘`;
-               }
+            }
 
             await sock.sendMessage(id, { text: message, mentions: [participant] });
         }
@@ -158,9 +174,10 @@ async function startBot() {
                 startBot();
             }
         } else if (connection === 'open') {
-            console.log(chalk.magenta('Connected'));
+            console.log(chalk.magenta('_Connected_'));
         }
     });
 }
 
 startBot();
+        
