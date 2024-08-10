@@ -40,7 +40,7 @@ async function startBot() {
 
     sock.ev.on('messages.upsert', async (m) => {
         const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
-        if (!msg.message || msg.key.fromMe) return;
+        if (!msg.message) return;
 
         const msgType = msg.messageType;
         let body = '';
@@ -73,21 +73,29 @@ async function startBot() {
             console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Sender: ${msg.sender}`));
         }
 
-        if (body.startsWith(config.prefix)) {
-            commands.forEach(async (command) => {
-                if (command.fromMe && !config.mods.includes(msg.sender)) return;
+        const isBotAdmin = msg.sender === sock.user.id; 
+        const mode_locked = config.MODS.includes(msg.sender); 
 
+        if (config.MODE === 'private') {
+                if (!isBotAdmin && !mode_locked) return;
+        }
+         if (command.fromMe && !isBotAdmin) {
+              return;
+        }
+         if (body.startsWith(config.prefix)) {
+            commands.forEach(async (command) => {
                 if (body.match(command.command)) {
-                    const matchResult = body.match(command.command);
+                    const match_args = body.match(command.command);
                     const prefix = matchResult[0];
-                    const matchedCommand = matchResult[1];
-                    const args = matchResult.slice(2);
-              await command.handler({
+                    const matched = match_args[1];
+                    const args = match_args.slice(2);
+
+                    await command.handler({
                         sock,
                         msg,
                         args,
                         prefix,
-                        command: matchedCommand,
+                        command: matched,
                     });
                 }
             });
@@ -154,3 +162,4 @@ async function startBot() {
 }
 
 startBot();
+        
