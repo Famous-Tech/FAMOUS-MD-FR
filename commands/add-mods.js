@@ -1,4 +1,4 @@
-const { defineCommand } = require('../../lib/commands');
+/*const { defineCommand } = require('../../lib/commands');
 const config = require('../../config');
 
 defineCommand({
@@ -42,3 +42,6 @@ ${new_Mods.map(mod => `- ${mod}`).join('\n')}
     }
 });
                                                     
+*/
+
+
