@@ -13,6 +13,7 @@ const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
 
 let action_add = true;
 let action_remove = true;
+let brainshop_private = config.BRAINSHOP_PRIVATE || false;
 
 async function Connect_Session() {
     if (fs.existsSync(SESSION_FILE)) return;
