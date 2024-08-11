@@ -294,19 +294,19 @@ async function startBot() {
             let message;
             if (action === 'add' && action_add) {
                 message = `┌────\n` +
-                          `│ *Welcome* @${name}\n` +
-                          `│ *Group*: ${groupName}\n` +
-                          `│ *Time*: ${time}\n` +
-                          `│ *We are excited X3*\n` +
-                          `└─────────────┘`;
+                 `│ 👋 *Welcome* @${name}\n` +
+                 `│ 🏡 *Group*: ${groupName}\n` +
+                 `│ 🕒 *Time*: ${time}\n` +
+                 `│ 🤗 *We are excited X3*\n` +
+                 `└─────────────┘`;
                 console.log(chalk.rgb(0, 255, 0)(`[${time}] ${groupName}: @${name}`));
             } else if (action === 'remove' && action_remove) {
                 message = `┌────\n` +
-                          `│ *Goodbye*, @${name}\n` +
-                          `│ *Group*: ${groupName}\n` +
-                          `│ *Time*: ${time}\n` +
-                          `│ *Will be missed*\n` +
-                          `└─────────────┘`;
+                 `│ 😔 *Goodbye*, @${name}\n` +
+                 `│ 🏡 *Group*: ${groupName}\n` +
+                 `│ 🕒 *Time*: ${time}\n` +
+                 `│ 💔 *Will be missed*\n` +
+                 `└─────────────┘`;
             }
 
             await sock.sendMessage(id, { text: message, mentions: [participant] });
