@@ -36,5 +36,33 @@ Meta({
   }
 });
 
-commands.push('kick');
+Meta({
+  command: 'add',
+  category: 'group',
+  handler: async (sock, message, matched) => {
+    const { from, body, sender } = message;
+
+    const groupMetadata = await sock.groupMetadata(from);
+    const admins = groupMetadata.participants.filter(p => p.admin !== null).map(p => p.id);
+    const isAdmin = admins.includes(sender);
+    const isOwner = config.MODS.includes(sender);
+
+    if (!isAdmin && !isOwner) {
+      return sock.sendMessage(from, { text: 'Only admins can use_this' }, { quoted: message });
+    }
+    const number = body.split(' ')[1];  //+27686881509
+    if (!number) {
+      return sock.sendMessage(from, { text: 'Please provide a number' }, { quoted: message });
+    }
+    const num_Jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
+     try {
+        await sock.groupParticipantsUpdate(from, [num_Jid], 'add');
+        await sock.sendMessage(from, { text: `${number} _added_` }, { quoted: message });
+    } catch (error) {
+        await sock.sendMessage(from, { text: `error` }, { quoted: message });
+    }
+  }
+});
+
+commands.push('kick', 'add');
       
