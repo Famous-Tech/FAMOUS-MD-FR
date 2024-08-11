@@ -10,33 +10,34 @@ const { serialised, decodeJid } = require('./lib/serialize');
 const { get_XP, set_XP, get_Level } = require('./lib/leveling_xp');
 
 const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
-
 let action_add = true;
 let action_remove = true;
 let brainshop_private = config.BRAINSHOP_PRIVATE || false;
 
 async function Connect_Session() {
     if (fs.existsSync(SESSION_FILE)) return;
-
     const sessionId = config.SESSION_ID.replace(/Socket;;;/g, "");
     let sessionData = sessionId;
     if (sessionId.length < 20) {
         const { data } = await axios.get(`https://privatebin.net/${sessionId}`);
         sessionData = Buffer.from(data, 'base64').toString('utf8');
     }
-
     fs.writeFileSync(SESSION_FILE, sessionData, 'utf8');
 }
 
 async function startBot() {
     await Connect_Session();
-
     const { state, saveCreds } = await useMultiFileAuthState(SESSION_FILE);
     const sock = makeWASocket({
         logger: P({ level: 'silent' }),
         printQRInTerminal: false,
         browser: Browsers.windows('Firefox'),
         auth: state,
+        getMessage: async () => {
+            return {
+                conversation: 'owner is diego call me naxor'
+            }
+        }
     });
     store.bind(sock.ev);
     sock.ev.on('creds.update', saveCreds);
