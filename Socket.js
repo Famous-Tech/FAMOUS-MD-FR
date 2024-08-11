@@ -198,7 +198,6 @@ async function startBot() {
                 `│ *Youve_reached:${new_level}*\n` +
                 `│ *Keep_up* 💪\n` +
                 `╰─────`;
-            await sock.sendMessage(from, { text: message_cap, mentions: [msg.sender] });
             await sock.sendMessage(from, { image: { url: profile_pic }, caption: message_cap, mentions: [msg.sender] });
             }
         });
