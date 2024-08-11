@@ -134,7 +134,18 @@ async function startBot() {
         if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
             return;
         }
-
+        const mention_cn = msg.message.extendedTextMessage?.contextInfo?.mentionedJid?.includes(sock.user.id);
+        const rep = msg.message.extendedTextMessage?.contextInfo?.stanzaId && msg.message.extendedTextMessage.contextInfo.participant === sock.user.id;
+        if (mention_cn || rep) {
+            if (brainshop_private && !config.MODS.includes(msg.sender)) {
+                return;
+            }
+            const uid = msg.sender.split('@')[0];
+              const query = encodeURIComponent(body.trim());
+                const res_cn = await axios.get(`http://api.brainshop.ai/get?bid=172352&key=vTmMboAxoXfsKEQQ&uid=${uid}&msg=${query}`);
+                  const reply = res_cn.data.cnt;
+            await sock.sendMessage(from, { text: reply }, { quoted: msg });
+          }
         if (body.startsWith(config.PREFIX)) {
             if (body.startsWith(`${config.PREFIX}welcome true`)) {
                 action_add = true;
