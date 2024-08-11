@@ -37,9 +37,7 @@ async function startBot() {
     });
 
     sock.ev.on('creds.update', saveCreds);
-
     const store = { contacts: {} };
-
     sock.ev.on('messages.upsert', async (m) => {
         const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
         if (!msg.message) return;
@@ -70,40 +68,43 @@ async function startBot() {
         const isGroup = from.endsWith('@g.us');
         if (isGroup) {
             const groupMetadata = await sock.groupMetadata(from);
-            const group_code = `https://chat.whatsapp.com/${groupMetadata.id.split('@')[0]}`;
             console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Group: ${groupMetadata.subject}, Message: ${body}, Sender: ${msg.sender}`));
 
-            const Regex = /(https?:\/\/[^\s]+)/g;
-            const cg_code = body.match(Regex);
-        
-        if (cg_code && !msg.key.fromMe) {
-          const groupAdmins = groupMetadata.participants
-        .filter(participant => participant.admin !== null)
-        .map(admin => admin.id);
+            if (config.PER_ANTI) {
+                const cd_code = body.match(/https:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9]{10,}/g);
+                if (cd_code && !msg.key.fromMe) {
+                    const group_code = groupMetadata.inviteCode;
+                    const gc_code = `https://chat.whatsapp.com/${group_code}`;
+                    const groupAdmins = groupMetadata.participants
+                        .filter(participant => participant.admin !== null)
+                        .map(admin => admin.id);
 
-    if (!groupAdmins.includes(msg.sender)) {
-        if (cg_code[0] !== group_code) {
-            const Msgz = `*<===Alert===>*\n\n` +
+                    if (!groupAdmins.includes(msg.sender)) { 
+                        if (cd_code[0] !== gc_code) {
+                             const Mzg_code = `*<===Alert===>*\n\n` +
                                    `@${msg.sender.split('@')[0]}: not_allowed\n\n` +
                                    `🔗 *Link*: ${cd_code[0]}\n\n` +
                                    `⚠️ *Note*: unauthorized links will lead to removal\n` +
                                    `Adhere to gc_rules.`;                                   
 
-            await sock.sendMessage(from, { text: Msgz, mentions: [msg.sender] });
-            await sock.groupParticipantsUpdate(from, [msg.sender], 'remove');
-         }
-      } else {
-    }
-         }
-            
+                            await sock.sendMessage(from, { text: Mzg_code, mentions: [msg.sender] });
+                            await sock.groupParticipantsUpdate(from, [msg.sender], 'remove');
+                        }
+                    } else {
+                   }
+                }
+            }
+        } else {
+            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Sender: ${msg.sender}`));
+        }
+
         const isBotAdmin = msg.sender === sock.user.id;
         const mode_locked = config.MODS.includes(msg.sender);
-
         if (config.MODE === 'private') {
             if (!isBotAdmin && !mode_locked) return;
         }
 
-        if (config.MODE === 'public' && msg.key.fromMe && !isBotAdmin) {
+        if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
             return;
         }
 
@@ -111,7 +112,7 @@ async function startBot() {
             if (body.startsWith(`${config.PREFIX}welcome true`)) {
                 action_add = true;
                 sock.sendMessage(from, { text: 'Welcome_enabled' });
-            } else if (body.startsWith(`${config.PEFIX}welcome false`)) {
+            } else if (body.startsWith(`${config.PREFIX}welcome false`)) {
                 action_add = false;
                 sock.sendMessage(from, { text: 'Welcome_disabled' });
             } else if (body.startsWith(`${config.PREFIX}goodbye true`)) {
@@ -120,6 +121,45 @@ async function startBot() {
             } else if (body.startsWith(`${config.PREFIX}goodbye false`)) {
                 action_remove = false;
                 sock.sendMessage(from, { text: 'Goodbye_disabled' });
+            }
+            
+            if (body.startsWith(`${config.PREFIX}eval`) || body.startsWith(`${config.PREFIX}$`) ||
+                body.startsWith(`${config.PREFIX}>`) || body.startsWith(`${config.PREFIX}#`)) {
+                
+                const command_Type = body.charAt(config.PREFIX.length); 
+                const code_Eval = body.slice(config.PREFIX.length + 2).trim();
+                if (code_Eval === '') {
+                    await sock.sendMessage(from, { text: 'Provide_code to evaluate Example: !eval 2 + 2' });
+                    return;
+                }
+
+                if (msg.sender === sock.user.id || config.MODS.includes(msg.sender)) {
+                    try {
+                        const timeout = 5000;
+                        let result;
+                         const compile_cd = new Promise((resolve, reject) => {
+                            try {
+                                result = eval(code_Eval);
+                                resolve(result);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        });
+
+                        result = await Promise.race([
+                            compile_cd,
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Timed out')), timeout))
+                        ]);
+
+                        const output = typeof result === 'string' ? result : require('util').inspect(result);
+                        const trimmed = output.length > 2000 ? `${output.slice(0, 2000)}...` : output;
+
+                        await sock.sendMessage(from, { text: `*OUTPUT*:\n${trimmed}` });
+                    } catch (error) {
+                        await sock.sendMessage(from, { text: `${error.message}` });
+                    }
+                } else {
+                   }
             }
 
             commands.forEach(async (command) => {
@@ -201,4 +241,4 @@ async function startBot() {
 }
 
 startBot();
-    
+        
