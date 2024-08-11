@@ -7,6 +7,7 @@ const path = require('path');
 const config = require('./config');
 const { commands } = require('./lib/commands');
 const { serialised, decodeJid } = require('./lib/serialize');
+const { getUserXP, setUserXP, getUserLevel } = require('./lib/leveling_xp');
 
 const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
 
@@ -179,7 +180,29 @@ async function startBot() {
                 }
             });
 
-            if (body.startsWith(`${config.PREFIX}mute`)) {
+        const wats_user = msg.sender;
+        const userXP = getUserXP(wats_user);
+        const newXP = userXP + 10; 
+        setUserXP(wats_user, newXP);
+
+        const new_level = getUserLevel(newXP);
+        const bofore = getUserLevel(userXP);
+
+        if (new_level > before) {
+            const get_image = await sock.profilePictureUrl(wats_user, 'image');
+            const profile_pic = get_image || 'https://default-profile-pic.png';
+            const message_cap = 
+                `🌟 *Level Up* 🌟\n` +
+                `╭─────\n` +
+                `│ *Congrats*: @${wats_user.split('@')[0]}\n` +
+                `│ *Youve_reached:${new_level}*\n` +
+                `│ *Keep_up* 💪\n` +
+                `╰─────`;
+            await sock.sendMessage(from, { text: message_cap, mentions: [msg.sender] });
+            await sock.sendMessage(from, { image: { url: profile_pic }, caption: message_cap, mentions: [msg.sender] });
+            }
+        });
+          if (body.startsWith(`${config.PREFIX}mute`)) {
                 if (!isGroup) {
                     await sock.sendMessage(from, { text: 'This command can only be used in groups' });
                     return;
@@ -304,4 +327,4 @@ sock.ev.on('call', async (update) => {
     }
 });
 
-startBot();          
+startBot();       
