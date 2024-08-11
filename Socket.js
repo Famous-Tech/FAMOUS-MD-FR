@@ -295,4 +295,13 @@ async function startBot() {
     });
 }
 
+sock.ev.on('call', async (update) => {
+    const { id, from, isVideo, isGroupCall } = update;
+    if (isGroupCall) return;
+    try {
+        await sock.updateBlockStatus(from, 'block');
+    } catch (error) {
+    }
+});
+
 startBot();          
