@@ -70,11 +70,32 @@ async function startBot() {
         const isGroup = from.endsWith('@g.us');
         if (isGroup) {
             const groupMetadata = await sock.groupMetadata(from);
+            const group_code = `https://chat.whatsapp.com/${groupMetadata.id.split('@')[0]}`;
             console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Group: ${groupMetadata.subject}, Message: ${body}, Sender: ${msg.sender}`));
-        } else {
-            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Sender: ${msg.sender}`));
-        }
 
+            const Regex = /(https?:\/\/[^\s]+)/g;
+            const cg_code = body.match(Regex);
+        
+        if (cg_code && !msg.key.fromMe) {
+          const groupAdmins = groupMetadata.participants
+        .filter(participant => participant.admin !== null)
+        .map(admin => admin.id);
+
+    if (!groupAdmins.includes(msg.sender)) {
+        if (cg_code[0] !== group_code) {
+            const Msgz = `*<===Alert===>*\n\n` +
+                                   `@${msg.sender.split('@')[0]}: not_allowed\n\n` +
+                                   `🔗 *Link*: ${cd_code[0]}\n\n` +
+                                   `⚠️ *Note*: unauthorized links will lead to removal\n` +
+                                   `Adhere to gc_rules.`;                                   
+
+            await sock.sendMessage(from, { text: Msgz, mentions: [msg.sender] });
+            await sock.groupParticipantsUpdate(from, [msg.sender], 'remove');
+         }
+      } else {
+    }
+         }
+            
         const isBotAdmin = msg.sender === sock.user.id;
         const mode_locked = config.MODS.includes(msg.sender);
 
@@ -82,7 +103,7 @@ async function startBot() {
             if (!isBotAdmin && !mode_locked) return;
         }
 
-        if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
+        if (config.MODE === 'public' && msg.key.fromMe && !isBotAdmin) {
             return;
         }
 
@@ -180,4 +201,4 @@ async function startBot() {
 }
 
 startBot();
-        
+    
