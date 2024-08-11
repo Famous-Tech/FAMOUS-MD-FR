@@ -190,7 +190,7 @@ async function startBot() {
 
         if (new_level > before) {
             const get_image = await sock.profilePictureUrl(wats_user, 'image');
-            const profile_pic = get_image || 'https://default-profile-pic.png';
+            const profile_pic = get_image || 'https://www.freepik.com/premium-vector/people-icon-person-symbol-vector-illustration_34470101.htm#query=blank%20profile&position=9&from_view=keyword&track=ais_hybrid&uuid=679974d4-3b6a-42c2-b807-b313d389fd87';
             const message_cap = 
                 `🌟 *Level Up* 🌟\n` +
                 `╭─────\n` +
