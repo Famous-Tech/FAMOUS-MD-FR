@@ -12,6 +12,7 @@ const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
 
 let action_add = true;
 let action_remove = true;
+
 async function Connect_Session() {
     if (fs.existsSync(SESSION_FILE)) return;
 
@@ -35,9 +36,10 @@ async function startBot() {
         browser: Browsers.windows('Firefox'),
         auth: state,
     });
-    store.bind(sock.ev)
+    store.bind(sock.ev);
     sock.ev.on('creds.update', saveCreds);
     const store = { contacts: {} };
+
     sock.ev.on('messages.upsert', async (m) => {
         const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
         if (!msg.message) return;
@@ -81,17 +83,16 @@ async function startBot() {
 
                     if (!groupAdmins.includes(msg.sender)) { 
                         if (cd_code[0] !== gc_code) {
-                             const Mzg_code = `*<===Alert===>*\n\n` +
-                                   `@${msg.sender.split('@')[0]}: not_allowed\n\n` +
-                                   `🔗 *Link*: ${cd_code[0]}\n\n` +
-                                   `⚠️ *Note*: unauthorized links will lead to removal\n` +
-                                   `Adhere to gc_rules.`;                                   
+                            const Mzg_code = `*<===Alert===>*\n\n` +
+                                `@${msg.sender.split('@')[0]}: not_allowed\n\n` +
+                                `🔗 *Link*: ${cd_code[0]}\n\n` +
+                                `⚠️ *Note*: unauthorized links will lead to removal\n` +
+                                `Adhere to gc_rules.`;                                   
 
                             await sock.sendMessage(from, { text: Mzg_code, mentions: [msg.sender] });
                             await sock.groupParticipantsUpdate(from, [msg.sender], 'remove');
                         }
-                    } else {
-                   }
+                    }
                 }
             }
         } else {
@@ -111,18 +112,18 @@ async function startBot() {
         if (body.startsWith(config.PREFIX)) {
             if (body.startsWith(`${config.PREFIX}welcome true`)) {
                 action_add = true;
-                sock.sendMessage(from, { text: 'Welcome_enabled' });
+                await sock.sendMessage(from, { text: 'Welcome_enabled' });
             } else if (body.startsWith(`${config.PREFIX}welcome false`)) {
                 action_add = false;
-                sock.sendMessage(from, { text: 'Welcome_disabled' });
+                await sock.sendMessage(from, { text: 'Welcome_disabled' });
             } else if (body.startsWith(`${config.PREFIX}goodbye true`)) {
                 action_remove = true;
-                sock.sendMessage(from, { text: 'Goodbye_enabled' });
+                await sock.sendMessage(from, { text: 'Goodbye_enabled' });
             } else if (body.startsWith(`${config.PREFIX}goodbye false`)) {
                 action_remove = false;
-                sock.sendMessage(from, { text: 'Goodbye_disabled' });
+                await sock.sendMessage(from, { text: 'Goodbye_disabled' });
             }
-            
+
             if (body.startsWith(`${config.PREFIX}eval`) || body.startsWith(`${config.PREFIX}$`) ||
                 body.startsWith(`${config.PREFIX}>`) || body.startsWith(`${config.PREFIX}#`)) {
                 
@@ -158,8 +159,7 @@ async function startBot() {
                     } catch (error) {
                         await sock.sendMessage(from, { text: `${error.message}` });
                     }
-                } else {
-                   }
+                }
             }
 
             commands.forEach(async (command) => {
@@ -178,10 +178,65 @@ async function startBot() {
                     });
                 }
             });
-        }
+
+            if (body.startsWith(`${config.PREFIX}mute`)) {
+                if (!isGroup) {
+                    await sock.sendMessage(from, { text: 'This command can only be used in groups' });
+                    return;
+                }
+                const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
+                const isBotAdmin = msg.sender === sock.user.id;
+                const mode_locked = config.MODS.includes(msg.sender);
+
+                if (!isBotAdmin && !mode_locked && !isAdmin) {
+                    await sock.sendMessage(from, { text: '*_You need to be an admin to use this command_*' });
+                    return;
+                }
+
+                const args = body.split(' ');
+                const mute_dt = parseInt(args[1]);
+                if (isNaN(mute_dt) || mute_dt <= 0) {
+                    await sock.sendMessage(from, { text: 'Specify a valid duration in minutes' });
+                    return;
+                }
+
+                const announcement_dt = 'announcement';
+                const mute_ms = mute_dt * 60000;
+                try {
+                    await sock.groupUpdate(from, { 
+                        announcement: announcement_dt,
+                        mute: mute_ms
+                    });
+                    await sock.sendMessage(from, { text: `*Group muted*: ${args[1]} *_minutes_*` });
+                } catch (error) {
+                  }
+            } else if (body.startsWith(`${config.PREFIX}unmute`)) {
+                if (!isGroup) {
+                    await sock.sendMessage(from, { text: 'This command can only be used in groups' });
+                    return;
+                }
+                const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
+                const isBotAdmin = msg.sender === sock.user.id;
+                const mode_locked = config.MODS.includes(msg.sender);
+
+                if (!isBotAdmin && !mode_locked && !isAdmin) {
+                    await sock.sendMessage(from, { text: '*_You need to be an admin to use this command_*' });
+                    return;
+                }
+                try {
+                    await sock.groupUpdate(from, { 
+                        announcement: 'not_announcement',
+                        mute: 0 
+                    });
+                    await sock.sendMessage(from, { text: '*Group unmuted*' });
+                } catch (error) {
+                }
+            }
+    
+    }
     });
 
-    sock.ev.on('group-participants.update', async (event) => {
+   sock.ev.on('group-participants.update', async (event) => {
         const { id, participants, action } = event;
         const groupMetadata = await sock.groupMetadata(id);
         const groupName = groupMetadata.subject;
@@ -240,5 +295,4 @@ async function startBot() {
     });
 }
 
-startBot();
-        
+startBot();          
