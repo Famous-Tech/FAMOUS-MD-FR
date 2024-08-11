@@ -40,7 +40,32 @@ async function startBot() {
     store.bind(sock.ev);
     sock.ev.on('creds.update', saveCreds);
     const store = { contacts: {} };
+    sock.ev.on('messages.update', async (update) => {
+        for (let msg_pdate of update) {
+            if (msg_pdate.key && msg_pdate.updateType === 'message-revoke') {
+                const { remoteJid, participant } = msg_pdate.key;
+                const org = msg_pdate.message;
+                if (org) {
+                    const Content_pdate = org.conversation || org.extendedTextMessage?.text;
+                    const group_name = (await sock.groupMetadata(remoteJid)).subject;
+                    const gender = store.contacts[participant]?.name || participant.split('@')[0];
 
+                    if (Content_pdate) {
+                        const anti_del = `🔴 *Anti-Delete Alert* 🔴\n\n` +
+                            `👤 *Sender*: @${gender}\n` +
+                            `⌚ *Time*: [${new Date().toLocaleString()}]`\n +
+                            `📜 *Message*: ${Content_pdate}\n` +
+                            `🚨 *Note*: Deleted`;
+
+                        await sock.sendMessage(remoteJid, {
+                            text: anti_del,
+                            mentions: [participant]
+                        });
+                    }
+                }
+            }
+        }
+    });
     sock.ev.on('messages.upsert', async (m) => {
         const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
         if (!msg.message) return;
