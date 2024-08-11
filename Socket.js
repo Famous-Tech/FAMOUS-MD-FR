@@ -35,7 +35,7 @@ async function startBot() {
         browser: Browsers.windows('Firefox'),
         auth: state,
     });
-
+    store.bind(sock.ev)
     sock.ev.on('creds.update', saveCreds);
     const store = { contacts: {} };
     sock.ev.on('messages.upsert', async (m) => {
