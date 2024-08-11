@@ -93,12 +93,34 @@ async function startBot() {
                 break;
         }
 
-        const from = msg.key.remoteJid;
-        const isGroup = from.endsWith('@g.us');
-        if (isGroup) {
-            const groupMetadata = await sock.groupMetadata(from);
-            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Group: ${groupMetadata.subject}, Message: ${body}, Sender: ${msg.sender}`));
+     const from = msg.key.remoteJid;
+      const isGroup = from.endsWith('@g.us');
+      if (isGroup) {
+         const groupMetadata = await sock.groupMetadata(from);
+         console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Group: ${groupMetadata.subject}, Message: ${body}, Sender: ${msg.sender}`));
+    if (msg.message.extendedTextMessage && msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.mentionedJid) {
+      const mentionedJid = msg.message.extendedTextMessage.contextInfo.mentionedJid;
+      let thumbnail = './lib/media/default_img.png';
+    try {
+        thumbnail = await sock.profilePictureUrl(msg.sender, 'image');
+      } catch (err) {
+    }
+    const audio_ptt = fs.readFileSync('./lib/media/audio.mp3');
+    await sock.sendMessage(from, {
+        audio: { url: './lib/media/audio.mp3' },
+        mimetype: 'audio/mpeg',
+        ptt: true,
+        contextInfo: {
+            externalAdReply: {
+                title: '*_mentioned_x-astral_*',
+                body: '*_notification_naxor_*',
+                thumbnail: await axios.get(thumbnail, { responseType: 'arraybuffer' }).then(res => Buffer.from(res.data, 'binary')),
+                mediaType: 2,
+              }
+          }
+       }, { quoted: msg });
 
+       }
             if (config.PER_ANTI) {
                 const cd_code = body.match(/https:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9]{10,}/g);
                 if (cd_code && !msg.key.fromMe) {
