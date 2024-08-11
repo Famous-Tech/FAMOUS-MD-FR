@@ -3,7 +3,7 @@ const { command, Meta } = require('../lib/');
 Meta({
     command: 'ping',
     category: 'mics',
-}, async (sock, matchedCommand, message) => {
+    handler: async (sock, matchedCommand, message) => {
         
         const start = new Date().getTime();
         const edited = await sock.sendMessage(message.chat, { text: '🏓 Pinging...' }, { quoted: message });
