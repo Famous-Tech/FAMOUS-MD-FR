@@ -7,7 +7,7 @@ const path = require('path');
 const config = require('./config');
 const { commands } = require('./lib/commands');
 const { serialised, decodeJid } = require('./lib/serialize');
-const { getUserXP, setUserXP, getUserLevel } = require('./lib/leveling_xp');
+const { get_XP, set_XP, get_Level } = require('./lib/leveling_xp');
 
 const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
 
@@ -181,12 +181,12 @@ async function startBot() {
             });
 
         const wats_user = msg.sender;
-        const userXP = getUserXP(wats_user);
-        const newXP = userXP + 10; 
-        setUserXP(wats_user, newXP);
+        const user_XP = get_XP(wats_user);
+        const new_XP = user_XP + 10; 
+        set_XP(wats_user, newXP);
 
-        const new_level = getUserLevel(newXP);
-        const bofore = getUserLevel(userXP);
+        const new_level = get_Level(new_XP);
+        const bofore = get_Level(user_XP);
 
         if (new_level > before) {
             const get_image = await sock.profilePictureUrl(wats_user, 'image');
