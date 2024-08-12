@@ -1,5 +1,6 @@
 const { commands, Meta } = require('../lib/');
-const { MessageType } = require('@whiskeysockets/baileys');
+const { MessageType, WA_DEFAULT_EPHEMERAL } = require('@whiskeysockets/baileys');
+
 Meta({
   command: 'kick',
   category: 'group',
@@ -105,6 +106,47 @@ Meta({
     }
     }
 });
+
+Meta({
+  command: 'ginfo',
+  category: 'group',
+  handler: async (sock, message, matched) => {
+    const { key, from, isGroup } = message[0];
+    const { remoteJid } = key;
+    const { participants, subject, desc, creation } = await sock.groupMetadata(from);
     
-commands.push('kick', 'add', remove_common);
+  if (!isGroup) return await sock.sendMessage(remoteJid, { text: '*[ERROR]* _🤣_' }, { quoted: message[0] });
+   const groupName = subject;
+   const groupDesc = desc || 'No description';
+    const  Count = participants.length;
+     const creations = new Date(creation * 1000).toLocaleString();
+     const GC_ID = remoteJid.split('@')[0];
+    const info_r = [
+        `╭───────────◯`,
+        `├ *Name:* ${groupName}`,
+        `│ *Desc:* ${groupDesc}`,
+        `│ *Members:* ${Count}`,
+        `│ *Group_ID:* ${GC_ID} members`,
+        `├───────────◯`,
+        `│  *_GC_INFOR_*`,
+        `╰───────────◯`
+    ].join('\n');
+
+  const mentions = participants.map(p => p.id);
+    const options = {
+      contextInfo: {
+        mentionedJid: mentions,
+        forwardingScore: 999,
+        isForwarded: true
+      },
+      quoted: message[0],
+    };
+    await sock.sendMessage(from, { text: info_r }, options);
+  }
+});
+      
+commands.push('kick', 
+              'add', 
+              'remove_common', 
+              'ginfo');
       
