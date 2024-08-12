@@ -12,9 +12,7 @@ Meta({
     if (!media) {
       return await sock.sendMessage(from, { 
         text: 'Please reply to an image or video to create a sticker' }, { quoted: message[0] });
-    }
-
-    const buffer = await sock.downloadMediaMessage(media);
+    } const buffer = await sock.downloadMediaMessage(media);
     const packName = config.PACKNAME;
     const cropp = await sharp(buffer)
       .resize(512, 512, {
@@ -52,14 +50,10 @@ Meta({
     if (!isGroup) {
       return await sock.sendMessage(from, {
         text: 'This command can only be used in a group' }, { quoted: message[0] });
-    }
-
-    if (!input) {
+    }if (!input) {
       return await sock.sendMessage(from, { 
         text: 'Usage: !vote <topic> to create a poll, !vote <option> to vote' }, { quoted: message[0] });
-    }
-
-    if (!polls[from]) {
+    } if (!polls[from]) {
       polls[from] = {
         topic: input,
         options: {},
@@ -71,7 +65,6 @@ Meta({
       if (poll.voters.includes(key.participant)) {
         return await sock.sendMessage(from, { text: 'You have already voted in this poll' }, { quoted: message[0] });
       }
-
       poll.options[input] = (poll.options[input] || 0) + 1;
       poll.voters.push(key.participant);
       let result = `*Poll:* ${poll.topic}\n\n`;
