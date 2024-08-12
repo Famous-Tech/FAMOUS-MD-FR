@@ -124,11 +124,10 @@ Meta({
     const info_r = [
         `╭───────────◯`,
         `├ *Name:* ${groupName}`,
-        `│ *Desc:* ${groupDesc}`,
         `│ *Members:* ${Count}`,
         `│ *Group_ID:* ${GC_ID} members`,
         `├───────────◯`,
-        `│  *_GC_INFOR_*`,
+        `│ *Desc:* ${groupDesc}`,
         `╰───────────◯`
     ].join('\n');
 
