@@ -12,7 +12,6 @@ Meta({
     if (!target || !duration) {
       return await sock.sendMessage(from, { text: 'Please mention a user and specify a ban duration, e.g., @naxor_ser' }, { quoted: message[0] });
     }
-
     await sock.groupRemove(from, [target]);
     await sock.sendMessage(from, { text: `@${target.split('@')[0]} has been banned for ${duration}.`, mentions: [target] }, { quoted: message[0] });
     const milliseconds = parseDuration(duration);
@@ -22,7 +21,6 @@ Meta({
     });
   }
 });
-
 function parseDuration(duration) {
   const timeUnits = {
     's': 1000,
