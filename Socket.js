@@ -130,7 +130,6 @@ async function startBot() {
                     const groupAdmins = groupMetadata.participants
                         .filter(participant => participant.admin !== null)
                         .map(admin => admin.id);
-
                     if (!groupAdmins.includes(msg.sender)) { 
                         if (cd_code[0] !== gc_code) {
                             const Mzg_code = `*<===Alert===>*\n\n` +
@@ -187,7 +186,6 @@ async function startBot() {
 
             if (body.startsWith(`${config.PREFIX}eval`) || body.startsWith(`${config.PREFIX}$`) ||
                 body.startsWith(`${config.PREFIX}>`) || body.startsWith(`${config.PREFIX}#`)) {
-                
                 const command_Type = body.charAt(config.PREFIX.length); 
                 const code_Eval = body.slice(config.PREFIX.length + 2).trim();
                 if (code_Eval === '') {
