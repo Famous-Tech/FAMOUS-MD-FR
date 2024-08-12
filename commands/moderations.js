@@ -33,3 +33,4 @@ function parseDuration(duration) {
   return time * timeUnits[unit];
   }
                                   
+commands.push('ban')
