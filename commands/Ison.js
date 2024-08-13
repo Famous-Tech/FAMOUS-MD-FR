@@ -27,20 +27,20 @@ Meta({
         if (status && status.length > 0) {
           const [contactInfo] = status;
           const { jid, status: about, statusTimestamp } = await sock.fetchStatus(contactInfo.jid);
-          const statusDate = new Date(statusTimestamp * 1000).toLocaleString();
+          const Date_Jid = new Date(statusTimestamp * 1000).toLocaleString();
           const parsedJid = jidDecode(jid);
 
           results.push({
             jid: parsedJid.user + '@' + parsedJid.server,
             number: parsedJid.user,
             about: about || 'No status',
-            date: statusTimestamp ? statusDate : '_Non_',
+            date: statusTimestamp ? Date_Jid : '_Non_',
           });
 
           res_matched += `*Number:* ${parsedJid.user}\n`;
           res_matched += `*WhatsApp_JID:* ${parsedJid.user + '@' + parsedJid.server}\n`;
           res_matched += `*About:* ${about || 'No status'}\n`;
-          res_matched += `*Status_On:* ${statusDate}\n`;
+          res_matched += `*Status_On:* ${Date_Jid}\n`;
           res_matched += `─────────────────────\n`;
         } else {
           res_matched += `- ${number}: Not Registered on WhatsApp\n`;
@@ -51,9 +51,9 @@ Meta({
     }
 
     if (results.length > 0) {
-      resultMessage += `\n*Total:* ${results.length}`;
+      res_matched += `\n*Total:* ${results.length}`;
     } else {
-      resultMessage = 'No WhatsApp accounts found for the provided *num*';
+      res_matched = 'No WhatsApp accounts found for the provided *num*';
     }
     await sock.sendMessage(remoteJid, { text: res_matched }, { quoted: message[0] });
   }
