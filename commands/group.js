@@ -143,9 +143,35 @@ Meta({
     await sock.sendMessage(from, { text: info_r }, options);
   }
 });
-      
+
+Meta({
+  command: 'jids',
+  category: 'group',
+  handler: async (sock, message, matched) => {
+    try {
+      const isGroup = message.key.remoteJid.endsWith('@g.us');
+      if (!isGroup) {
+        await sock.sendMessage(message.key.remoteJid, { text: '*This command can only be used in groups*' });
+        return;
+      }
+      const groupMetadata = await sock.groupMetadata(message.key.remoteJid);
+      const participants = groupMetadata.participants;
+      const jids = participants.map((participant, index) => 
+        `✨ *Member ${index + 1}:*\n🆔 *JID*: ${participant.id}\n`
+      );
+      const gc_name = groupMetadata.subject;
+      const List = jids.join('\n');
+      const messagez = `*📜 JID M: ${gc_name}*\n\n${List}\n*Total*: ${participants.length}`;
+       await sock.sendMessage(message.key.remoteJid, { text: messagez });    
+    } catch (error) {
+      console.error(error);
+        }
+  }
+});
+
 commands.push('kick', 
-              'add', 
+              'add',
+              'jids',
               'remove_common', 
               'ginfo');
       
