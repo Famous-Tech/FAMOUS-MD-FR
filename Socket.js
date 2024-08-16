@@ -20,9 +20,9 @@ async function Connect_Session() {
     let sessionData = sessionId;
     if (sessionId.length < 20) {
         const { data } = await axios.get(`https://privatebin.net/${sessionId}`);
-        sessionData = Buffer.from(data, 'base64').toString('utf8');
+        session = Buffer.from(data, 'base64').toString('utf8');
     }
-    fs.writeFileSync(SESSION_FILE, sessionData, 'utf8');
+    fs.writeFileSync(SESSION_FILE, session, 'utf8');
 }
 
 async function startBot() {
