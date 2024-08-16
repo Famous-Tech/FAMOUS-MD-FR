@@ -49,12 +49,10 @@ Meta({
     const isOwner = config.MODS.includes(sender);
     if (!isAdmin && !isOwner) {
       return sock.sendMessage(from, { text: 'Only admins can use_this' }, { quoted: message });
-    }
-    const number = body.split(' ')[1];  //+27686881509
+    } const number = body.split(' ')[1];  //+27686881509
     if (!number) {
       return sock.sendMessage(from, { text: 'Please provide a number' }, { quoted: message });
-    }
-    const num_Jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
+  }const num_Jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
      try {
         await sock.groupParticipantsUpdate(from, [num_Jid], 'add');
         await sock.sendMessage(from, { text: `${number} _added_` }, { quoted: message });
