@@ -10,7 +10,12 @@
     },
     "SESSION_ID": {
       "description": "Session key for your qr",
-      "required": true
+      "required": true,
+    },
+    "MODE": {
+      "description": "self mode_for bot_X_public",
+      "required": true,
+      "value": "private"
     },
     "MODS": {
       "description": "Admin of moderator to ur bot",
