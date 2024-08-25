@@ -1,6 +1,6 @@
 const { commands, Meta } = require('../lib/');
 const { YT_SEARCH } = require('../lib/YOUTUBE.js');
-const { searchAndDownload, getYoutubeThumbnail, bytesToSize, generateId } = require('../lib/youtubei.js');
+const { searchAndDownload, downloadYouTubeVideo, downloadYouTubeAudio, getYoutubeThumbnail, bytesToSize, generateId } = require('../lib/youtubei.js');
 const fs = require('fs');
 const path = require('path');
 
