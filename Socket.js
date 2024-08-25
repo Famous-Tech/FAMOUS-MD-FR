@@ -210,7 +210,7 @@ async function startBot() {
                     }
                 }
             }
-
+         if (body.startsWith(config.PREFIX)) {
          const cmd_str = body.slice(config.PREFIX.length).trim().split(' ')[0];
          const command = commands.find(cmd => cmd.command === cmd_str);
         if (command) {
