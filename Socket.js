@@ -68,32 +68,22 @@ async function startBot() {
             }
         }
     });
+    
     sock.ev.on('messages.upsert', async (m) => {
-        const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
-        if (!msg.message) return;
-
-        const msgType = msg.messageType;
-        let body = '';
-        switch (msgType) {
-            case 'conversation':
-                body = msg.text;
-                break;
-            case 'imageMessage':
-            case 'videoMessage':
-            case 'extendedTextMessage':
-                body = msg.text;
-                break;
-            case 'buttonsResponseMessage':
-                body = m.message.buttonsResponseMessage.selectedButtonId;
-                break;
-            case 'listResponseMessage':
-                body = m.message.listResponseMessage.singleSelectReply.selectedRowId;
-                break;
-            case 'templateButtonReplyMessage':
-                body = m.message.templateButtonReplyMessage.selectedId;
-                break;
-        }
-
+    if (m.type !== 'notify') return;
+    const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
+    if (!msg.message) return;
+    const messageMapping = {
+        'conversation': () => msg.text,
+        'imageMessage': () => msg.text,
+        'videoMessage': () => msg.text,
+        'extendedTextMessage': () => msg.text,
+        'buttonsResponseMessage': () => m.message.buttonsResponseMessage.selectedButtonId,
+        'listResponseMessage': () => m.message.listResponseMessage.singleSelectReply.selectedRowId,
+        'templateButtonReplyMessage': () => m.message.templateButtonReplyMessage.selectedId
+    };
+    const msgType = msg.messageType;
+    const body = messageMapping[msgType]?.() || '';
      const from = msg.key.remoteJid;
       const isGroup = from.endsWith('@g.us');
       if (isGroup) {
@@ -221,23 +211,19 @@ async function startBot() {
                 }
             }
 
-            commands.forEach(async (command) => {
-                if (body.match(command.command)) {
-                    const match_cmd = body.match(command.command);
-                    const prefix = match_cmd[0];
-                    const matched = match_cmd[1];
-                    const args = match_cmd.slice(2);
-
-                    await command.handler({
-                        sock,
-                        msg,
-                        args,
-                        prefix,
-                        command: matched,
-                    });
-                }
-            });
-
+         const cmd_str = body.slice(config.PREFIX.length).trim().split(' ')[0];
+         const command = commands.find(cmd => cmd.command === cmd_str);
+        if (command) {
+            const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
+            try {
+                await command.handler({sock, msg,args,
+                    command: cmd_str,
+                });
+            } catch (error) {}
+        } else {
+       }
+          }
+      });
         const wats_user = msg.sender;
         const user_XP = get_XP(wats_user);
         const new_XP = user_XP + 10; 
