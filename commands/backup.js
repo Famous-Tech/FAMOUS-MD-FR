@@ -5,8 +5,8 @@ const path = require('path');
 Meta({
   command: 'backup',
   category: 'utility',
-  handler: async (sock, message, matched) => {
-    const { from } = message[0];
+  handler: async (sock, message, args) => {
+    const { from } = message;
 
     try {
       const groupMetadata = await sock.groupMetadata(from);
@@ -35,7 +35,7 @@ Meta({
       }
       const filePath = path.join(backupDir, `backup-${from}-${Date.now()}.json`);
       fs.writeFileSync(filePath, JSON.stringify(backupData, null, 2), 'utf8');
-      await sock.sendMessage(from, { text: `Data saved to ${filePath}.` }, { quoted: message[0] });
+      await sock.sendMessage(from, { text: `Data saved to ${filePath}.` }, { quoted: message });
     } catch (error) {
       console.error(error);
       }
