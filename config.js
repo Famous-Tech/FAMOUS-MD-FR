@@ -7,5 +7,6 @@ module.exports = {
     PER_ANTI: process.env.PER_ANTI || 'true', // false
     SESSION_ID: process.env.SESSION_ID || 'session_key',
     BRAINSHOP_PRIVATE: process.env.BRAINSHOP_PRIVATE || 'false', //true
+    MODE: process.env.MODE || 'private', // public
     MODS: process.env.MODS ? JSON.parse(process.env.MODS) : ['27686881509@s.whatsapp.net']
 };
