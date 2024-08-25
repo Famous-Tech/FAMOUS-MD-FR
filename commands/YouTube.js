@@ -64,4 +64,39 @@ Meta({
     }
   }
 });
-    
+
+  Meta({
+  command: 'yta',
+  category: 'youtube',
+  handler: async (sock, message, args) => {
+    const { from } = message;
+    const audio_url = args.join(' ').trim();
+    if(audio_url) {
+    return await sock.sendMessage(from, { text: 'Provide YouTube url/' });
+      }
+    const Path_str = path.join(__dirname, 'temp_audio.mp3');
+    try {
+      await downloadYouTubeAudio(audio_url, Path_str);
+      if (fs.existsSync(Path_str)) {
+        const stats = fs.statSync(Path_str);
+        const fileSize = bytesToSize(stats.size);
+        const audioId = generateId(audioUrl);
+        const thumbnail_cn = await getYoutubeThumbnail(audioId);
+        await sock.sendMessage(from, {
+          audio: { url: Path_str },
+          mimetype: 'audio/mp4',
+          caption: `*_Name_*: ${path.basename(Path_str)}\n*_Size_*: ${fileSize}\n*_Bytes_*: ${stats.size}\n*_ID_*: ${audioId}`,
+          externalAdReply: {
+            title: 'Audio_Mp3',
+            body: 'Done',
+            thumbnail: { url: thumbnail_cn }
+          }
+        });
+        fs.unlinkSync(Path_str); 
+      } else {
+          }
+    } catch (error) {
+      await sock.sendMessage(from, { text: `${error.message}` });
+    }
+  }
+});
