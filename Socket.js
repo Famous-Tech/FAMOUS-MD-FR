@@ -216,7 +216,7 @@ async function startBot() {
          if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
-                await command.handler({sock, msg,args,
+                await command.handler({sock, msg,args,isGroup,groupMetadata, mentionedJid,groupAdmins
                     command: cmd_str,
                 });
             } catch (error) {}
