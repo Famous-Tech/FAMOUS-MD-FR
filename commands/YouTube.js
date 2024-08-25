@@ -100,3 +100,34 @@ Meta({
     }
   }
 });
+
+Meta({
+  command: 'ytv',
+  category: 'youtube',
+  handler: async (sock, message, args) => {
+    const { from } = message;
+    const video_url = args.join(' ').trim();
+    if(video_url) {
+    return await sock.sendMessage(from, { text: 'Provide YouTube url/' });
+    }
+    const exit = path.join(__dirname, 'temp_video.mp4');
+    try {
+      await downloadYouTubeVideo(video_url, exit);
+      if (fs.existsSync(exit)) {
+        const stats = fs.statSync(exit);
+        const fileSize = bytesToSize(stats.size);
+        const videoId = generateId(video_url);
+        await sock.sendMessage(from, {
+          video: { url: exit },
+          mimetype: 'video/mp4',
+          caption: `*Name*: ${path.basename(exit)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
+        });
+        fs.unlinkSync(exit); 
+      } else {
+          }
+    } catch (error) {
+      await sock.sendMessage(from, { text: `${error.message}` });
+    }
+  }
+});
+            
