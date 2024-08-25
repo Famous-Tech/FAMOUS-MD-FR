@@ -5,15 +5,15 @@ const { jidDecode } = require('@whiskeysockets/baileys');
 Meta({
   command: 'ison',
   category: 'utility',
-  handler: async (sock, message, matched) => {
-    const { key, from, isGroup } = message[0];
+  handler: async (sock, message, args) => {
+    const { key, from, isGroup } = message;
     const { remoteJid } = key;
 
-    const numbers = matched.input.trim().split(' ').slice(1);
+    const numbers = args.input.trim().split(' ').slice(1);
     if (numbers.length === 0) {
         return await sock.sendMessage(remoteJid, {
         text: `*Usage:* ${config.PREFIX}ison 27686881×××`,
-        quoted: message[0]
+        quoted: message
       });
     }
 
@@ -55,10 +55,6 @@ Meta({
     } else {
       res_matched = 'No WhatsApp accounts found for the provided *num*';
     }
-    await sock.sendMessage(remoteJid, { text: res_matched }, { quoted: message[0] });
+    await sock.sendMessage(remoteJid, { text: res_matched }, { quoted: message });
   }
 });
-
-commands.push(
-  'ison'
-  )
