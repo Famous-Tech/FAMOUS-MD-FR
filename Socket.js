@@ -213,7 +213,7 @@ async function startBot() {
          if (body.startsWith(config.PREFIX)) {
          const cmd_str = body.slice(config.PREFIX.length).trim().split(' ')[0];
          const command = commands.find(cmd => cmd.command === cmd_str);
-        if (command) {
+         if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
                 await command.handler({sock, msg,args,
