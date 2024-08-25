@@ -130,4 +130,38 @@ Meta({
     }
   }
 });
-            
+
+Meta({
+  command: 'video',
+  category: 'youtube',
+  handler: async (sock, message, args) => {
+    const { from } = message;
+    const search = args.join(' ').trim();
+    if(search) {
+    return await sock.sendMessage(from, { text: 'Provide name/url' });
+     }
+    const naxor = path.join(__dirname, 'temp_video.mp4');
+    try {
+      if (search.startsWith('http')) {
+        await downloadYouTubeVideo(search, naxor);
+      } else {
+        await searchAndDownload(search, naxor, 'video');
+      }
+      if (fs.existsSync(naxor)) {
+        const stats = fs.statSync(naxor);
+        const fileSize = bytesToSize(stats.size);
+        const videoId = generateId(search); 
+        await sock.sendMessage(from, {
+          video: { url: naxor },
+          mimetype: 'video/mp4',
+          caption: `*Name*: ${path.basename(naxor)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
+        });
+
+        fs.unlinkSync(naxor); 
+      } else {
+          }
+    } catch (error) {
+      await sock.sendMessage(from, { text: `${error.message}` });
+    }
+  }
+});
