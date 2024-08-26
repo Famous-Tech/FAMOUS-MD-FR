@@ -4,7 +4,7 @@ const config = require('../config');
 Meta({
     command: 'menu',
     category: 'mics',
-    handler: async (sock, args, message) => {
+    handler: async (sock, args, message, author) => {
         const { from } = message;
       
         const text = args.join(' ');
@@ -47,7 +47,7 @@ Meta({
 
         let menu_str = `╭───╼〔 𝐗-𝐀𝐒𝐓𝐑𝐀𝐋 〕\n`;
         menu_str += `┃ ✦ ${Unicode('Owner')} : ${config.OWNER}\n`;
-        menu_str += `┃ ✦ ${Unicode('User')} : \n`;
+        menu_str += `┃ ✦ ${Unicode('User')} : ${author}\n`;
         menu_str += `┃ ✦ ${Unicode('Mode')} : ${config.MODE}\n`;
         menu_str += `┃ ✦ ${Unicode('Version')} : ${config.VERSION}\n`;
         menu_str += `╰──────────╼\n`;
