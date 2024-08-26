@@ -32,6 +32,8 @@ Meta({
             });
         });
 
+        menuText += `╰──────────╼`;
+        
         await sock.sendMessage(from, { text: menuText });
     }
 });
