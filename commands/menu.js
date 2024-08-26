@@ -1,4 +1,4 @@
-const { commands, Meta } = require('../lib/'); 
+const { commands, Meta, Unicode } = require('../lib/'); 
 const config = require('../config'); 
 
 Meta({
@@ -18,17 +18,17 @@ Meta({
 
         
         let menu_str = '╭───╼〔 𝐗-𝐀𝐒𝐓𝐑𝐀𝐋 𝐁𝐎𝐓 〕
-┃ ✦ Owner : ${config.OWNER}
-┃ ✦ User : 
-┃ ✦ Mode : ${config.MODE}
-┃ ✦ Version : ${config.VERSION}
+┃ ✦ ${Unicode('Owner')} : ${config.OWNER}
+┃ ✦ ${Unicode('User')} : 
+┃ ✦ ${Unicode('Mode')} : ${config.MODE}
+┃ ✦ ${Unicode('Version')} : ${config.VERSION}
 ╰──────────╼\n';
         
         Object.keys(cmd_str).forEach(category => {
-            menu_str += `╭───╼〔 ${category.toUpperCase()} 〕\n`;
+            menu_str += `╭───╼〔 ${Unicode(category.toUpperCase())} 〕\n`;
             cmd_str[category].forEach(cmd => {
                 const { command, filename, description } = cmd;
-                menu_str += `┃ ∘ ${command}\n`;
+                menu_str += `┃ ∘ ${Unicode(command)}\n`;
             });
         });
 
