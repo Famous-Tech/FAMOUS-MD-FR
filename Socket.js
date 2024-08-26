@@ -73,6 +73,9 @@ async function startBot() {
     if (m.type !== 'notify') return;
     const msg = await serialised(JSON.parse(JSON.stringify(m.messages[0])), m, sock);
     if (!msg.message) return;
+    const sendd = msg.sender;
+    const contact = store.contacts[sendd] || {};
+    const author = contact.name || sendd.split('@')[0];     
     const messageMapping = {
         'conversation': () => msg.text,
         'imageMessage': () => msg.text,
@@ -216,7 +219,7 @@ async function startBot() {
          if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
-                await command.handler({sock, msg, args, isGroup, groupMetadata, mentionedJid, groupAdmins,
+                await command.handler({sock, msg, args, isGroup, author, groupMetadata, mentionedJid, groupAdmins,
                     command: cmd_str,
                 });
             } catch (error) {}
