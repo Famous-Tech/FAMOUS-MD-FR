@@ -355,12 +355,16 @@ async function startBot() {
                 console.log(chalk.red('Connection closed => Reconnecting...'));
                 startBot();
             }
-        } else if (connection === 'open') {
+        } else if (connection === 'open') {     
+        console.log("⬇️ Installing Plugins...");
+        fs.readdirSync(`${__dirname}/commmands`)
+           .filter(file => file.endsWith('.js'))
+           .forEach(file => require(`${__dirname}/commands/${file}`));
+        console.log("✅ Plugins Installed");          
             console.log(chalk.magenta('_Connected_'));
         }
     });
 }
-
 sock.ev.on('call', async (update) => {
     const { id, from, isVideo, isGroupCall } = update;
     if (isGroupCall) return;
