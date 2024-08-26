@@ -25,10 +25,10 @@ Meta({
 ╰──────────╼\n';
         
         Object.keys(groupedCommands).forEach(category => {
-            menuText += `\n${category.toUpperCase()}:\n`;
+            menuText += `╭───╼〔 ${category.toUpperCase()} 〕\n`;
             groupedCommands[category].forEach(cmd => {
                 const { command, filename, description } = cmd;
-                menuText += `┃ ∘  ${command}\n`;
+                menuText += `┃ ∘ ${command}\n`;
             });
         });
 
