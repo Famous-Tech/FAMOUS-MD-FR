@@ -45,7 +45,7 @@ Meta({
             return acc;
         }, {});
 
-        let menu_str = `╭───╼〔 𝐗-𝐀𝐒𝐓𝐑𝐀𝐋 𝐁𝐎𝐓 〕\n`;
+        let menu_str = `╭───╼〔 𝐗-𝐀𝐒𝐓𝐑𝐀𝐋 〕\n`;
         menu_str += `┃ ✦ ${Unicode('Owner')} : ${config.OWNER}\n`;
         menu_str += `┃ ✦ ${Unicode('User')} : \n`;
         menu_str += `┃ ✦ ${Unicode('Mode')} : ${config.MODE}\n`;
