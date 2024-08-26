@@ -1,5 +1,5 @@
 const { commands, Meta } = require('../lib/'); 
-const config = require('../config'); // Adjust the path as needed
+const config = require('../config'); 
 
 Meta({
     command: 'menu',
