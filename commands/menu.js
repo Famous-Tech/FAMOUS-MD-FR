@@ -17,13 +17,18 @@ Meta({
         }, {});
 
         
-        let menuText = 'Menu:\n';
+        let menu_str = '╭───╼〔 𝐀𝐒𝐓𝐑𝐈𝐃 𝐁𝐎𝐓 〕
+┃ ✦ Owner : ${config.OWNER}
+┃ ✦ User : 
+┃ ✦ Mode : ${config.MODE}
+┃ ✦ Version : ${config.VERSION}
+╰──────────╼\n';
         
         Object.keys(groupedCommands).forEach(category => {
             menuText += `\n${category.toUpperCase()}:\n`;
             groupedCommands[category].forEach(cmd => {
                 const { command, filename, description } = cmd;
-                menuText += `- ${command}: ${description || 'No description'}\n`;
+                menuText += `┃ ∘  ${command}\n`;
             });
         });
 
