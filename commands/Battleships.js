@@ -1,6 +1,6 @@
 const Battleship = require('../data_store/Battleship.d.js');
 const { commands, Meta } = require('../lib/');
-const gameInstances = {};
+const instances = {};
 
 Meta({
   command: 'battleship',
