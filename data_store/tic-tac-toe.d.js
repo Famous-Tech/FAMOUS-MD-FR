@@ -11,7 +11,6 @@ class X_TicTacToe {
         this.XAccepted = false;
         this.OAccepted = false;
         
-  
         this.init_data();
     }
 
@@ -32,7 +31,6 @@ class X_TicTacToe {
     init_data() {
         if (!fs.existsSync('tic-tac-toe.json')) {
             fs.writeFileSync('tic-tac-toe.json', JSON.stringify([]));
-            
         }
         if (!fs.existsSync('tac-points.json')) {
             fs.writeFileSync('tac-points.json', JSON.stringify({}));
@@ -51,6 +49,7 @@ class X_TicTacToe {
     static saveGame(games) {
         fs.writeFileSync('tic-tac-toe.json', JSON.stringify(games, null, 2));
     }
+
     static findGame(player) {
         const games = X_TicTacToe.loadGame();
         return games.find(game => game.playerX === player || game.playerO === player);
@@ -83,11 +82,23 @@ class X_TicTacToe {
         if (this.XAccepted && this.OAccepted) {
             return this.displayBoard();
         }
-        return 'Waiting for_player to accept';
+        return 'Waiting for player to accept';
     }
 
     displayBoard() {
-        return this.board.map(position => X_TicTacToe.emojiMap[position]).join('');
+        const rows = [
+            [this.board[0], this.board[1], this.board[2]],
+            [this.board[3], this.board[4], this.board[5]],
+            [this.board[6], this.board[7], this.board[8]]
+        ];
+
+        const boardString = rows.map(row =>
+            row.map(cell => X_TicTacToe.emojiMap[cell]).join(' | ')
+        ).join('\n---------\n');
+
+        const current_str = this.currentTurn === this.playerX ? '❌' : '⭕';
+        const turn_syt = `Player ${current_str}s turn (@${this.currentTurn})`;
+        return `*Tic-Tac-Toe Game* 🎮\n\n${boardString}\n\n${turn_syt}`;
     }
 
     makeMove(player, position) {
@@ -107,9 +118,9 @@ class X_TicTacToe {
             return { status: true, message: `Player ${player} wins✌️` };
         } else if (this.turns >= 9) {
             this.gameOver = true;
-            return { status: true, message: 'Game over It\s a tie' };
+            return { status: true, message: 'Game over. It\'s a tie!' };
         } else {
-            return { status: true, message: 'Move accepted Next turn' };
+            return { status: true, message: 'Move accepted. Next turn' };
         }
     }
 
