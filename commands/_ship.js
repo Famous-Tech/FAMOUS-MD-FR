@@ -56,7 +56,6 @@ Meta({
       const mention_str = mentioned.length > 1 
         ? mentioned.map(id => `@${id.split('@')[0]}`).join(' and ')
         : `@${mentioned[0].split('@')[0]}`;
-
       const caption = `*CAP_MATE TYRE*\n${percentage}%\n${mention_str}\n*Rating*: *${rating}*`;
       await sock.sendMessage(from, {
         image,
