@@ -5,8 +5,8 @@ Meta({
     command: 'tictac',
     category: 'games',
     filename: 'tic-tac-toe.js',
-    handler: async (sock, message, author, args) => {
-        const { from, mentionedJid } = message;
+    handler: async (sock, message,mentionedJid, author, args) => {
+        const { from } = message;
 
         if (args.length < 1 || mentionedJid.length < 1) {
             await sock.sendMessage(from, { text: 'Please mention a user to challenge for Tic-Tac-Toe' });
