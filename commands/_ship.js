@@ -13,7 +13,6 @@ Meta({
     if (mentioned.length === 0) {
       return sock.sendMessage(from, { text: "Please mention at least one user to ship" });
     }
-
     let profilePicUrl;
     try {
       profilePicUrl = await sock.profilePictureUrl(from);
@@ -22,16 +21,16 @@ Meta({
     const percentage = Math.floor(Math.random() * 101);
     const ratings = [
       'Sweet',
-      'Awful',
-      'Very Bad',
-      'Poor',
-      'Average',
-      'Good',
-      'Great',
-      'Amazing',
-      'XAstral',
-      'Virgin',
-      'looser'
+       'Awful',
+       'Very Bad',
+        'Poor',
+         'Average',
+           'Good',
+             'Great',
+               'Amazing',
+                  'XAstral',
+                     'Virgin',
+                       'looser'
       
     ];
     const str_rate = ratings[Math.floor(percentage / 15)];
