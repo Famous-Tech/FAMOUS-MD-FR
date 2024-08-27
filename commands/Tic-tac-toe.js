@@ -1,8 +1,8 @@
 const { commands, Meta } = require('../lib/');
-const TicTacToeGame = require('../lib/tic-tac-toe.d.js');
+const X_TicTacToe = require('../lib/tic-tac-toe.d.js');
 
 Meta({
-    command: 'tictactoe',
+    command: 'tictac',
     category: 'games',
     filename: 'tic-tac-toe.js',
     handler: async (sock, message, author, args) => {
@@ -14,21 +14,21 @@ Meta({
         }
         const playerX = author;
         const playerO = mentionedJid[0];
-        let game = TicTacToeGame.findGame(playerX);
+        let game = X_TicTacToe.findGame(playerX);
 
         if (!game) {
-            game = new TicTacToeGame(playerX, playerO);
-            TicTacToeGame.saveGame([...TicTacToeGame.loadGame(), game]);
+            game = new X_TicTacToe(playerX, playerO);
+            X_TicTacToe.saveGame([...X_TicTacToe.loadGame(), game]);
             await sock.sendMessage(from, { text: `Game created: Waiting for @${playerO.split('@')[0]}`, mentions: [playerO] });
 
           sock.ev.on('messages.upsert', async ({ messages }) => {
                 const msg = messages[0];
                 if (msg.body === `${config.PREFIX}accept ttt` && msg.sender === playerO) {
                     game.playerOAccepted = true;
-                    TicTacToeGame.updateGame(game);
-                    const boardMessage = game.startGame();
-                    if (boardMessage) {
-                        await sock.sendMessage(from, { text: boardMessage });
+                    X_TicTacToe.updateGame(game);
+                    const Msg_str = game.startGame();
+                    if (Msg_str) {
+                        await sock.sendMessage(from, { text: Msg_str });
                     }
                 }
             });
@@ -42,7 +42,7 @@ Meta({
                 const move = parseInt(msg.body.trim());
                 if (move >= 1 && move <= 9) {
                     const result = game.makeMove(msg.sender, move);
-                    TicTacToeGame.updateGame(game);
+                    X_TicTacToe.updateGame(game);
                     if (result.status) {
                         await sock.sendMessage(from, { text: result.message });
                         if (!game.gameOver) {
@@ -57,9 +57,9 @@ Meta({
             const TIMEOUT = 30000; 
             if (!game.gameOver && Date.now() - game.lastMoveTime > TIMEOUT) {
                 game.gameOver = true;
-                TicTacToeGame.addPoints(game.currentTurn === playerX ? playerO : playerX, 1);
+                X_TicTacToe.addPoints(game.currentTurn === playerX ? playerO : playerX, 1);
                 await sock.sendMessage(from, { text: `Game over🙃 @${game.currentTurn.split('@')[0]} took too long @${(game.currentTurn === playerX ? playerO : playerX).split('@')[0]} wins`, mentions: [playerX, playerO] });
-                TicTacToeGame.updateGame(game);
+                X_TicTacToe.updateGame(game);
             }
         });
     }
