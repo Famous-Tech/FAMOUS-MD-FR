@@ -1,5 +1,5 @@
 const { commands, Meta } = require('../lib/');
-const X_TicTacToe = require('../lib/tic-tac-toe.d.js');
+const X_TicTacToe = require('../data_store/tic-tac-toe.d.js');
 
 Meta({
     command: 'tictac',
