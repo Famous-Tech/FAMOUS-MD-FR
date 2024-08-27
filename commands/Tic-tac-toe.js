@@ -24,7 +24,7 @@ Meta({
           sock.ev.on('messages.upsert', async ({ messages }) => {
                 const msg = messages[0];
                 if (msg.body === `${config.PREFIX}accept ttt` && msg.sender === playerO) {
-                    game.playerOAccepted = true;
+                    game.OAccepted = true;
                     X_TicTacToe.updateGame(game);
                     const Msg_str = game.startGame();
                     if (Msg_str) {
