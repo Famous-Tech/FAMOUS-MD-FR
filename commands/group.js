@@ -165,3 +165,30 @@ Meta({
         }
   }
 });
+          
+Meta({
+    command: 'join',
+    category: 'owner',
+    handler: async (sock, args, message, creator, author, isGroup) => {
+        const { from } = message;
+      if (isGroup) {
+            return sock.sendMessage(from, { text: 'This command can only be used in private chat' });
+          } if (!config.MODS.includes(author)) {
+            return sock.sendMessage(from, { text: 'You are not allowed to use this cmd' });
+           }
+        if (args.length === 0) {
+            return sock.sendMessage(from, { text: 'Please provide a group invite link' });
+           }
+        const str_invite = args[0];
+        const get_code = str_invite.split('https://chat.whatsapp.com/')[1];
+        if (!get_code) {
+            return sock.sendMessage(from, { text: 'Please provide a valid group invite link' });
+              }try {
+          await sock.groupAcceptInvite(get_code);
+            sock.sendMessage(from, { text: '*_Successfully_*' });
+        } catch (error) {
+            console.error(error);
+                  }
+         }
+   });
+
