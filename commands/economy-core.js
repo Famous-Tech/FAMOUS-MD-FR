@@ -109,3 +109,21 @@ ${multi_winner > 0
 await sock.sendMessage(from, { text: naxor_ser });
   },
 });
+
+Meta({
+  command: 'spin',
+  category: 'games',
+  filename: 'spin.js',
+  handler: async (sock, message, author) => {
+    const { from } = message;
+
+    const xps = Math.floor(Math.random() * 91) + 10;
+    updateUserPoints(author, xps);
+    const str_cs = get_Points(author);
+    const spun = `
+      *🎉 You earn:* _${xps} p_
+      *💰 Balance_is:* _${str_cs} p&
+    `;
+    await sock.sendMessage(from, { text: spun });
+  },
+});
