@@ -87,6 +87,7 @@ async function startBot() {
     };
     const msgType = msg.messageType;
     const body = messageMapping[msgType]?.() || '';
+    const creator = config.MODS;
      const from = msg.key.remoteJid;
       const isGroup = from.endsWith('@g.us');
       if (isGroup) {
@@ -219,7 +220,7 @@ async function startBot() {
          if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
-                await command.handler({sock, msg, args, isGroup, author, groupMetadata, mentionedJid, groupAdmins,
+                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, groupAdmins,
                     command: cmd_str,
                 });
             } catch (error) {}
