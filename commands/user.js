@@ -25,7 +25,7 @@ END:VCARD`;
           title: "Owners_Num",
           body: "save_owners_contact",
           mediaType: 2,
-          thumbnailUrl: "https://example.com/thumbnail.jpg",
+          thumbnailUrl: "https://i.imgur.com/jQWY9mm.jpeg",
           mediaUrl: "https://x-astral.com", 
           sourceUrl: "https://x-astral.com", 
         },
