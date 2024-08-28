@@ -21,6 +21,9 @@ const update_eco = (userId, points = 0, diamonds = 0, gold = 0) => {
 const cent_xp = (userId, points) => {
   return get_Points(userId) >= points;
 };
+const Get_XP = () => {
+  return Math.floor(Math.random() * (500 - 50 + 1)) + 50;
+};
 const soccer_table = (slots) => {
   return `
 -----------------------
@@ -117,8 +120,8 @@ Meta({
   handler: async (sock, message, author) => {
     const { from } = message;
 
-    const xps = Math.floor(Math.random() * 91) + 10;
-    updateUserPoints(author, xps);
+    const xps = Get_XP();
+    update_eco(author, xps);
     const str_cs = get_Points(author);
     const spun = `
       *🎉 You earn:* _${xps} p_
