@@ -100,7 +100,7 @@ Meta({
 ${naxors}
 ${multi_winner > 0 
       ? `🎉 Congrats won _${changed}_,earned ${diamonds_str ? '1 Diamond' : gold_str ? '1 Gold' : ''}` 
-      : `😢 Sorry, lost _${get_points} p_`}
+      : `😢 Sorry, lost _${seck_mone} p_`}
       
 *💰 Bank Balance*: _${ama_points} p_
 *💎 Diamonds*: _${wayiwayi}_
