@@ -82,9 +82,9 @@ Meta({
     let gold_str = 0;
 
     if (multi_winner === -1) {
-      changed = -betPoints;
+      changed = seck_mone;
     } else {
-      changed = betPoints * multi_winner;
+      changed = seck_mone * multi_winner;
       if (uwubani === 'Diamond') {
         diamonds_str = 1;  
       } else if (uwubani === 'Gold') {
