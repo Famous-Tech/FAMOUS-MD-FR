@@ -37,8 +37,8 @@ Meta({
   command: 'slot',
   category: 'games',
   filename: 'slot.js',
-  handler: async (sock, message, args) => {
-    const { from, sender } = message;
+  handler: async (sock, message, args, author) => {
+    const { from } = message;
     const slot_str = ['🍒', '🍋', '🍉', '🍇', '🔔', '⭐', '7️⃣'];
     if (args.length === 0) {
       await sock.sendMessage(from, { text: 'Please specify the amount of points to bet\nUsage: slot [points]' });
@@ -49,8 +49,8 @@ Meta({
       await sock.sendMessage(from, { text: 'Invalid points: Please enter a valid points' });
       return;
     }
-    if (!cent_xp(sender, seck_mone)) {
-      const currents = get_Points(sender);
+    if (!cent_xp(author, seck_mone)) {
+      const currents = get_Points(author);
       await sock.sendMessage(from, { text: `_You do not have enough points_` });
       return;
     }
@@ -91,10 +91,10 @@ Meta({
         gold_str = 1;  
       }
     }
-    update_eco(sender, changed, diamonds_str, gold_str);
-    const ama_points = get_Points(sender);
-    const wayiwayi = get_Diamonds(sender);
-    const magolide = get_Gold(sender);
+    update_eco(author, changed, diamonds_str, gold_str);
+    const ama_points = get_Points(author);
+    const wayiwayi = get_Diamonds(author);
+    const magolide = get_Gold(author);
     const naxor_ser = `
 *🎰 Slot Machine 🎰*
 ${naxors}
