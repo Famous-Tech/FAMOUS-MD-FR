@@ -173,7 +173,7 @@ Meta({
         const { from } = message;
       if (isGroup) {
             return sock.sendMessage(from, { text: 'This command can only be used in private chat' });
-          } if (!config.MODS.includes(author)) {
+        } if (!config.MODS.includes(author)) {
             return sock.sendMessage(from, { text: 'You are not allowed to use this cmd' });
            }
         if (args.length === 0) {
@@ -192,3 +192,38 @@ Meta({
          }
    });
 
+Meta({
+    command: 'tagall',
+    category: 'group',
+    handler: async (sock, args, message, isGroup, creator, author) => {
+        const { from } = message;
+
+        if (!config.MODS.includes(author)) {
+            return sock.sendMessage(from, { text: 'You are not allowed to use this_cmd' });
+        }     if (!isGroup) {
+            return sock.sendMessage(from, { text: 'This command can only be used in a group' });
+          } const groupMetadata = await sock.groupMetadata(from);
+        const { participants } = groupMetadata;
+        let tags = '';
+        for (const participant of participants) {
+            const { id } = participant;
+            tags += `@${id.split('@')[0]} `;
+        }  const tag_str = args.length > 0 ? args.join(' ') : '*Hello everyone*';
+        const message_str = `
+╭───────────◯
+${tag_str}
+
+${tags}
+╰───────────◯\n*X-Astral*
+       `;
+        try {
+            await sock.sendMessage(from, {
+                text: message_str,
+                mentions: participants.map(p => p.id),
+            });
+        } catch (error) {
+            console.error(error);             
+        }
+    }
+});
+      
