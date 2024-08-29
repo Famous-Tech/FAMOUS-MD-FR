@@ -226,4 +226,54 @@ ${tags}
         }
     }
 });
-      
+
+const getTimeUntil = (targetHour, targetMinute) => {
+    const now = new Date();
+    const target = new Date();
+    target.setHours(targetHour, targetMinute, 0, 0);
+    if (now > target) {
+        target.setDate(target.getDate() + 1);
+    }
+    return target - now;
+};
+Meta({
+    command: 'automute',
+    category: 'group',
+    handler: async (sock, args, message, creator, isGroup, author) => {
+        const { from } = message;
+
+        if (!config.MODS.includes(author)) {
+            return sock.sendMessage(from, { text: 'You are not allowed to use this *cmd*' });
+        }      if (!isGroup) {
+            return sock.sendMessage(from, { text: '_This command can only be used in a group chat_' });
+        }   if (args.length !== 4) {
+            return sock.sendMessage(from, { text: 'Please provide mute and unmute times in the format: /automute HH MM HH MM *(e.g., /automute 22 00 07 30)*' });
+        }
+        const mute_hr = parseInt(args[0]);
+        const mute_mun = parseInt(args[1]);
+        const unmute_hr = parseInt(args[2]);
+        const unmute_min = parseInt(args[3]);
+        if (isNaN(mute_hr) || isNaN(mute_mun) || isNaN(unmute_hr) || isNaN(unmute_min)) {
+            return sock.sendMessage(from, { text: 'Invalid time format: _Please provide numeric values for hours and minutes_' });
+        }    const muteDelay = getTimeUntil(mute_hr, mute_mun);
+        setTimeout(async () => {
+            try {
+                await sock.groupSettingUpdate(from, 'announcement');
+                sock.sendMessage(from, { text: '🔇 *Group has been automatically muted*' });
+            } catch (error) {
+                console.error(error);
+                    }
+        }, muteDelay);
+           const unmuteDelay = getTimeUntil(unmute_hr, unmute_min);
+        setTimeout(async () => {
+            try {
+                await sock.groupSettingUpdate(from, 'not_announcement');
+                sock.sendMessage(from, { text: '🔊 *Group has been automatically unmuted*' });
+            } catch (error) {
+                console.error(error);
+                  }
+        }, unmuteDelay);
+        sock.sendMessage(from, { text: `Auto-mute has been set: _The group will be muted at ${mute_hr}:${mute_mun} and unmuted at ${unmute_hr}:${unmute_min}` });
+    }
+});
+          
