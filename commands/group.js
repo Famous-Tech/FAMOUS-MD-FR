@@ -1,6 +1,6 @@
 const { commands, Meta } = require('../lib/');
 const { MessageType, WA_DEFAULT_EPHEMERAL } = require('@whiskeysockets/baileys');
-
+const config = require('../config');
 Meta({
   command: 'kick',
   category: 'group',
