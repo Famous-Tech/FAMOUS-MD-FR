@@ -3,7 +3,7 @@ const config = require('../config');
 
 Meta({
     command: 'menu',
-    category: 'mics',
+    category: 'utility',
     handler: async (sock, args, message, author) => {
         const { from } = message;
       
@@ -62,6 +62,23 @@ Meta({
         });
 
         await sock.sendMessage(from, { text: menu_str });
+    }
+});
+
+Meta({
+    command: 'alive',
+    category: 'utility',
+    handler: async (sock, args, message) => {
+        const { from } = message;
+        const alive_str = `
+╭───╼〔*Bot Status*〕
+            
+🟢 *Bot is Alive*
+🕒 *Time:* ${new Date().toLocaleTimeString()}
+📅 *Date:* ${new Date().toLocaleDateString()}
+
+╰──────────╼
+`; await sock.sendMessage(from, { text: alive_str });
     }
 });
                
