@@ -4,12 +4,42 @@ const sharp = require('sharp');
 const { writeFileSync } = require('fs');
 const { MessageType, Mimetype } = require('@whiskeysockets/baileys');
 const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+ffmpeg.setFfmpegPath(ffmpegPath);
 const fs = require('fs');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 const unlinkAsync = promisify(fs.unlink);
 const { SpeechClient } = require('@google-cloud/speech');
 const speechClient = new SpeechClient();
+
+Meta({
+    command: 'video2gif',
+    category: 'media',
+    handler: async (sock, args, message) => {
+        const { from } = message;
+        if (!message.message || !message.message.videoMessage) {
+            return sock.sendMessage(from, { text: '*Please send a video*' }, MessageType.text);
+        } const video_togif = await sock.downloadMediaMessage(message);
+        const video_xv = path.join(__dirname, 'input.mp4');
+        const gif_naxor = path.join(__dirname, 'output.gif');
+        fs.writeFileSync(video_xv, video_togif);
+        ffmpeg(video_xv)
+            .setStartTime('00:00:05')
+            .setDuration(5) 
+            .toFormat('gif')
+            .save(gif_naxor)
+            .on('end', async () => {
+                const gif_naxors = fs.readFileSync(gif_naxor);
+                await sock.sendMessage(from, { video: gif_naxors, caption: '*Made with love*', gifPlayback: true }, MessageType.video);
+         fs.unlinkSync(video_);
+                fs.unlinkSync(gif_naxor);
+            })
+            .on('error', async (err) => {
+                console.error(err);
+                });
+    }
+});
 
 Meta({
     command: 'resize',
