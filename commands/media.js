@@ -2,6 +2,13 @@ const { commands, Meta } = require('../lib/');
 const config = require('../config.js');
 const sharp = require('sharp');
 const { writeFileSync } = require('fs');
+const { MessageType, Mimetype } = require('@whiskeysockets/baileys');
+const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const unlinkAsync = promisify(fs.unlink);
+
 
 Meta({
   command: 'sticker',
@@ -73,5 +80,46 @@ Meta({
     }
   }
 });
-        
+  
+Meta({
+    command: 'animsticker',
+    category: 'media',
+    handler: async (sock, args, message) => {
+      const { from } = message;
+        if (!message.message || (!message.message.videoMessage && !message.message.imageMessage)) {
+            return sock.sendMessage(from, { text: 'Please send a video or GIF' }, MessageType.text);
+        }
+        const isVideo = message.message.videoMessage !== undefined;
+        const media_msg = isVideo ? message.message.videoMessage : message.message.imageMessage;
+        const mime = media_msg.mimetype;
+      if (!/video|gif/.test(mime)) {
+            return sock.sendMessage(from, { text: 'Not valid' }, MessageType.text);
+        }
+        const media_fire = await sock.downloadMediaMessage(message);
+        const tempFile = `./temp_media_${Date.now()}.${isVideo ? 'mp4' : 'gif'}`;
+        const output = `./temp_sticker_${Date.now()}.webp`;
+        fs.writeFileSync(tempFile, media_fire);
+
+        try {
+             await new Promise((resolve, reject) => {
+                ffmpeg(tempFile)
+                    .inputFormat(isVideo ? 'mp4' : 'gif')
+                    .toFormat('webp')
+                    .videoFilters('scale=512:512')
+                    .outputOptions(['-vcodec', 'libwebp', '-lossless', '1', '-qscale', '0', '-preset', 'default', '-loop', '0', '-an', '-vsync', '0'])
+                    .save(output)
+                    .on('end', resolve)
+                    .on('error', reject);
+            });
+             const sticker_str = fs.readFileSync(output);
+            await sock.sendMessage(from, { sticker: sticker_str }, MessageType.sticker);
+        } catch (err) {
+            console.error(err);
+         } finally {
+        await unlinkAsync(tempFile);
+            await unlinkAsync(output);
+        }
+    }
+};
+                                    
       
