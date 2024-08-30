@@ -8,6 +8,9 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 const unlinkAsync = promisify(fs.unlink);
+const { SpeechClient } = require('@google-cloud/speech');
+const speechClient = new SpeechClient();
+
 
 
 Meta({
@@ -120,6 +123,39 @@ Meta({
             await unlinkAsync(output);
         }
     }
-};
+});
+
+Meta({
+    command: 'transcribe',
+    category: 'media',
+    handler: async (sock, args, message) => {
+        if (!message.message || !message.message.audioMessage) {
+            return sock.sendMessage(from, { text: 'Please send an audio message' }, MessageType.text);
+        }
+        const audio_str = await sock.downloadMediaMessage(message);
+        const audio_cn = path.join(__dirname, 'audio.ogg');
+        fs.writeFileSync(audio_cn, audio_str);
+        const audio = fs.readFileSync(audio_cn);
+        const request = {
+            audio: {
+                content: audio.toString('base64'),
+            },
+            config: {
+                encoding: 'OGG_OPUS',
+                sampleRateHertz: 16000,
+                languageCode: 'en-US',
+            },
+        };
+        try {
+            const [response] = await speechClient.recognize(request);
+            const transcription = response.results
+                .map(result => result.alternatives[0].transcript)
+                .join('\n');
+            await sock.sendMessage(from, { text: `*X*\n${transcription}` }, MessageType.text);
+        } catch (err) {
+            console.error(err);
+            } fs.unlinkSync(audio_cn);
+    }
+});
                                     
       
