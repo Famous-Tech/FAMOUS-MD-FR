@@ -11,8 +11,28 @@ const unlinkAsync = promisify(fs.unlink);
 const { SpeechClient } = require('@google-cloud/speech');
 const speechClient = new SpeechClient();
 
-
-
+Meta({
+    command: 'resize',
+    category: 'media',
+    handler: async (sock, args, message) => {
+      const { from } = message;
+        const [width, height] = args;
+        if (!width || !height || isNaN(width) || isNaN(height)) {
+            return sock.sendMessage(from, { text: 'Please specify valid width and height Usage: /resize 300 300' }, MessageType.text);
+        }     if (!message.message || !message.message.imageMessage) {
+            return sock.sendMessage(from, { text: 'Please send an image to resize' }, MessageType.text);
+        }      const image_imgz = await sock.downloadMediaMessage(message);
+        try {
+            const to_harzad = await sharp(image_imgz)
+                .resize(parseInt(width), parseInt(height))
+                .toBuffer();
+            await sock.sendMessage(from, { image: to_harzad, caption: '*Made with love*' }, MessageType.image);
+        } catch (err) {
+            console.error(err);
+            }
+    }
+});
+            
 Meta({
   command: 'sticker',
   category: 'media',
@@ -52,8 +72,8 @@ let polls = {};
 Meta({
   command: 'vote',
   category: 'group',
-  handler: async (sock, message, args) => {
-    const { key, from, isGroup, message: msg } = message;
+  handler: async (sock, message, isGroup, args) => {
+    const { key, from, message: msg } = message;
     const input = args;
     if (!isGroup) {
       return await sock.sendMessage(from, {
@@ -129,6 +149,7 @@ Meta({
     command: 'transcribe',
     category: 'media',
     handler: async (sock, args, message) => {
+      const { from } = message;
         if (!message.message || !message.message.audioMessage) {
             return sock.sendMessage(from, { text: 'Please send an audio message' }, MessageType.text);
         }
