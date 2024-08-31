@@ -1,14 +1,15 @@
 const { commands, Meta } = require('../lib');
+const config = require('../config');
 const { IMAGE_DOWN } = require('./FUNCS_DATA/img_down.js');
 
 Meta({
   command: 'img',
   category: 'downloads',
   filename: __filename,
-  handler: async (sock, message, args) => {
+  handler: async (sock, message, args, languages) => {
     const { from } = message;
     if (!args.length) {
-      await sock.sendMessage(from, { text: '*_Please provide a query_*' });
+      await sock.sendMessage(from, { text: languages[config.LANGUAGE].DOWNLOAD.MSG});
       return;
     }
     const query = args.join(' ');
