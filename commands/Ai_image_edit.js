@@ -73,7 +73,7 @@ Meta({
                 api_str = 'https://api.deepai.org/api/nsfw-detector';
                 break;
             case 'saliency':
-                apiUrl = 'https://api.deepai.org/api/saliency';
+                api_str = 'https://api.deepai.org/api/saliency';
                 break;
             case 'text2img':
                 api_str = 'https://api.deepai.org/api/text2img';
