@@ -6,12 +6,39 @@ const { MessageType, Mimetype } = require('@whiskeysockets/baileys');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 ffmpeg.setFfmpegPath(ffmpegPath);
+const axios = require('axios');
+const FormData = require('form-data');
 const fs = require('fs');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 const unlinkAsync = promisify(fs.unlink);
 const { SpeechClient } = require('@google-cloud/speech');
 const speechClient = new SpeechClient();
+
+Meta({
+    command: 'removebg',
+    category: 'media',
+    filename: 'removebg',
+    handler: async (sock, message, author, args, quoted) => {
+        const { from } = message;
+        if (!quoted || quoted.mtype !== 'imageMessage') {
+            return await sock.sendMessage(from, { text: '*_Reply to an image_*' }, MessageType.text);
+        }      const media_data = await sock.downloadMediaMessage(quoted);
+        if (!media_data) {
+        } try {
+            const formData = new FormData();
+            formData.append('image', media_data, 'image.png');
+            const { data } = await axios.post('https://api.deepai.org/api/remove-bg', formData, {
+                headers: { 'Api-Key': config.DEEPAI_KEY, ...formData.getHeaders() }
+            }); if (data.output_url) {
+                 const res_str = await axios.get(data.output_url, { responseType: 'arraybuffer' });
+                await sock.sendMessage(from, { image: res_str.data, caption: '*Made with love*' }, MessageType.image);
+            } else {}
+        } catch (error) {
+            console.error(error);
+          }
+    }
+});
 
 Meta({
     command: 'video2gif',
