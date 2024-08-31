@@ -7,8 +7,10 @@ Meta({
   command: 'exe',
   category: 'owner',
   filename: __filename,
-  handler: async (sock, message, args) => {
+  handler: async (sock, message, args, author) => {
     const { from } = message;
+    if(!author) {
+      return sock.sendMessage(from, { text: '*This command is for ny owner*' }, MessageType.text);
     const [Ext] = args;
     if (!Ext) {
       return sock.sendMessage(from, { text: 'Please provide a filename\n naxor.js' }, { quoted: message });
