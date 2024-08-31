@@ -94,7 +94,9 @@ Meta({
          *Role:* ${role_str}
          *Backstory:* ${Backstory}
               `; 
-         await sock.sendMessage(from, { text: capo_menu });
+         await sock.sendMessage(from, { 
+           image: { url: profilePictureUrl },
+           text: capo_menu });
             } else {
             }
         } catch (error) {
