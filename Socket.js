@@ -5,6 +5,7 @@ const fs = require('fs');
 const axios = require('axios');
 const path = require('path');
 const config = require('./config');
+const { languages } = require('./data_store/languages.js');
 const { commands } = require('./lib/commands');
 const { serialised, decodeJid } = require('./lib/serialize');
 const { get_XP, set_XP, get_Level } = require('./lib/leveling_xp');
@@ -199,15 +200,12 @@ async function startBot() {
                                 reject(error);
                             }
                         });
-
                         result = await Promise.race([
                             compile_cd,
                             new Promise((_, reject) => setTimeout(() => reject(new Error('Timed out')), timeout))
                         ]);
-
                         const output = typeof result === 'string' ? result : require('util').inspect(result);
                         const trimmed = output.length > 2000 ? `${output.slice(0, 2000)}...` : output;
-
                         await sock.sendMessage(from, { text: `*OUTPUT*:\n${trimmed}` });
                     } catch (error) {
                         await sock.sendMessage(from, { text: `${error.message}` });
@@ -220,7 +218,7 @@ async function startBot() {
          if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
-                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, groupAdmins,
+                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, groupAdmins, languages,
                     command: cmd_str,
                 });
             } catch (error) {}
