@@ -173,7 +173,7 @@ Meta({
         styles.forEach((style, index) => {
             menu_str += `${index + 1}. ${style}\n`;
         });
-        menu_str += '\n*Usage:* `{Prefix}editimage [style]`;
+        menu_str += '\n*Usage',:* `editimage [style]`;
         await sock.sendMessage(from, { text: menu_str }, MessageType.text);
     }
 });
