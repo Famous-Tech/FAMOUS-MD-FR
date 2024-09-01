@@ -21,10 +21,9 @@ async function Connect_Session() {
     const sessionId = config.SESSION_ID.replace(/Socket;;;/g, "");
     let sessionData = sessionId;
     if (sessionId.length < 20) {
-        const { data } = await axios.get(`https://privatebin.net/${sessionId}`);
+        const { data } = await axios.get(`https://pastebin.com/raw/${sessionId}`);
         session = Buffer.from(data, 'base64').toString('utf8');
-    }
-    fs.writeFileSync(SESSION_FILE, session, 'utf8');
+    }fs.writeFileSync(SESSION_FILE, session, 'utf8');
 }
 
 async function startBot() {
