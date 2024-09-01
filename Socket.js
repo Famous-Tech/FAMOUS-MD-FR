@@ -3,6 +3,7 @@ const P = require('pino');
 const chalk = require('chalk');
 const fs = require('fs');
 const axios = require('axios');
+const canvafy = require('canvafy');
 const path = require('path');
 const config = require('./config');
 const { languages } = require('./data_store/languages.js');
