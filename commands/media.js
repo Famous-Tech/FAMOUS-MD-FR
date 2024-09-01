@@ -19,10 +19,10 @@ Meta({
     command: 'removebg',
     category: 'media',
     filename: 'removebg',
-    handler: async (sock, message, author, args, quoted) => {
+    handler: async (sock, message, author, args, quoted, languages) => {
         const { from } = message;
         if (!quoted || quoted.mtype !== 'imageMessage') {
-            return await sock.sendMessage(from, { text: '*_Reply to an image_*' }, MessageType.text);
+            return await sock.sendMessage(from, { text: languages[config.LANGUAGE].IMAGE_MSG }, MessageType.text);
         }      const media_data = await sock.downloadMediaMessage(quoted);
         if (!media_data) {
         } try {
@@ -43,10 +43,10 @@ Meta({
 Meta({
     command: 'video2gif',
     category: 'media',
-    handler: async (sock, args, message) => {
+    handler: async (sock, args, message, languages) => {
         const { from } = message;
         if (!message.message || !message.message.videoMessage) {
-            return sock.sendMessage(from, { text: '*Please send a video*' }, MessageType.text);
+            return sock.sendMessage(from, { text: languages[config.LANGUAGE].VIDEO_MSG}, MessageType.text);
         } const video_togif = await sock.downloadMediaMessage(message);
         const video_xv = path.join(__dirname, 'input.mp4');
         const gif_naxor = path.join(__dirname, 'output.gif');
@@ -71,13 +71,13 @@ Meta({
 Meta({
     command: 'resize',
     category: 'media',
-    handler: async (sock, args, message) => {
+    handler: async (sock, args, message, languages) => {
       const { from } = message;
         const [width, height] = args;
         if (!width || !height || isNaN(width) || isNaN(height)) {
             return sock.sendMessage(from, { text: 'Please specify valid width and height Usage: /resize 300 300' }, MessageType.text);
         }     if (!message.message || !message.message.imageMessage) {
-            return sock.sendMessage(from, { text: 'Please send an image to resize' }, MessageType.text);
+            return sock.sendMessage(from, { text: languages[config.LANGUAGE].IMAGE_MSG }, MessageType.text);
         }      const image_imgz = await sock.downloadMediaMessage(message);
         try {
             const to_harzad = await sharp(image_imgz)
@@ -93,12 +93,12 @@ Meta({
 Meta({
   command: 'sticker',
   category: 'media',
-  handler: async (sock, message, args) => {
+  handler: async (sock, message, args, languages) => {
     const { from, message: msg } = message;
     const media = msg.imageMessage || msg.videoMessage || msg.stickerMessage;
     if (!media) {
       return await sock.sendMessage(from, { 
-        text: 'Please reply to an image or video to create a sticker' }, { quoted: message });
+        text: languages[config.LANGUAGE].IMAGE_MSG}, { quoted: message });
     } const buffer = await sock.downloadMediaMessage(media);
     const packName = config.PACKNAME;
     const cropp = await sharp(buffer)
@@ -129,12 +129,12 @@ let polls = {};
 Meta({
   command: 'vote',
   category: 'group',
-  handler: async (sock, message, isGroup, args) => {
+  handler: async (sock, message, isGroup, args, languages) => {
     const { key, from, message: msg } = message;
     const input = args;
     if (!isGroup) {
       return await sock.sendMessage(from, {
-        text: 'This command can only be used in a group' }, { quoted: message });
+        text: languages[config.LANGUAGE].GROUP_MSG }, { quoted: message });
     }if (!input) {
       return await sock.sendMessage(from, { 
         text: 'Usage: !vote <topic> to create a poll, !vote <option> to vote' }, { quoted: message });
@@ -164,16 +164,16 @@ Meta({
 Meta({
     command: 'animsticker',
     category: 'media',
-    handler: async (sock, args, message) => {
+    handler: async (sock, args, message, languages) => {
       const { from } = message;
         if (!message.message || (!message.message.videoMessage && !message.message.imageMessage)) {
-            return sock.sendMessage(from, { text: 'Please send a video or GIF' }, MessageType.text);
+            return sock.sendMessage(from, { text: languages[config.LANGUAGE].VIDEO_MSG}, MessageType.text);
         }
         const isVideo = message.message.videoMessage !== undefined;
         const media_msg = isVideo ? message.message.videoMessage : message.message.imageMessage;
         const mime = media_msg.mimetype;
       if (!/video|gif/.test(mime)) {
-            return sock.sendMessage(from, { text: 'Not valid' }, MessageType.text);
+            return sock.sendMessage(from, { text: languages[config.LANGUAGE].VALID_MSG}, MessageType.text);
         }
         const media_fire = await sock.downloadMediaMessage(message);
         const tempFile = `./temp_media_${Date.now()}.${isVideo ? 'mp4' : 'gif'}`;
@@ -205,10 +205,10 @@ Meta({
 Meta({
     command: 'transcribe',
     category: 'media',
-    handler: async (sock, args, message) => {
+    handler: async (sock, args, message, languages) => {
       const { from } = message;
         if (!message.message || !message.message.audioMessage) {
-            return sock.sendMessage(from, { text: 'Please send an audio message' }, MessageType.text);
+            return sock.sendMessage(from, { text: languages[config.LANGUAGE].AUDIOS_MSG }, MessageType.text);
         }
         const audio_str = await sock.downloadMediaMessage(message);
         const audio_cn = path.join(__dirname, 'audio.ogg');
