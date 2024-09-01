@@ -1,4 +1,5 @@
 const { commands, Meta } = require('../lib');
+const config = require('../config');
 const ytdl = require('ytdl-core');
 
 function YT2MATE_AUDIO(url) {
@@ -11,15 +12,15 @@ Meta({
   command: 'yt2mate',
   category: 'downloads',
   filename: __filename,
-  handler: async (sock, message, args) => {
+  handler: async (sock, message, args, languages) => {
     const { from } = message;
     if (!args.length) {
-      await sock.sendMessage(from, { text: 'Please provide a *YouTube URL*' });
+      await sock.sendMessage(from, { text: languages[config.LANGUAGE].URL_MSG' });
       return;
     }  const url = args[0];
     const video_str = YT2MATE_AUDIO(url);
     if (!video_str) {
-      await sock.sendMessage(from, { text: '*Invalid YouTube url*' });
+      await sock.sendMessage(from, { text: languages[config.LANGUAGE].VALID_MSG});
       return;
     } try {
       const info = await ytdl.getInfo(video_str);
