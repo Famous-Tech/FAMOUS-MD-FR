@@ -41,10 +41,10 @@ Meta({
     command: 'editimage',
     category: 'image',
     filename: 'editimage',
-    handler: async (sock, message, args, quoted) => {
+    handler: async (sock, message, args, quoted, languages) => {
         const { from } = message;
         if (!quoted || quoted.mtype !== 'imageMessage') {
-            return await sock.sendMessage(from, { text: '*_Reply to an image to edit_*' }, MessageType.text);
+            return await sock.sendMessage(from, { text: languages[config.LANGUAGE].IMAGE_MSG}, MessageType.text);
         } let style = args[0] || 'editor';
         let apiUrl = 'https://api.deepai.org/api/image-editor';
         switch (style.toLowerCase()) {
