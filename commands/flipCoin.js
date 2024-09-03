@@ -12,7 +12,7 @@ Meta({
       ['⚪', '⚪', '⚪'],
       ['⚪', '⚪', '⚪']
     ];
-    const emojis = {
+    const set_hearder = {
       heads: "🔴",  
       tails: "🔵"   
     };
@@ -30,18 +30,18 @@ Meta({
       return false;
     };
     const str_cbord = (board, i, j, result) => {
-      board[i][j] = emojis[result];
+      board[i][j] = set_hearder[result];
     };
-    
+    const res_dec = (board) => board.map(row => row.join(' ')).join('\n');
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
       const result = flipCoin();
         const no_idea = no_idea_cn[result];
         str_cbord(board, i, j, result);
-        await sock.sendMessage(from, { text: `*🕹️FLIP_COIN*: ${no_idea}\n\n${formatBoard(board)}` });
+        await sock.sendMessage(from, { text: `*🕹️FLIP_COIN*: ${no_idea}\n\n${res_dec(board)}` });
         if (get_win(board)) {
           const winner_then = result === 'heads' ? 'Player 1 (🔴)' : 'Player 2 (🔵)';
-          await sock.sendMessage(from, { text: `Game Over ${winner_then} wins\n\n${formatBoard(board)}` });
+          await sock.sendMessage(from, { text: `Game Over ${winner_then} wins\n\n${res_dec(board)}` });
           return;
         }
       }
