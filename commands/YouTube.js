@@ -154,7 +154,7 @@ Meta({
         await sock.sendMessage(from, {
           video: { url: naxor },
           mimetype: 'video/mp4',
-          caption: `*Name*: ${path.basename(naxor)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
+          caption: `✗ *V I D - D O W N*\n\n*Name*: ${path.basename(naxor)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
         });
 
         fs.unlinkSync(naxor); 
