@@ -63,6 +63,7 @@ Meta({
 commands.forEach(cmd => {
   if (cmd.enabled === undefined) {
     cmd.enabled = true; 
+    cmd.get_time = null;
   }
 });
     if (!author) {
@@ -77,9 +78,11 @@ const toggle_cmd = commands.find(cmd => cmd.command === cmd_naxot);
     }
 if (action === 'enable') {
       toggle_cmd.enabled = true;
+      toggle_cmd.get_time = null;
       sock.sendMessage(from, { text: `"${cmd_naxor}" has been enabled` });
     } else if (action === 'disable') {
       toggle_cmd.enabled = false;
+      toggle_cmd.get_time = new Date();
       sock.sendMessage(from, { text: `"${cmd_naxor}" has been disabled` });
     } else {
       sock.sendMessage(from, { text: "*use* 'enable' or 'disable'" });
@@ -93,7 +96,8 @@ sock.on('message', async message => {
   const command = commands.find(cmd => cmd.command === cmd_naxor);
   if (!command) return; 
   if (!command.enabled) {
-    const x_astral_cn = `*Command:* ${command.command}_disabled_\n*Time:* _${new Date().toLocaleString()}_\n*Category:* _${command.category}_`;
+    const get_time = command.get_time ? command.get_time.toLocaleString() : "";
+    const x_astral_cn = `*Command:* ${command.command}_disabled_\n*Time:* _${get_time}_\n*Category:* _${command.category}_`;
     return sock.sendMessage(from, { text: x_astral_cn });
   }  if (typeof command.handler === 'function') {
     await command.handler(sock, message, args);
