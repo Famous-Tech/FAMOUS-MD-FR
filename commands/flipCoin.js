@@ -46,6 +46,6 @@ Meta({
         }
       }
     }
-    await sock.sendMessage(from, { text: `It's a draw!\n\n${formatBoard(board)}` });
+    await sock.sendMessage(from, { text: `*Draw*\n\n${res_dec(board)}` });
   }
 });
