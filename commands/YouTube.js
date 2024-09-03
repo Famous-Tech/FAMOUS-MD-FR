@@ -120,7 +120,7 @@ Meta({
         await sock.sendMessage(from, {
           video: { url: exit },
           mimetype: 'video/mp4',
-          caption: `✗ * V I D - D O W N*\n\n*Name*: ${path.basename(exit)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
+          caption: `✗ *V I D - D O W N*\n\n*Name*: ${path.basename(exit)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
         });
         fs.unlinkSync(exit); 
       } else {
