@@ -72,7 +72,7 @@ commands.forEach(cmd => {
       return sock.sendMessage(from, { text: "*cmd* <enable|disable> <command_name>" });
     } const action = args[0].toLowerCase();
     const cmd_naxor = args[1].toLowerCase();
-const toggle_cmd = commands.find(cmd => cmd.command === cmd_naxot);
+const toggle_cmd = commands.find(cmd => cmd.command === cmd_naxor);
     if (!toggle_cmd) {
       return sock.sendMessage(from, { text: `"${cmd_naxor}" not found` });
     }
