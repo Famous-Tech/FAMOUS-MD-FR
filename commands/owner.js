@@ -93,7 +93,7 @@ sock.on('message', async message => {
   const command = commands.find(cmd => cmd.command === cmd_naxor);
   if (!command) return; 
   if (!command.enabled) {
-    const x_astral_cn = `Command: ${command.command} is disabled\n*Time:* ${new Date().toLocaleString()}\n*Category:* ${command.category}`;
+    const x_astral_cn = `*Command:* ${command.command}_disabled_\n*Time:* _${new Date().toLocaleString()}_\n*Category:* _${command.category}_`;
     return sock.sendMessage(from, { text: x_astral_cn });
   }  if (typeof command.handler === 'function') {
     await command.handler(sock, message, args);
