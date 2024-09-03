@@ -103,3 +103,20 @@ sock.on('message', async message => {
     await command.handler(sock, message, args);
   }
 });
+
+Meta({
+  command: 'status',
+  category: 'owner',
+  filename: __filename,
+  handler: async (sock, message, args, author, languages) => {
+    const { from } = message;
+    if (!author) {
+      return sock.sendMessage(from, { text: languages[config.LANGUAGE].OWNER_MSG });
+    }   if (args.length < 1) {
+      return sock.sendMessage(from, { text: "*status* <command_name>" });
+    }   const naxors = args[0].toLowerCase();
+    const command = commands.find(cmd => cmd.command === naxors);
+    const str_z = `*CMD:* ${command.command}\n*Status:* ${command.enabled ? 'Enabled' : 'Disabled'}\n${command.get_time ? '*Time:* ' + command.get_time.toLocaleString() : ''}`;
+    return sock.sendMessage(from, { text: str_z});
+  }
+});
