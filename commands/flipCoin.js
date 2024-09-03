@@ -78,8 +78,8 @@ async function startGame(sock, player1, player2) {
       const result = flipCoin();
       const no_idea = no_idea_cn[result];
       str_cbord(board, i, j, result);
-      await sock.sendMessage(player1, { text: `*🕹️ FLIP COIN*: ${no_idea}\n\n${res_dec(board)}` });
-      await sock.sendMessage(player2, { text: `*🕹️ FLIP COIN*: ${no_idea}\n\n${res_dec(board)}` });
+      await sock.sendMessage(player1, { text: `*🕹️ FLIP_COIN*: ${no_idea}\n\n${res_dec(board)}` });
+      await sock.sendMessage(player2, { text: `*🕹️ FLIP_COIN*: ${no_idea}\n\n${res_dec(board)}` });
       if (get_win(board)) {
         const winner_then = result === 'heads' ? 'Player 1 (🔴)' : 'Player 2 (🔵)';
         await sock.sendMessage(player1, { text: `Game Over ${winner_then} wins\n\n${res_dec(board)}` });
