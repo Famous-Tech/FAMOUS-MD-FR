@@ -3,7 +3,7 @@ const xenoStr = new XenoStr();
 const { Meta } = require('../lib/');
 
 function startTimer(sock, player, from) {
-    const game = xenoStr.getGame(player);
+    const game = xenoStr.get_xeno(player);
     game.timer = setTimeout(() => {
         sock.sendMessage(from, { text: `⏳ Times up You didnt make a move in time` });
         xenoStr.endGame(player, sock, from);
@@ -11,7 +11,7 @@ function startTimer(sock, player, from) {
 }
 
 function PowerUp_str(sock, player, from, powerUp) {
-    const game = xenoStr.getGame(player);
+    const game = xenoStr.get_xeno(player);
     if (powerUp === 'reveal' && game.powerUps.reveal > 0) {
         game.powerUps.reveal -= 1;
         const safeSpot = game.board.findIndex((val, idx) => !game.bombs.includes(idx));
@@ -25,7 +25,7 @@ function PowerUp_str(sock, player, from, powerUp) {
         game.round += 1;
         startTimer(sock, player, from);
     } else {
-        sock.sendMessage(from, { text: `No such power-up or not enough` });
+        sock.sendMessage(from, { text: `No such power-up` });
     }
 }
 
@@ -35,7 +35,7 @@ Meta({
     handler: async (sock, message, args, author) => {
         const { from } = message;
         const player = author;
-        let game = xenoStr.getGame(player);
+        let game = xenoStr.get_xeno(player);
         if (!game) {
             game = xenoStr.create(player);
             const str_board = `${game.board.slice(0, 3).join('')}\n${game.board.slice(3, 6).join('')}\n${game.board.slice(6, 9).join('')}`;
