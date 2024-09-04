@@ -212,13 +212,21 @@ async function startBot() {
                     }
                 }
             }
+            const reacts = async (emoji) => {
+         await sock.sendMessage(from, {
+        react: {
+            text: emoji,
+            key: msg.key 
+           }
+      });
+         };
          if (body.startsWith(config.PREFIX)) {
          const cmd_str = body.slice(config.PREFIX.length).trim().split(' ')[0];
          const command = commands.find(cmd => cmd.command === cmd_str);
          if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
-                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, groupAdmins, languages,
+                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, groupAdmins, languages, reacts,
                     command: cmd_str,
                 });
             } catch (error) {}
