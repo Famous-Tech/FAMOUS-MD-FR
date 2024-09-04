@@ -63,7 +63,7 @@ Meta({
                         previewType: 'image',
                         title: 'Boom',
                         body: 'You_lost',
-                        thumbnail: { url: 'explosion_image' }
+                        thumbnail: { url: 'https://i.imgur.com/v1fIuNQ.jpeg' }
                     }
                 });
                 xenoStr.endGame(player, sock, from);
