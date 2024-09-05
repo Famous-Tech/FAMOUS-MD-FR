@@ -71,11 +71,27 @@ Choose a format:
       if (ID_NUM === '1') {
         const xano_audio = path.join(__dirname, `${match_args.title}.mp4`);
         await sock.sendMessage(from, { text: `*Downloading video: ${match_args.title}*` });
-        await searchAndDownload(reg_url, xano_audio, 'video'); 
+        await searchAndDownload(reg_url, xano_audio, 'video');
+        await sock.sendMessage(from, {
+          video: { url: xeno_audio },
+          caption: `*${match_args.title}*\n*Viwes:* ${match_args.views.toLocaleString()`
+        });
       } else if (ID_NUN === '2') {
         const xano_audio = path.join(__dirname, `${match_args.title}.mp3`);
         await sock.sendMessage(from, { text: `Downloading audio...` });
         await searchAndDownload(reg_url, xano_audio, 'audio'); 
+        await sock.sendMessage(from, {
+          text: `*X-ASTRAL*`,
+          contextInfo: {
+            externalAdReply: {
+              title: match_args.title,
+              body: '_Complete_',
+              thumbnailUrl: str_image, 
+              mediaUrl: match_video, 
+              sourceUrl: match_video,
+            }
+          }
+        });
       } else {
         await sock.sendMessage(from, { text: '_Invalid_*ID*' });
       }
