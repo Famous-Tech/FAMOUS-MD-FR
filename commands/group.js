@@ -287,7 +287,7 @@ Meta({
     const participants = groupMetadata.participants;
     const x_astral_s = participants.map(p => p.id);
     const msg_map = new Map();
-    const mule = async (ids) => {
+    const mule_donkey = async (ids) => {
       const presence_up = await Promise.all(ids.map(id => sock.presenceSubscribe(id)));
       presence_up.forEach(update => {
         msg_arg.set(update.id, update.status === 'available');
@@ -295,7 +295,7 @@ Meta({
     }; const batchSize = 10;
     for (let i = 0; i < x_astral_s.length; i += batchSize) {
       const batch = x_astral_s.slice(i, i + batchSize);
-      await checkPresence(batch);
+      await mule_donkey(batch);
     }
     const meander_neck = [];
     const exotic = [];
