@@ -317,3 +317,77 @@ Meta({
     await sock.sendMessage(from, { text: caption });
   }
 });   
+
+const moment = require('moment');
+Meta({
+    command: 'group_stats',
+    category: 'group',
+    handler: async (sock, message, args, author) => {
+        const { from } = message;
+      let msg_log = {};
+        const groupMetadata = await sock.groupMetadata(from);
+        const participants = groupMetadata.participants;
+        let gc_icon = await sock.profilePictureUrl(from, 'image').catch(() => null);
+        if (!msg_log[from]) {
+            msg_log[from] = [];
+        }
+        let msgz = {};
+        let emails = {};
+        for (let participant of participants) {
+            const jid = participant.id;
+            msgz[jid] = 0;
+            emails[jid] = [];
+        }
+        msg_log[from].forEach(log => {
+            if (msgz[log.jid] !== undefined) {
+                msgz[log.jid]++;
+                emails[log.jid].push(log.timestamp);
+            }
+        });
+        let active_hrs = Object.keys(msgz)
+            .map(jid => ({ jid, count: msgz[jid] }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 3);
+
+        let Stamps = Object.values(emails).flat();
+        let msoon = {};
+         Stamps.forEach(ts => {
+            let hour = moment(ts).format('HH');
+            if (!msoon[hour]) {
+                msoon[hour] = 0;
+            }
+            msoon[hour]++;
+        });
+        let most_gays = Object.keys(msoon).sort((a, b) => msoon[b] - msoon[a])[0];
+        let most_dicks = `${most_gays}:00 - ${parseInt(most_gays) + 1}:00`;
+        let stats = `*📊 Group Stats: ${groupMetadata.subject} 📊*\n\n`;
+        stats += `*🔵 Total Members:* ${participants.length}\n`;
+        stats += `*💬 Total Messages_S:* ${msg_log[from].length}\n\n`;
+        stats += `*🥇 Most Active Members:*\n`;
+        for (let i = 0; i < active_hrs.length; i++) {
+            let rank = ['🥇', '🥈', '🥉'][i];
+            let name = participants.find(p => p.id === active_hrs[i].jid).notify || active_hrs[i].jid.split('@')[0];
+            stats += `${rank} ${name} - ${active_hrs[i].count} messages\n`;
+        }
+        stats += `\n*🕒 Most Active Time:*\n${most_dicks}`;
+        await sock.sendMessage(from, {
+            caption: stats,
+            image: { url: gc_icon }
+        });
+    }
+});
+
+const logMessage = (groupJid, partJid) => {
+    if (!msg_log[groupJid]) {
+        msg_log[groupJid] = [];
+    }
+    msg_log[groupJid].push({
+        jid: partJid,
+        timestamp: new Date()
+    });
+};
+sock.on('message-new', async (message) => {
+    const from = message.key.remoteJid;
+    const participant = message.participant || message.key.participant || message.key.remoteJid;
+    logMessage(from, participant);
+});
