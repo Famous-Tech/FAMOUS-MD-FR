@@ -277,3 +277,43 @@ Meta({
     }
 });
           
+Meta({
+  command: 'online_mem',
+  category: 'group',
+  handler: async (sock, message) => {
+    const { from } = message;
+
+    const groupMetadata = await sock.groupMetadata(from);
+    const participants = groupMetadata.participants;
+    const x_astral_s = participants.map(p => p.id);
+    const msg_map = new Map();
+    const mule = async (ids) => {
+      const presence_up = await Promise.all(ids.map(id => sock.presenceSubscribe(id)));
+      presence_up.forEach(update => {
+        msg_arg.set(update.id, update.status === 'available');
+      });
+    }; const batchSize = 10;
+    for (let i = 0; i < x_astral_s.length; i += batchSize) {
+      const batch = x_astral_s.slice(i, i + batchSize);
+      await checkPresence(batch);
+    }
+    const meander_neck = [];
+    const exotic = [];
+    participants.forEach(participant => {
+      const online = msg_map.get(participant.id);
+      const ex_arg = participant.id.split('@')[0];
+       if(online) {
+        meander_neck.push(`🟢 ${ex_arg}`);
+      } else {
+        exotic.push(`🔴 ${ex_arg}`);
+      }
+    });
+    const caption = 
+      '*Group: ' + groupMetadata.subject + '*\n' + '\n' +
+      '*🟢 Online Mems:*\n' + 
+      (meander_neck.length > 0 ? meander_neck.join('\n') : 'None') + '\n' + '\n' +
+      '*🔴 Offline Mems:*\n' + 
+      (exotic.length > 0 ? exotic.join('\n') : '_All_membs are online_') + '\n';
+    await sock.sendMessage(from, { text: caption });
+  }
+});   
