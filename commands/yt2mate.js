@@ -73,13 +73,15 @@ Meta({
         await sock.sendMessage(from, { text: `Downloading audio...` });
         await searchAndDownload(reg_url, audio_num, 'audio');
         await sock.sendMessage(from, {
-          text: `*X-ASTRAL*`,
+          audio: { url: audio_path },
+          mimetype: 'audio/mp3',
+          ptt: false,
           contextInfo: {
             externalAdReply: {
               title: match_args.title,
               body: '_Complete_',
               thumbnailUrl: str_image,
-              mediaUrl: reg_url, 
+              mediaUrl: reg_url,
               sourceUrl: reg_url,
             }
           }
