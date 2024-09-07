@@ -391,3 +391,21 @@ sock.on('message-new', async (message) => {
     const participant = message.participant || message.key.participant || message.key.remoteJid;
     logMessage(from, participant);
 });
+
+Meta({
+    command: 'admin_list',
+    category: 'group',
+    handler: async (sock, message) => {
+        const { from } = message;
+        const groupMetadata = await sock.groupMetadata(from);
+        const admins = groupMetadata.participants.filter(participant => participant.admin);
+        let adminz = '*Group Admins:* \n\n';
+        admins.forEach(admin => {
+            adminz += `@${admin.id.split('@')[0]}\n`;
+        });
+        await sock.sendMessage(from, {
+            text: adminz,
+            mentions: admins.map(admin => admin.id)
+        });
+    }
+});
