@@ -4,13 +4,13 @@ const config = require('../config');
 Meta({
   command: 'kick',
   category: 'group',
-  handler: async (sock, message, args) => {
+  handler: async (sock, message, args, author) => {
     const { from, sender, body } = message;
   
     const groupMetadata = await sock.groupMetadata(from);
     const admins = groupMetadata.participants.filter(p => p.admin !== null).map(p => p.id);
-    const isAdmin = admins.includes(sender);
-    const isOwner = config.MODS.includes(sender);
+    const isAdmin = admins.includes(author);
+    const isOwner = config.MODS.includes(author);
 
     if (!isAdmin && !isOwner) {
       return sock.sendMessage(from, { text: '_Only admins can use this command_' }, { quoted: message });
@@ -40,13 +40,13 @@ Meta({
 Meta({
   command: 'add',
   category: 'group',
-  handler: async (sock, message, args) => {
-    const { from, body, sender } = message;
+  handler: async (sock, message, args, author) => {
+    const { from, body } = message;
 
     const groupMetadata = await sock.groupMetadata(from);
     const admins = groupMetadata.participants.filter(p => p.admin !== null).map(p => p.id);
-    const isAdmin = admins.includes(sender);
-    const isOwner = config.MODS.includes(sender);
+    const isAdmin = admins.includes(author);
+    const isOwner = config.MODS.includes(author);
     if (!isAdmin && !isOwner) {
       return sock.sendMessage(from, { text: 'Only admins can use_this' }, { quoted: message });
     } const number = body.split(' ')[1];  //+27686881509
@@ -65,8 +65,8 @@ Meta({
 Meta({
   command: 'remove_common',
   category: 'group',
-  handler: async (sock, message, args) => {
-    const { key, from, isGroup } = message;
+  handler: async (sock, message, isGroup, args) => {
+    const { key, from  } = message;
     const { remoteJid } = key;
 
   if (!isGroup) {
@@ -107,8 +107,8 @@ Meta({
 Meta({
   command: 'ginfo',
   category: 'group',
-  handler: async (sock, message, args) => {
-    const { key, from, isGroup } = message;
+  handler: async (sock, message, isGroup, args) => {
+    const { key, from } = message;
     const { remoteJid } = key;
     const { participants, subject, desc, creation } = await sock.groupMetadata(from);
     
