@@ -457,12 +457,12 @@ sock.ev.on('messages.upsert', async () => {
             const { content, author } = response.data;
             const quote = `"${content}" - ${author}`;
             await sock.sendMessage(from, {
-                image: { url: 'image.jpg' },
+                image: { url: 'https://ik.imagekit.io/eypz/1725719155620_rvfPmh1lL.png' },
                 caption: `*${morning_msg}*\n\n${quote}`
             });
         } catch (error) {
             await sock.sendMessage(from, {
-                image: { url: 'image.jpg' },
+                image: { url: 'https://ik.imagekit.io/eypz/1725719155620_rvfPmh1lL.png' },
                 caption: `*${morning_msg}*\n\nStay positive and keep moving forward`
             });
         }
@@ -474,12 +474,12 @@ sock.ev.on('messages.upsert', async () => {
             const { content, author } = response.data;
             const quote = `"${content}" - ${author}`;
             await sock.sendMessage(from, {
-                image: { url: 'image.jpg' },
+                image: { url: 'https://ik.imagekit.io/eypz/1725719170035_t13SGIUYv.png' },
                 caption: `*${night_msg}*\n\n${quote}`
             });
         } catch (error) {
             await sock.sendMessage(from, {
-                image: { url: 'image.jpg' },
+                image: { url: 'https://ik.imagekit.io/eypz/1725719170035_t13SGIUYv.png' },
                 caption: `*${night_msg}*\n\nRest well and recharge`
             });
         }
