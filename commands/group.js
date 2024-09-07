@@ -444,11 +444,7 @@ Meta({
         if (!isAdmin) {
             return sock.sendMessage(from, { text: 'Only admins can use this command' });
         }
-        morning_str = null;
-        night_str = null;
-        morning_msg = 'Good morning everyone 🌞'; 
-        night_msg = 'Good night everyone 🌙'; 
-
+        function xastralh(){var A=['87TaNkro','1530496lsgGGL','59863OXTPXR','225228OsRSMn','253nfCyDg','19315mzyKkd','6BngyKD','140HQucVl','1524439ukvhWx','Good\x20night\x20everyone\x20🌙','150ehdNHh','Good\x20morning\x20everyone\x20🌞','31668nPNxOH','111906wBTMIU'];xastralh=function(){return A;};return xastralh();}function xastrall(h,l){var a=xastralh();return xastrall=function(o,r){o=o-0x113;var L=a[o];return L;},xastrall(h,l);}var xastralc=xastrall;(function(h,l){var L=xastrall,a=h();while(!![]){try{var o=-parseInt(L(0x11a))/0x1*(-parseInt(L(0x11e))/0x2)+-parseInt(L(0x118))/0x3*(-parseInt(L(0x116))/0x4)+parseInt(L(0x11d))/0x5*(-parseInt(L(0x114))/0x6)+parseInt(L(0x120))/0x7+parseInt(L(0x119))/0x8+parseInt(L(0x117))/0x9*(-parseInt(L(0x11f))/0xa)+-parseInt(L(0x11c))/0xb*(parseInt(L(0x11b))/0xc);if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x1c4dd),morning_str=null,night_str=null,morning_msg=xastralc(0x115),night_msg=xastralc(0x113));
         await sock.sendMessage(from, { text: 'Daily messages cleared' });
     }
 });
