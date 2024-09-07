@@ -409,3 +409,71 @@ Meta({
         });
     }
 });
+
+Meta({
+    command: 'set_daily',
+    category: 'group',
+    handler: async (sock, message, args) => {
+        const { from, participant } = message;
+        const isAdmin = participant.isAdmin;
+        morning_str = args[0] || '07:00'; 
+        night_str = args[1] || '22:00'; 
+        if (!isAdmin) {
+            return sock.sendMessage(from, { text: 'Only admins can use this command' });
+        }
+        await sock.sendMessage(from, { text: `Daily message set` });
+    }
+});
+
+Meta({
+    command: 'clear_msg',
+    category: 'group',
+    handler: async (sock, message) => {
+        const { from, participant } = message;
+        const isAdmin = participant.isAdmin;
+        if (!isAdmin) {
+            return sock.sendMessage(from, { text: 'Only admins can use this command' });
+        }
+        morning_str = null;
+        night_str = null;
+        await sock.sendMessage(from, { text: 'Daily messages cleared' });
+    }
+});
+
+sock.ev.on('messages.upsert', async () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const axios = require('axios');
+    const QUOTE_API = 'https://api.quotable.io/random';
+  
+    if (morning_str && `${hour}:${minute}` === morning_str) {
+        axios.get(QUOTE_API)
+            .then(async (response) => {
+                const { content, author } = response.data;
+                const quote = `"${content}" - ${author}`;
+                await sock.sendMessage(from, {
+                    image: { url: 'image.jpg' },
+                    caption: `Good morning everyone 🌞\n\n${quote}`
+                });
+            })
+            .catch(() => {
+                sock.sendMessage(from, { text: '*Good morning everyone 🌞*\n\nStay positive and keep moving forward' });
+            });
+    }
+
+    if (night_str && `${hour}:${minute}` === night_str) {
+        axios.get(QUOTE_API_URL)
+            .then(async (response) => {
+                const { content, author } = response.data;
+                const quote = `"${content}" - ${author}`;
+                await sock.sendMessage(from, {
+                    image: { url: 'image.jpg' },
+                    caption: `Good night everyone 🌙\n\n${quote}`
+                });
+            })
+            .catch(() => {
+                sock.sendMessage(from, { text: 'Good night everyone 🌙\n\nRest well and recharge' });
+            });
+    }
+});
