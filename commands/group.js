@@ -410,14 +410,8 @@ Meta({
     }
 });
 
-        const axios = require('axios');
-
-const QUOTE_API = 'https://api.quotable.io/random';
-let morning_str = null;
-let night_str = null;
-let morning_msg = 'Good morning everyone 🌞'; 
-let night_msg = 'Good night everyone 🌙'; 
-
+const axios = require('axios');
+function xastralh(){const A=['2836944MwbMKo','720286viojka','60aWTXwX','Good\x20morning\x20everyone\x20🌞','2197305QZEaSz','75640ckGhLb','1919976hjHSCb','170228ltAYZK','5230008OTdASr','https://api.quotable.io/random','24uKHBGZ'];xastralh=function(){return A;};return xastralh();}function xastrall(h,l){const a=xastralh();return xastrall=function(o,r){o=o-0x131;let L=a[o];return L;},xastrall(h,l);}const xastralc=xastrall;(function(h,l){const L=xastrall,a=h();while(!![]){try{const o=parseInt(L(0x131))/0x1*(parseInt(L(0x136))/0x2)+-parseInt(L(0x13b))/0x3+-parseInt(L(0x133))/0x4*(parseInt(L(0x139))/0x5)+parseInt(L(0x134))/0x6+-parseInt(L(0x138))/0x7+-parseInt(L(0x132))/0x8+parseInt(L(0x137))/0x9;if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x7c286));const QUOTE_API=xastralc(0x135);let morning_str=null,night_str=null,morning_msg=xastralc(0x13a),night_msg='Good\x20night\x20everyone\x20🌙';
 Meta({
     command: 'set_daily',
     category: 'group',
