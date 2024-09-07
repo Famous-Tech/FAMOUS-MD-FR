@@ -450,11 +450,7 @@ Meta({
 });
 
 sock.ev.on('messages.upsert', async () => {
-    const now = new Date();
-    const hour = now.getHours().toString().padStart(2, '0');
-    const minute = now.getMinutes().toString().padStart(2, '0');
-    const cur_str = `${hour}:${minute}`;
-
+    const xastralc=xastrall;(function(h,l){const L=xastrall,a=h();while(!![]){try{const o=-parseInt(L(0x16a))/0x1*(parseInt(L(0x167))/0x2)+-parseInt(L(0x16d))/0x3*(parseInt(L(0x16e))/0x4)+-parseInt(L(0x16b))/0x5+parseInt(L(0x16f))/0x6+parseInt(L(0x166))/0x7*(-parseInt(L(0x172))/0x8)+parseInt(L(0x168))/0x9+parseInt(L(0x171))/0xa;if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x88f37));function xastrall(h,l){const a=xastralh();return xastrall=function(o,r){o=o-0x166;let L=a[o];return L;},xastrall(h,l);}const now=new Date(),hour=now['getHours']()[xastralc(0x16c)]()[xastralc(0x169)](0x2,'0'),minute=now[xastralc(0x170)]()[xastralc(0x16c)]()[xastralc(0x169)](0x2,'0'),cur_str=hour+':'+minute;function xastralh(){const A=['8oePcDj','1817753cOHxyd','32GYxSWa','2294289wDOoMM','padStart','56522IjTpsX','43585HJKejn','toString','337569WpEGcf','16fzWIBo','3000612xrCLqm','getMinutes','14287680kCffdj'];xastralh=function(){return A;};return xastralh();}
     if (morning_str && cur_str === morning_str) {
         try {
             const response = await axios.get(QUOTE_API);
