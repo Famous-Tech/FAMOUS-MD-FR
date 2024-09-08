@@ -5,26 +5,22 @@ Meta({
   command: 'kick',
   category: 'group',
   handler: async (sock, message, args, author) => {
-    const { from, sender, body } = message;
+    const { from, body } = message;
   
     const groupMetadata = await sock.groupMetadata(from);
     const admins = groupMetadata.participants.filter(p => p.admin !== null).map(p => p.id);
     const isAdmin = admins.includes(author);
     const isOwner = config.MODS.includes(author);
-
     if (!isAdmin && !isOwner) {
       return sock.sendMessage(from, { text: '_Only admins can use this command_' }, { quoted: message });
-    }
-
-    const arg = body.trim().split('//').pop().trim();
+    } const arg = body.trim().split('//').pop().trim();
     if (arg === 'all') {
      const participants = groupMetadata.participants.map(p => p.id);
       for (const participant of participants) {
         if (!admins.includes(participant) && participant !== sock.user.id) {
           await sock.groupParticipantsUpdate(from, [participant], 'remove');
         }
-      }
-      await sock.sendMessage(from, { text: 'All non-admin memb have been removed' }, { quoted: message });
+      } await sock.sendMessage(from, { text: 'All non-admin memb have been removed' }, { quoted: message });
     } else {
       const get_lost = arg.includes('@') ? arg : `${arg}@s.whatsapp.net`;
       if (!admins.includes(get_lost) && get_lost !== sock.user.id) {
@@ -74,7 +70,6 @@ Meta({
     }
     const groupMetadata = await sock.groupMetadata(from);
     const participants = groupMetadata.participants;
-
     const Num_Jid = {};
     for (const participant of participants) {
       const number = participant.id.split('@')[0];
@@ -88,8 +83,7 @@ Meta({
     const common_num = Object.keys(Num_Jid).filter(number => Num_Jid[number] > 1);
     if (common_num.length === 0) {
       return await sock.sendMessage(remoteJid, { text: 'No common numbers found in the group.' }, { quoted: message });
-    }
-    let naxor_ser = '*Common_Detected:*\n\n';
+    } let naxor_ser = '*Common_Detected:*\n\n';
     common_num.forEach(number => {
       naxor_ser += `- ${number}\n`;
     });
