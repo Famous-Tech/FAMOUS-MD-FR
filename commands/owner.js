@@ -127,29 +127,37 @@ Meta({
     handler: async (sock, args, message, isGroup, author) => {
         const { from } = message;
 
-      if(!isGroup) {
-        await sock.sendMessage(from, { text: 'This command can be used in group'});
-      } if(!author) {
-        return sock.sendMessage(from, { text: 'Youre not allowed'});
-      } if (!config.antilink) {
+      if (!isGroup) {
+            await sock.sendMessage(from, { text: 'This command can be used in a group' });
+            return;
+        } if (!author) {
+            await sock.sendMessage(from, { text: 'Youre not allowed' });
+            return;
+         } if (!config.antilink) {
             config.antilink = {};
-        }  const enableCmd = ['on', 'enable'];
+        } const enableCmd = ['on', 'enable'];
         const disableCmd = ['off', 'disable'];
+        const Cmd = ['info'];
         if (enableCmd.includes(args[0])) {
             if (config.antilink[from]) {
                 await sock.sendMessage(from, { text: 'Antilink is already enabled' });
             } else {
                 config.antilink[from] = true;
                 await sock.sendMessage(from, { text: 'Antilink has been enabled' });
-            }  } else if (disableCmd.includes(args[0])) {
+            }
+        } else if (disableCmd.includes(args[0])) {
             if (!config.antilink[from]) {
                 await sock.sendMessage(from, { text: 'Antilink is already disabled' });
             } else {
                 config.antilink[from] = false;
                 await sock.sendMessage(from, { text: 'Antilink has been disabled' });
-            }
+            } } else if (Cmd.includes(args[0])) {
+            const status = config.antilink[from] ? 'ON' : 'OFF';
+            const footer = `*ANTILINK MANAGER*\nStatus: ${status}`;
+            await sock.sendMessage(from, { text: footer });
         } else {
-            await sock.sendMessage(from, { text: `${config.PREFIX} "on", "off", "enable", or "disable"` });
+            await sock.sendMessage(from, { text: `${config.PREFIX}antilink "on", "off", "enable", "disable", or "info"` });
         }
     }
 });
+                                   
