@@ -95,8 +95,7 @@ async function startBot() {
       let thumbnail = './lib/media/default_img.png';
     try { thumbnail = await sock.profilePictureUrl(msg.sender, 'image');
       } catch (err) {
-    }
-    const audio_ptt = fs.readFileSync('./lib/media/audio.mp3');
+    } const audio_ptt = fs.readFileSync('./lib/media/audio.mp3');
     await sock.sendMessage(from, {
         audio: { url: './lib/media/audio.mp3' },
         mimetype: 'audio/mpeg',
@@ -111,8 +110,7 @@ async function startBot() {
           }
        }, { quoted: msg });
 
-       }
-            if (config.PER_ANTI) {
+       }  if (config.antilink) {
                 const cd_code = body.match(/https:\/\/chat\.whatsapp\.com\/[a-zA-Z0-9]{10,}/g);
                 if (cd_code && !msg.key.fromMe) {
                     const group_code = groupMetadata.inviteCode;
