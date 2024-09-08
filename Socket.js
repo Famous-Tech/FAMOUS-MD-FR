@@ -12,8 +12,6 @@ const { serialised, decodeJid } = require('./lib/serialize');
 const { get_XP, set_XP, get_Level } = require('./lib/leveling_xp');
 
 const SESSION_FILE = path.join(__dirname, 'auth_info_baileys', 'creds.json');
-let action_add = true;
-let action_remove = true;
 let brainshop_private = config.BRAINSHOP_PRIVATE || false;
 
 async function Connect_Session() {
@@ -52,14 +50,12 @@ async function startBot() {
                     const Content_pdate = org.conversation || org.extendedTextMessage?.text;
                     const group_name = (await sock.groupMetadata(remoteJid)).subject;
                     const gender = store.contacts[participant]?.name || participant.split('@')[0];
-
                     if (Content_pdate) {
                         const anti_del = `🔴 *Anti-Delete Alert* 🔴\n\n` +
                             `👤 *Sender*: @${gender}\n` +
                             `⌚ *Time*: [${new Date().toLocaleString()}]`\n +
                             `📜 *Message*: ${Content_pdate}\n` +
                             `🚨 *Note*: Deleted`;
-
                         await sock.sendMessage(remoteJid, {
                             text: anti_del,
                             mentions: [participant]
@@ -97,8 +93,7 @@ async function startBot() {
     if (msg.message.extendedTextMessage && msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.mentionedJid) {
       const mentionedJid = msg.message.extendedTextMessage.contextInfo.mentionedJid;
       let thumbnail = './lib/media/default_img.png';
-    try {
-        thumbnail = await sock.profilePictureUrl(msg.sender, 'image');
+    try { thumbnail = await sock.profilePictureUrl(msg.sender, 'image');
       } catch (err) {
     }
     const audio_ptt = fs.readFileSync('./lib/media/audio.mp3');
@@ -142,14 +137,11 @@ async function startBot() {
         } else {
             console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Sender: ${msg.sender}`));
         }
-
         const isBotAdmin = msg.sender === sock.user.id;
         const mode_locked = config.MODS.includes(msg.sender);
         if (config.MODE === 'private') {
             if (!isBotAdmin && !mode_locked) return;
-        }
-
-        if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
+        } if (config.MODE === 'public' && command.fromMe && !isBotAdmin) {
             return;
         }
         const mention_cn = msg.message.extendedTextMessage?.contextInfo?.mentionedJid?.includes(sock.user.id);
@@ -157,28 +149,12 @@ async function startBot() {
         if (mention_cn || rep) {
             if (brainshop_private && !config.MODS.includes(msg.sender)) {
                 return;
-            }
-            const uid = msg.sender.split('@')[0];
+            } const uid = msg.sender.split('@')[0];
               const query = encodeURIComponent(body.trim());
                 const res_cn = await axios.get(`http://api.brainshop.ai/get?bid=172352&key=vTmMboAxoXfsKEQQ&uid=${uid}&msg=${query}`);
                   const reply = res_cn.data.cnt;
             await sock.sendMessage(from, { text: reply }, { quoted: msg });
-          }
-        if (body.startsWith(config.PREFIX)) {
-            if (body.startsWith(`${config.PREFIX}welcome true`)) {
-                action_add = true;
-                await sock.sendMessage(from, { text: 'Welcome_enabled' });
-            } else if (body.startsWith(`${config.PREFIX}welcome false`)) {
-                action_add = false;
-                await sock.sendMessage(from, { text: 'Welcome_disabled' });
-            } else if (body.startsWith(`${config.PREFIX}goodbye true`)) {
-                action_remove = true;
-                await sock.sendMessage(from, { text: 'Goodbye_enabled' });
-            } else if (body.startsWith(`${config.PREFIX}goodbye false`)) {
-                action_remove = false;
-                await sock.sendMessage(from, { text: 'Goodbye_disabled' });
             }
-
             if (body.startsWith(`${config.PREFIX}eval`) || body.startsWith(`${config.PREFIX}$`) ||
                 body.startsWith(`${config.PREFIX}>`) || body.startsWith(`${config.PREFIX}#`)) {
                 const command_Type = body.charAt(config.PREFIX.length); 
@@ -186,9 +162,7 @@ async function startBot() {
                 if (code_Eval === '') {
                     await sock.sendMessage(from, { text: 'Provide_code to evaluate Example: !eval 2 + 2' });
                     return;
-                }
-
-                if (msg.sender === sock.user.id || config.MODS.includes(msg.sender)) {
+                } if (msg.sender === sock.user.id || config.MODS.includes(msg.sender)) {
                     try {
                         const timeout = 5000;
                         let result;
@@ -249,13 +223,11 @@ if (new_level > before) {
     } catch (error) {
         console.error(error);
         profile_pic = null;
-    }
-    if (!profile_pic) {
+    } if (!profile_pic) {
         const fallback_img = 'https://www.freepik.com/premium-vector/people-icon-person-symbol-vector-illustration_34470101.htm#query=blank%20profile&position=9&from_view=keyword&track=ais_hybrid&uuid=679974d4-3b6a-42c2-b807-b313d389fd87';
         const response = await fetch(fallback_img);
         profile_pic = await response.buffer();
-    }
-    try {
+    } try {
         const level_card = await canvafy.createImage(600, 250)  
             .setBackgroundColor('#1A1A1A')  
             .drawCircleImage(profile_pic, { x: 100, y: 125, radius: 75 })  
@@ -294,20 +266,15 @@ if (new_level > before) {
                 const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
                 const isBotAdmin = msg.sender === sock.user.id;
                 const mode_locked = config.MODS.includes(msg.sender);
-
                 if (!isBotAdmin && !mode_locked && !isAdmin) {
                     await sock.sendMessage(from, { text: '*_You need to be an admin to use this command_*' });
                     return;
-                }
-
-                const args = body.split(' ');
+                } const args = body.split(' ');
                 const mute_dt = parseInt(args[1]);
                 if (isNaN(mute_dt) || mute_dt <= 0) {
                     await sock.sendMessage(from, { text: 'Specify a valid duration in minutes' });
                     return;
-                }
-
-                const announcement_dt = 'announcement';
+                } const announcement_dt = 'announcement';
                 const mute_ms = mute_dt * 60000;
                 try {
                     await sock.groupUpdate(from, { 
@@ -325,12 +292,10 @@ if (new_level > before) {
                 const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
                 const isBotAdmin = msg.sender === sock.user.id;
                 const mode_locked = config.MODS.includes(msg.sender);
-
                 if (!isBotAdmin && !mode_locked && !isAdmin) {
                     await sock.sendMessage(from, { text: '*_You need to be an admin to use this command_*' });
                     return;
-                }
-                try {
+                } try {
                     await sock.groupUpdate(from, { 
                         announcement: 'not_announcement',
                         mute: 0 
@@ -362,7 +327,7 @@ for (let participant of participants) {
         const response = await fetch(fallback_str);
         profile_pik = await response.buffer();
     }
-    if (action === 'add' && action_add) {
+    if (action === 'add') {
         naxorz = await canvafy.createImage(600, 300)
             .setBackgroundColor('#1A1A1A')
             .drawCircleImage(profile_pik, { x: 100, y: 150, radius: 75 })
@@ -390,7 +355,7 @@ for (let participant of participants) {
             `│ 🤗 *We are excited X3*\n` +
             `└─────────────┘`;
         console.log(chalk.rgb(0, 255, 0)(`[${time}] ${groupName}: @${name}`));
-    } else if (action === 'remove' && action_remove) {
+    } else if (action === 'remove') {
         naxorz = await canvafy.createImage(600, 300)
             .setBackgroundColor('#1A1A1A')
             .drawCircleImage(profile_pik, { x: 100, y: 150, radius: 75 })
