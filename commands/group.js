@@ -485,3 +485,53 @@ sock.ev.on('messages.upsert', async () => {
         }
     }
 });
+
+Meta({
+  command: 'warn',
+  category: 'groups',
+  handler: async (sock, message, args, isGroup, author) => {
+    if (!isGroup) return; 
+
+    const { from } = message;
+    const pushname = args[0]; 
+    const reason = args.slice(1).join(' ') || '*No reason*';
+    const to_three = 3; 
+    if (!pushname) {
+      await sock.sendMessage(from, { text: 'specify a user to warn*' });
+      return;
+    }   const pikachu = await WeAreGays(sock, from, pushname);
+    const count = pikachu + 1;
+    await sock.sendMessage(from, {
+      text: `┏━━━━━━━━━━━━━━━━━━━━━┓\n` +
+            `┃      ⚠️ *Warning* ⚠️     \n` +
+            `┣━━━━━━━━━━━━━━━━━━━━━┫\n` +
+            `┃ *▢ Number:* ${pushname}\n` +
+            `┃ *▢ Name:* ${pushname}\n` +
+            `┃ *▢ Count:* ${count}/${to_three}\n` +
+            `┃ *▢ Reason:* ${reason}\n` +
+            `┗━━━━━━━━━━━━━━━━━━━━━┛\n\n` +
+            `┏━━━━━━━━━━━━━━━━━━━━━┓\n` +
+            `┃ *Please be cautious*\n` +
+            `┗━━━━━━━━━━━━━━━━━━━━━┛`
+    });
+    if (count >= to_three) {
+      await sock.groupParticipantsUpdate(from, [pushname], 'remove');
+      await sock.sendMessage(from, { text: `*${pushname} has been removed*` });
+    }
+  }
+});
+
+async function WeAreGays(sock, gcID, pushNama) {
+  let count = 0;
+  const history = await sock.fetchMessages(gcID, { limit: 50 });
+  history.forEach(msg => {
+    if (msg.message && msg.message.conversation) {
+      const content = msg.message.conversation;
+      if (content.includes(`▢ Number: ${pushNama}`) && content.includes('⚠️ *Warning* ⚠️')) {
+        count += 1;
+      }
+    }
+  });
+  return count;
+                 }
+        
