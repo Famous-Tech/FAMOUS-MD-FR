@@ -120,3 +120,36 @@ Meta({
     return sock.sendMessage(from, { text: str_z});
   }
 });
+
+Meta({
+    command: 'antilink ?(*)',
+    category: 'group',
+    handler: async (sock, args, message, isGroup, author) => {
+        const { from } = message;
+
+      if(!isGroup) {
+        await sock.sendMessage(from, { text: 'This command can be used in group'});
+      } if(!author) {
+        return sock.sendMessage(from, { text: 'Youre not allowed'});
+      } if (!config.antilink) {
+            config.antilink = {};
+        }  const enableCmd = ['on', 'enable'];
+        const disableCmd = ['off', 'disable'];
+        if (enableCmd.includes(args[0])) {
+            if (config.antilink[from]) {
+                await sock.sendMessage(from, { text: 'Antilink is already enabled' });
+            } else {
+                config.antilink[from] = true;
+                await sock.sendMessage(from, { text: 'Antilink has been enabled' });
+            }  } else if (disableCmd.includes(args[0])) {
+            if (!config.antilink[from]) {
+                await sock.sendMessage(from, { text: 'Antilink is already disabled' });
+            } else {
+                config.antilink[from] = false;
+                await sock.sendMessage(from, { text: 'Antilink has been disabled' });
+            }
+        } else {
+            await sock.sendMessage(from, { text: `${config.PREFIX} "on", "off", "enable", or "disable"` });
+        }
+    }
+});
