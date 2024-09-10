@@ -78,7 +78,7 @@ Meta({
 📅 *Date:* ${new Date().toLocaleDateString()}
 
 ╰──────────╼
-`; await sock.sendMessage(from, { text: alive_str });
+`; await sock.sendMessage(from, { image: 'https://f.uguu.se/BuFAPRQO.jpg'{ text: alive_str }});
     }
 });
                
