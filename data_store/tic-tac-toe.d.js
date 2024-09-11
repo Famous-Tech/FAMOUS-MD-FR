@@ -1,22 +1,22 @@
 const fs = require('fs');
 
-class X_TicTacToe {
-    constructor(playerX, playerO) {
-        this.playerX = playerX;
-        this.playerO = playerO;
-        this.currentTurn = playerX;
-        this.board = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        this.turns = 0;
-        this.gameOver = false;
-        this.XAccepted = false;
-        this.OAccepted = false;
+class Morpion {
+    constructor(joueurX, joueurO) {
+        this.joueurX = joueurX;
+        this.joueurO = joueurO;
+        this.tourActuel = joueurX;
+        this.plateau = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        this.tours = 0;
+        this.partieFinie = false;
+        this.XAccepte = false;
+        this.OAccepte = false;
         
-        this.init_data();
+        this.initialiserDonnees();
     }
 
     static emojiMap = {
         X: "❌",
-        O: "⭕",
+        O: "⭕", // à terminer demain 
         1: "1️⃣",
         2: "2️⃣",
         3: "3️⃣",
@@ -28,7 +28,7 @@ class X_TicTacToe {
         9: "9️⃣",
     };
 
-    init_data() {
+    initialiserDonnees() {
         if (!fs.existsSync('tic-tac-toe.json')) {
             fs.writeFileSync('tic-tac-toe.json', JSON.stringify([]));
         }
@@ -37,7 +37,7 @@ class X_TicTacToe {
         }
     }
 
-    static loadGame() {
+    static chargerPartie() {
         try {
             const data = fs.readFileSync('tic-tac-toe.json', 'utf8');
             return JSON.parse(data);
@@ -46,86 +46,86 @@ class X_TicTacToe {
         }
     }
 
-    static saveGame(games) {
-        fs.writeFileSync('tic-tac-toe.json', JSON.stringify(games, null, 2));
+    static sauvegarderPartie(parties) {
+        fs.writeFileSync('tic-tac-toe.json', JSON.stringify(parties, null, 2));
     }
 
-    static findGame(player) {
-        const games = X_TicTacToe.loadGame();
-        return games.find(game => game.playerX === player || game.playerO === player);
+    static trouverPartie(joueur) {
+        const parties = Morpion.chargerPartie();
+        return parties.find(partie => partie.joueurX === joueur || partie.joueurO === joueur);
     }
 
-    static updateGame(updatedGame) {
-        const games = X_TicTacToe.loadGame();
-        const tac_Index = games.findIndex(game => game.playerX === updatedGame.playerX && game.playerO === updatedGame.playerO);
-        if (tac_Index !== -1) {
-            games[tac_Index] = updatedGame;
-            X_TicTacToe.saveGame(games);
+    static mettreAJourPartie(partieMiseAJour) {
+        const parties = Morpion.chargerPartie();
+        const indexPartie = parties.findIndex(partie => partie.joueurX === partieMiseAJour.joueurX && partie.joueurO === partieMiseAJour.joueurO);
+        if (indexPartie !== -1) {
+            parties[indexPartie] = partieMiseAJour;
+            Morpion.sauvegarderPartie(parties);
         }
     }
 
-    static addPoints(player, points) {
-        let X_Y_DATA = {};
+    static ajouterPoints(joueur, points) {
+        let donneesXY = {};
         try {
-            X_Y_DATA = JSON.parse(fs.readFileSync('tac-points.json', 'utf8'));
+            donneesXY = JSON.parse(fs.readFileSync('tac-points.json', 'utf8'));
         } catch (err) {
-            X_Y_DATA = {};
+            donneesXY = {};
         }
-        if (!X_Y_DATA[player]) {
-            X_Y_DATA[player] = 0;
+        if (!donneesXY[joueur]) {
+            donneesXY[joueur] = 0;
         }
-        X_Y_DATA[player] += points;
-        fs.writeFileSync('tac-points.json', JSON.stringify(X_Y_DATA, null, 2));
+        donneesXY[joueur] += points;
+        fs.writeFileSync('tac-points.json', JSON.stringify(donneesXY, null, 2));
     }
 
-    startGame() {
-        if (this.XAccepted && this.OAccepted) {
-            return this.displayBoard();
+    demarrerPartie() {
+        if (this.XAccepte && this.OAccepte) {
+            return this.afficherPlateau();
         }
-        return 'Waiting for player to accept';
+        return 'En attente de l\'acceptation du joueur';
     }
 
-    displayBoard() {
-        const rows = [
-            [this.board[0], this.board[1], this.board[2]],
-            [this.board[3], this.board[4], this.board[5]],
-            [this.board[6], this.board[7], this.board[8]]
+    afficherPlateau() {
+        const lignes = [
+            [this.plateau[0], this.plateau[1], this.plateau[2]],
+            [this.plateau[3], this.plateau[4], this.plateau[5]],
+            [this.plateau[6], this.plateau[7], this.plateau[8]]
         ];
 
-        const boardString = rows.map(row =>
-            row.map(cell => X_TicTacToe.emojiMap[cell]).join(' | ')
+        const plateauString = lignes.map(ligne =>
+            ligne.map(cellule => Morpion.emojiMap[cellule]).join(' | ')
         ).join('\n---------\n');
 
-        const current_str = this.currentTurn === this.playerX ? '❌' : '⭕';
-        const turn_syt = `Player ${current_str}s turn (@${this.currentTurn})`;
-        return `*Tic-Tac-Toe Game* 🎮\n\n${boardString}\n\n${turn_syt}`;
+        const symboleActuel = this.tourActuel === this.joueurX ? '❌' : '⭕';
+        const tourString = `Tour du joueur ${symboleActuel} (@${this.tourActuel})`;
+        return `*Jeu du Morpion* 🎮\n\n${plateauString}\n\n${tourString}`;
     }
 
-    makeMove(player, position) {
-        if (this.currentTurn !== player || this.gameOver) {
-            return { status: false, message: 'Not your turn or game is over' };
+    jouerCoup(joueur, position) {
+        if (this.tourActuel !== joueur || this.partieFinie) {
+            return { status: false, message: 'Ce n\'est pas votre tour ou la partie est terminée' };
         }
-        if (this.board[position - 1] === 'X' || this.board[position - 1] === 'O') {
-            return { status: false, message: 'Position already taken' };
+        if (this.plateau[position - 1] === 'X' || this.plateau[position - 1] === 'O') {
+            return { status: false, message: 'Position déjà occupée' };
         }
-        this.board[position - 1] = player === this.playerX ? 'X' : 'O';
-        this.turns += 1;
-        this.currentTurn = player === this.playerX ? this.playerO : this.playerX;
+        this.plateau[position - 1] = joueur === this.joueurX ? 'X' : 'O';
+        this.tours += 1;
+        this.tourActuel = joueur === this.joueurX ? this.joueurO : this.joueurX;
 
-        if (this.checkWin()) {
-            this.gameOver = true;
-            X_TicTacToe.addPoints(player, 1);
-            return { status: true, message: `Player ${player} wins✌️` };
-        } else if (this.turns >= 9) {
-            this.gameOver = true;
-            return { status: true, message: 'Game over. It\'s a tie!' };
+        if (this.verifierVictoire()) {
+            this.partieFinie = true;
+            Morpion.ajouterPoints(joueur, 1);
+            return { status: true, message: `Le joueur ${joueur} gagne✌️` };
+        } else if (this.tours >= 9) {
+            this.partieFinie = true;
+            return { status: true, message: 'Partie terminée. Égalité !' };
         } else {
-            return { status: true, message: 'Move accepted. Next turn' };
+            return { status: true, message: 'Coup accepté. Tour suivant' };
         }
     }
 
-    checkWin() {
-        const cn_winner = [
+    verifierVictoire() {
+        const conditionsVictoire = [
             [0, 1, 2],
             [3, 4, 5],
             [6, 7, 8],
@@ -136,9 +136,9 @@ class X_TicTacToe {
             [2, 4, 6]
         ];
 
-        for (const condition of cn_winner) {
+        for (const condition of conditionsVictoire) {
             const [a, b, c] = condition;
-            if (this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
+            if (this.plateau[a] === this.plateau[b] && this.plateau[a] === this.plateau[c]) {
                 return true;
             }
         }
@@ -147,4 +147,4 @@ class X_TicTacToe {
     }
 }
 
-module.exports = X_TicTacToe;
+module.exports = Morpion;
