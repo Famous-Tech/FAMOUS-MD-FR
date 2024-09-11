@@ -3,31 +3,31 @@ const config = require('../config');
 
 Meta({
   command: 'owner',
-  category: 'mics',
+  category: 'divers',
   filename: 'contact.js',
   handler: async (sock, message, args) => {
     const { from } = message;
 
-    const owner_name = config.OWNER_NAME;
-    const owner_num = config.MODS[0];
+    const nomProprietaire = config.OWNER_NAME;
+    const numeroProprietaire = config.MODS[0];
     const vcard = `BEGIN:VCARD
 VERSION:3.0
-FN:${owner_name}
-TEL;type=CELL;type=VOICE;waid=${owner_num}:${owner_num}
+FN:${nomProprietaire}
+TEL;type=CELL;type=VOICE;waid=${numeroProprietaire}:${numeroProprietaire}
 END:VCARD`;
    const message_str = {
       contacts: {
-        displayName: owner_name,
+        displayName: nomProprietaire,
         contacts: [{ vcard }],
       },
       contextInfo: {
         externalAdReply: {
-          title: "Owners_Num",
-          body: "save_owners_contact",
+          title: "Numéro du propriétaire",
+          body: "Enregistrez le contact du propriétaire",
           mediaType: 2,
           thumbnailUrl: "https://i.imgur.com/jQWY9mm.jpeg",
-          mediaUrl: "https://x-astral.com", 
-          sourceUrl: "https://x-astral.com", 
+          mediaUrl: "", 
+          sourceUrl: "", 
         },
       },
     };
@@ -38,65 +38,65 @@ END:VCARD`;
 
 const get_Backstory = (role) => {
     const backstories = {
-        "🌾 Farmer": "A humble individual who tends the fields, ensuring the guild is well-fed.",
-        "🛡️ Squire": "An aspiring knight, learning the art of combat and honor.",
-        "🏹 Ranger": "A skilled scout with an uncanny ability to navigate and survive in the wild.",
-        "⚔️ Knight": "A seasoned warrior with a strong sense of duty and protection.",
-        "🐉 Dragon Rider": "One of the elite few who has tamed a dragon and commands its power.",
-        "🧙‍♂️ Archmage": "A master of arcane arts, wielding powerful spells and ancient knowledge.",
-        "👑 High King": "A revered leader with the wisdom and strength to rule and guide the guild.",
-        "🌠 Celestial": "A mystical being with cosmic influence, transcending ordinary existence.",
-        "⚔️ Grandmaster": "The ultimate leader, revered by all, with unmatched skill and respect.",
-        "🌌 Eternal": "A legendary figure who has transcended time and space, embodying the essence of eternity."
+        "🌾 Fermier": "Un individu humble qui s'occupe des champs, assurant que la guilde est bien nourrie.",
+        "🛡️ Écuyer": "Un aspirant chevalier, apprenant l'art du combat et de l'honneur.",
+        "🏹 Forestier": "Un éclaireur habile avec une capacité incroyable à naviguer et survivre dans la nature.",
+        "⚔️ Chevalier": "Un guerrier expérimenté avec un fort sens du devoir et de la protection.",
+        "🐉 Cavalier de dragon": "Un des élus rares qui a apprivoisé un dragon et commande son pouvoir.",
+        "🧙‍♂️ Archimage": "Un maître des arts arcanes, maniant de puissants sorts et des connaissances anciennes.",
+        "👑 Roi suprême": "Un leader révéré avec la sagesse et la force pour régner et guider la guilde.",
+        "🌠 Céleste": "Un être mystique avec une influence cosmique, transcendant l'existence ordinaire.",
+        "⚔️ Grand maître": "Le leader ultime, révéré par tous, avec une compétence et un respect inégalés.",
+        "🌌 Éternel": "Une figure légendaire qui a transcendé le temps et l'espace, incarnant l'essence de l'éternité."
     };
-    return backstories[role] || "No";
+    return backstories[role] || "Aucune";
 };
 
 const determineRole = (Activit) => {
     if (Activit <= 10) {
-        return "🌾 Farmer";
+        return "🌾 Fermier";
     } else if (Activit <= 20) {
-        return "🛡️ Squire";
+        return "🛡️ Écuyer";
     } else if (Activit <= 30) {
-        return "🏹 Ranger";
+        return "🏹 Forestier";
     } else if (Activit <= 40) {
-        return "⚔️ Knight";
+        return "⚔️ Chevalier";
     } else if (Activit <= 50) {
-        return "🐉 Dragon Rider";
+        return "🐉 Cavalier de dragon";
     } else if (Activit <= 60) {
-        return "🧙‍♂️ Archmage";
+        return "🧙‍♂️ Archimage";
     } else if (Activit <= 70) {
-        return "👑 High King";
+        return "👑 Roi suprême";
     } else if (Activit <= 80) {
-        return "🌠 Celestial";
+        return "🌠 Céleste";
     } else if (Activit <= 90) {
-        return "⚔️ Grandmaster";
+        return "⚔️ Grand maître";
     } else {
-        return "🌌 Eternal";
+        return "🌌 Éternel";
     }
 };
 Meta({
     command: 'profile',
-    category: 'mics',
+    category: 'divers',
     filename: 'user',
     handler: async (sock, message, args, author, mentionedJid) => {
         const { from } = message;
-        const target_str = mentionedJid.length > 0 ? mentionedJid[0] : author;
+        const cible = mentionedJid.length > 0 ? mentionedJid[0] : author;
         const Activit = Math.floor(Math.random() * 100);
-        const role_str = determineRole(Activit);
-        const Backstory = get_Backstory(role_str);
-         try{ const profilePictureUrl = await sock.profilePictureUrl(target_str, 'image').catch(() => 'No PP');
-            const contact = await sock.onWhatsApp(target_str);
+        const role = determineRole(Activit);
+        const backstory = get_Backstory(role);
+         try{ const profilePictureUrl = await sock.profilePictureUrl(cible, 'image').catch(() => 'Pas de photo de profil');
+            const contact = await sock.onWhatsApp(cible);
         if (contact && contact[0]) {
-            const capo_menu = `
-         *Name:* ${contact[0].notify || ''}
+            const menuProfil = `
+         *Nom:* ${contact[0].notify || ''}
          *Bio:* ${contact[0].status || ''}
-         *Role:* ${role_str}
-         *Backstory:* ${Backstory}
+         *Rôle:* ${role}
+         *Histoire:* ${backstory}
               `; 
          await sock.sendMessage(from, { 
            image: { url: profilePictureUrl },
-           text: capo_menu });
+           text: menuProfil });
             } else {
             }
         } catch (error) {
