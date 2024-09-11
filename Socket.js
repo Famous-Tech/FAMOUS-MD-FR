@@ -289,21 +289,21 @@ if (new_level > before) {
                   }
             } else if (body.startsWith(`${config.PREFIX}unmute`)) {
                 if (!isGroup) {
-                    await sock.sendMessage(from, { text: 'This command can only be used in groups' });
+                    await sock.sendMessage(from, { text: 'Cette commande peut être seulement utilisé dans des groupes.' });
                     return;
                 }
                 const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
                 const isBotAdmin = msg.sender === sock.user.id;
                 const mode_locked = config.MODS.includes(msg.sender);
                 if (!isBotAdmin && !mode_locked && !isAdmin) {
-                    await sock.sendMessage(from, { text: '*_You need to be an admin to use this command_*' });
+                    await sock.sendMessage(from, { text: '*_désolé mais il faut être un admin pour utiliser cette commande_*' });
                     return;
                 } try {
                     await sock.groupUpdate(from, { 
                         announcement: 'not_announcement',
                         mute: 0 
                     });
-                    await sock.sendMessage(from, { text: '*Group unmuted*' });
+                    await sock.sendMessage(from, { text: '*Group ouvert!✅*' });
                 } catch (error) {
                 }
             }
@@ -352,10 +352,10 @@ for (let participant of participants) {
             })
             .toBuffer();
         message = `┌────\n` +
-            `│ 👋 *Welcome* @${name}\n` +
-            `│ 🏡 *Group*: ${groupName}\n` +
-            `│ 🕒 *Time*: ${time}\n` +
-            `│ 🤗 *We are excited X3*\n` +
+            `│ 👋 *Bienvenue à vous* @${name}\n` +
+            `│ 🏡 *Nous sommes enchanté de vous accueillir dans*: ${groupName}\n` +
+            `│ 🕒 *Vous êtes venus à*: ${time}\n` +
+            `│ 🤗 *Nous sommes très content de ta venue*\n` +
             `└─────────────┘`;
         console.log(chalk.rgb(0, 255, 0)(`[${time}] ${groupName}: @${name}`));
     } else if (action === 'remove') {
@@ -380,10 +380,10 @@ for (let participant of participants) {
             })
             .toBuffer();
         message = `┌────\n` +
-            `│ 😔 *Goodbye*, @${name}\n` +
-            `│ 🏡 *Group*: ${groupName}\n` +
-            `│ 🕒 *Time*: ${time}\n` +
-            `│ 💔 *Will be missed*\n` +
+            `│ 😔 *Au revoir*, @${name}\n` +
+            `│ 🏡 *Tu nous manqueras tous içi à*: ${groupName}\n` +
+            `│ 🕒 *Tu es parti à*: ${time}\n` +
+            `│ 💔 *Tu vas nous manquer 😭😢*\n` +
             `└─────────────┘`;
     }
     await sock.sendMessage(id, {
@@ -416,11 +416,11 @@ for (let participant of participants) {
                 startBot();
             }
         } else if (connection === 'open') {     
-        console.log("⬇️ Installing Plugins...");
+        console.log("⬇️ Installations des Plugins...");
         fs.readdirSync(`${__dirname}/commmands`)
            .filter(file => file.endsWith('.js'))
            .forEach(file => require(`${__dirname}/commands/${file}`));
-        console.log("✅ Plugins Installed");          
+        console.log("✅  Cool ! les plugins ont étés installés avec succès");          
             console.log(chalk.magenta('_Connected_'));
         }
     });
