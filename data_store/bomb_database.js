@@ -1,42 +1,42 @@
 class XenoStr {
     constructor() {
         this.bomDB = new Map();
-        this.leaderboard = new Map();
+        this.classement = new Map();
     }
 
-    create(player) {
-        const board = Array(9).fill().map((_, i) => `${i + 1}️⃣`);
-        const bombCount = 1;  
-        const bombs = Array(bombCount).fill().map(() => Math.floor(Math.random() * 9));      
-        this.bomDB.set(player, {
-            board,
-            bombs,
-            active: true,
+    creer(joueur) {
+        const plateau = Array(9).fill().map((_, i) => `${i + 1}️⃣`);
+        const nombreBombes = 1;  
+        const bombes = Array(nombreBombes).fill().map(() => Math.floor(Math.random() * 9));      
+        this.bomDB.set(joueur, {
+            plateau,
+            bombes,
+            actif: true,
             points: 100,
-            round: 1,
-            timer: null,
-            startTime: Date.now(),
-            powerUps: { reveal: 1, skip: 1 }  
+            tour: 1,
+            minuteur: null,
+            heureDebut: Date.now(),
+            bonus: { reveler: 1, passer: 1 }  
         });
 
-        return this.bomDB.get(player);
+        return this.bomDB.get(joueur);
     }
-    get_xeno(player) {
-        return this.bomDB.get(player);
+    get_xeno(joueur) {
+        return this.bomDB.get(joueur);
     }
-    endGame(player, sock, from) {
-        const game = this.bomDB.get(player);
-        if (game) {
-            clearTimeout(game.timer);
-            this.leaderboard.set(player, (this.leaderboard.get(player) || 0) + game.points);
-            sock.sendMessage(from, { text: `💥 Score: ${game.points}\n*LEADERBOARD*:\n${this.getLeaderboard()}` });
-            this.bomDB.delete(player);
+    finPartie(joueur, sock, from) {
+        const partie = this.bomDB.get(joueur);
+        if (partie) {
+            clearTimeout(partie.minuteur);
+            this.classement.set(joueur, (this.classement.get(joueur) || 0) + partie.points);
+            sock.sendMessage(from, { text: `💥 Score: ${partie.points}\n*CLASSEMENT*:\n${this.getClassement()}` });
+            this.bomDB.delete(joueur);
         }
     }
-    getLeaderboard() {
-        const sorted = Array.from(this.leaderboard.entries()).sort((a, b) => b[1] - a[1]);
-        return sorted.map(([player, points], index) => `${index + 1}. ${player}: ${points} points`).join('\n');
+    getClassement() {
+        const classementTrie = Array.from(this.classement.entries()).sort((a, b) => b[1] - a[1]);
+        return classementTrie.map(([joueur, points], index) => `${index + 1}. ${joueur}: ${points} points`).join('\n');
     }
 }
 
-module.exports = XenoStr;                                                  
+module.exports = XenoStr;
