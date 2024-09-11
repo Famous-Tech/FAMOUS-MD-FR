@@ -153,7 +153,7 @@ Meta({
                 const out = await axios.get(data.output_url, { responseType: 'arraybuffer' });
                 const naxor = 'xastral-image.png';
                 fs.writeFileSync(naxor, out.data);
-                await sock.sendMessage(from, { image: { url: naxor }, caption: `*Made with love*\n*Style*: _${style}_` }, MessageType.image);
+                await sock.sendMessage(from, { image: { url: naxor }, caption: `*Made with 🤍* , _by_ *_FAMOUS-MD_*\n*Style*: _${style}_` }, MessageType.image);
                 fs.unlinkSync(naxor);
             } else {
             }
@@ -173,7 +173,7 @@ Meta({
         styles.forEach((style, index) => {
             menu_str += `${index + 1}. ${style}\n`;
         });
-        menu_str += '\n*Usage:,* `editimage [style]`';
+        menu_str += '\n*Utilisation:,* `editimage [style]`';
         await sock.sendMessage(from, { text: menu_str }, MessageType.text);
     }
 });
