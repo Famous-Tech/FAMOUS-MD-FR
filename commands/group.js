@@ -3,7 +3,7 @@ const { MessageType, WA_DEFAULT_EPHEMERAL } = require('@whiskeysockets/baileys')
 const config = require('../config');
 Meta({
   command: 'kick',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message, args, author) => {
     const { from, body } = message;
   
@@ -12,7 +12,7 @@ Meta({
     const isAdmin = admins.includes(author);
     const isOwner = config.MODS.includes(author);
     if (!isAdmin && !isOwner) {
-      return sock.sendMessage(from, { text: '_Only admins can use this command_' }, { quoted: message });
+      return sock.sendMessage(from, { text: '_Seuls les admins peuvent utiliser cette commande_' }, { quoted: message });
     } const arg = body.trim().split('//').pop().trim();
     if (arg === 'all') {
      const participants = groupMetadata.participants.map(p => p.id);
@@ -20,14 +20,14 @@ Meta({
         if (!admins.includes(participant) && participant !== sock.user.id) {
           await sock.groupParticipantsUpdate(from, [participant], 'remove');
         }
-      } await sock.sendMessage(from, { text: 'All non-admin memb have been removed' }, { quoted: message });
+      } await sock.sendMessage(from, { text: 'Tous les membres non-admins ont été retirés' }, { quoted: message });
     } else {
       const get_lost = arg.includes('@') ? arg : `${arg}@s.whatsapp.net`;
       if (!admins.includes(get_lost) && get_lost !== sock.user.id) {
         await sock.groupParticipantsUpdate(from, [get_lost], 'remove');
-        await sock.sendMessage(from, { text: `${arg} *has been removed*` }, { quoted: message });
+        await sock.sendMessage(from, { text: `${arg} *a été retiré*` }, { quoted: message });
       } else {
-        await sock.sendMessage(from, { text: '_You cannot *kick_the bot* itself_' }, { quoted: message });
+        await sock.sendMessage(from, { text: '_Vous ne pouvez pas *expulser le bot* lui-même_' }, { quoted: message });
       }
     }
   }
@@ -35,7 +35,7 @@ Meta({
 
 Meta({
   command: 'add',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message, args, author) => {
     const { from, body } = message;
 
@@ -44,29 +44,29 @@ Meta({
     const isAdmin = admins.includes(author);
     const isOwner = config.MODS.includes(author);
     if (!isAdmin && !isOwner) {
-      return sock.sendMessage(from, { text: 'Only admins can use_this' }, { quoted: message });
+      return sock.sendMessage(from, { text: 'Seuls les admins peuvent utiliser cette commande' }, { quoted: message });
     } const number = body.split(' ')[1];  //+27686881509
     if (!number) {
-      return sock.sendMessage(from, { text: 'Please provide a number' }, { quoted: message });
+      return sock.sendMessage(from, { text: 'Veuillez fournir un numéro' }, { quoted: message });
   }const num_Jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
      try {
         await sock.groupParticipantsUpdate(from, [num_Jid], 'add');
-        await sock.sendMessage(from, { text: `${number} _added_` }, { quoted: message });
+        await sock.sendMessage(from, { text: `${number} *a été ajouté*` }, { quoted: message });
     } catch (error) {
-        await sock.sendMessage(from, { text: `error` }, { quoted: message });
+        await sock.sendMessage(from, { text: `erreur` }, { quoted: message });
     }
   }
 });
 
 Meta({
   command: 'remove_common',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message, isGroup, args) => {
     const { key, from  } = message;
     const { remoteJid } = key;
 
   if (!isGroup) {
-      return await sock.sendMessage(remoteJid, { text: '*[ERROR]* _Group_Command_' }, { quoted: message });
+      return await sock.sendMessage(remoteJid, { text: '*[ERREUR]* _Commande de groupe_' }, { quoted: message });
     }
     const groupMetadata = await sock.groupMetadata(from);
     const participants = groupMetadata.participants;
@@ -82,12 +82,12 @@ Meta({
 
     const common_num = Object.keys(Num_Jid).filter(number => Num_Jid[number] > 1);
     if (common_num.length === 0) {
-      return await sock.sendMessage(remoteJid, { text: 'No common numbers found in the group.' }, { quoted: message });
-    } let naxor_ser = '*Common_Detected:*\n\n';
+      return await sock.sendMessage(remoteJid, { text: 'Aucun numéro commun trouvé dans le groupe.' }, { quoted: message });
+    } let naxor_ser = '*Numéros communs détectés:*\n\n';
     common_num.forEach(number => {
       naxor_ser += `- ${number}\n`;
     });
-    naxor_ser += '\n*Removing_these numbers...*';
+    naxor_ser += '\n*Suppression de ces numéros...*';
     await sock.sendMessage(remoteJid, { text: naxor_ser }, { quoted: message });
     for (const number of common_num) {
       const part_psnts = participants.filter(p => p.id.startsWith(`${number}@`));
@@ -100,23 +100,23 @@ Meta({
 
 Meta({
   command: 'ginfo',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message, isGroup, args) => {
     const { key, from } = message;
     const { remoteJid } = key;
     const { participants, subject, desc, creation } = await sock.groupMetadata(from);
     
-  if (!isGroup) return await sock.sendMessage(remoteJid, { text: '*[ERROR]* _🤣_' }, { quoted: message });
+  if (!isGroup) return await sock.sendMessage(remoteJid, { text: '*[ERREUR]* _🤣_' }, { quoted: message });
    const groupName = subject;
-   const groupDesc = desc || 'No description';
+   const groupDesc = desc || 'Aucune description';
     const  Count = participants.length;
      const creations = new Date(creation * 1000).toLocaleString();
      const GC_ID = remoteJid.split('@');
     const info_r = [
         `╭───────────◯`,
-        `├ *Name:* ${groupName}`,
-        `│ *Members:* ${Count}`,
-        `│ *Group_ID:* ${GC_ID} members`,
+        `├ *Nom:* ${groupName}`,
+        `│ *Membres:* ${Count}`,
+        `│ *ID du groupe:* ${GC_ID} membres`,
         `├───────────◯`,
         `│ *Desc:* ${groupDesc}`,
         `╰───────────◯`
@@ -137,18 +137,18 @@ Meta({
 
 Meta({
   command: 'jids',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message, args) => {
     try {
       const isGroup = message.key.remoteJid.endsWith('@g.us');
       if (!isGroup) {
-        await sock.sendMessage(message.key.remoteJid, { text: '*This command can only be used in groups*' });
+        await sock.sendMessage(message.key.remoteJid, { text: '*Cette commande ne peut être utilisée que dans les groupes*' });
         return;
       }
       const groupMetadata = await sock.groupMetadata(message.key.remoteJid);
       const participants = groupMetadata.participants;
       const jids = participants.map((participant, index) => 
-        `✨ *Member ${index + 1}:*\n🆔 *JID*: ${participant.id}\n`
+        `✨ *Membre ${index + 1}:*\n🆔 *JID*: ${participant.id}\n`
       );
       const gc_name = groupMetadata.subject;
       const List = jids.join('\n');
@@ -162,24 +162,24 @@ Meta({
           
 Meta({
     command: 'join',
-    category: 'owner',
+    category: 'propriétaire',
     handler: async (sock, args, message, creator, author, isGroup) => {
         const { from } = message;
       if (isGroup) {
-            return sock.sendMessage(from, { text: 'This command can only be used in private chat' });
+            return sock.sendMessage(from, { text: 'Cette commande ne peut être utilisée que dans un chat privé' });
         } if (!config.MODS.includes(author)) {
-            return sock.sendMessage(from, { text: 'You are not allowed to use this cmd' });
+            return sock.sendMessage(from, { text: 'Vous n\'êtes pas autorisé à utiliser cette commande' });
            }
         if (args.length === 0) {
-            return sock.sendMessage(from, { text: 'Please provide a group invite link' });
+            return sock.sendMessage(from, { text: 'Veuillez fournir un lien d\'invitation de groupe' });
            }
         const str_invite = args[0];
         const get_code = str_invite.split('https://chat.whatsapp.com/')[1];
         if (!get_code) {
-            return sock.sendMessage(from, { text: 'Please provide a valid group invite link' });
+            return sock.sendMessage(from, { text: 'Veuillez fournir un lien d\'invitation de groupe valide' });
               }try {
           await sock.groupAcceptInvite(get_code);
-            sock.sendMessage(from, { text: '*_Successfully_*' });
+            sock.sendMessage(from, { text: '*_Réussi_*' });
         } catch (error) {
             console.error(error);
                   }
@@ -188,21 +188,21 @@ Meta({
 
 Meta({
     command: 'tagall',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, args, message, isGroup, creator, author) => {
         const { from } = message;
 
         if (!config.MODS.includes(author)) {
-            return sock.sendMessage(from, { text: 'You are not allowed to use this_cmd' });
+            return sock.sendMessage(from, { text: 'Vous n\'êtes pas autorisé à utiliser cette commande' });
         }     if (!isGroup) {
-            return sock.sendMessage(from, { text: 'This command can only be used in a group' });
+            return sock.sendMessage(from, { text: 'Cette commande ne peut être utilisée que dans un groupe' });
           } const groupMetadata = await sock.groupMetadata(from);
         const { participants } = groupMetadata;
         let tags = '';
         for (const participant of participants) {
             const { id } = participant;
             tags += `@${id.split('@')[0]} `;
-        }  const tag_str = args.length > 0 ? args.join(' ') : '*Hello everyone*';
+        }  const tag_str = args.length > 0 ? args.join(' ') : '*Bonjour à tous*';
         const message_str = `
 ╭───────────◯
 ${tag_str}
@@ -232,28 +232,28 @@ const getTimeUntil = (targetHour, targetMinute) => {
 };
 Meta({
     command: 'automute',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, args, message, creator, isGroup, author) => {
         const { from } = message;
 
         if (!config.MODS.includes(author)) {
-            return sock.sendMessage(from, { text: 'You are not allowed to use this *cmd*' });
+            return sock.sendMessage(from, { text: 'Vous n\'êtes pas autorisé à utiliser cette commande' });
         }      if (!isGroup) {
-            return sock.sendMessage(from, { text: '_This command can only be used in a group chat_' });
+            return sock.sendMessage(from, { text: '_Cette commande ne peut être utilisée que dans un groupe_' });
         }   if (args.length !== 4) {
-            return sock.sendMessage(from, { text: 'Please provide mute and unmute times in the format: /automute HH MM HH MM *(e.g., /automute 22 00 07 30)*' });
+            return sock.sendMessage(from, { text: 'Veuillez fournir les heures de mute et de démute au format: /automute HH MM HH MM *(par exemple, /automute 22 00 07 30)*' });
         }
         const mute_hr = parseInt(args[0]);
         const mute_mun = parseInt(args[1]);
         const unmute_hr = parseInt(args[2]);
         const unmute_min = parseInt(args[3]);
         if (isNaN(mute_hr) || isNaN(mute_mun) || isNaN(unmute_hr) || isNaN(unmute_min)) {
-            return sock.sendMessage(from, { text: 'Invalid time format: _Please provide numeric values for hours and minutes_' });
+            return sock.sendMessage(from, { text: 'Format d\'heure invalide: _Veuillez fournir des valeurs numériques pour les heures et les minutes_' });
         }    const muteDelay = getTimeUntil(mute_hr, mute_mun);
         setTimeout(async () => {
             try {
                 await sock.groupSettingUpdate(from, 'announcement');
-                sock.sendMessage(from, { text: '🔇 *Group has been automatically muted*' });
+                sock.sendMessage(from, { text: '🔇 *Le groupe a été automatiquement mis en sourdine*' });
             } catch (error) {
                 console.error(error);
                     }
@@ -262,18 +262,18 @@ Meta({
         setTimeout(async () => {
             try {
                 await sock.groupSettingUpdate(from, 'not_announcement');
-                sock.sendMessage(from, { text: '🔊 *Group has been automatically unmuted*' });
+                sock.sendMessage(from, { text: '🔊 *Le groupe a été automatiquement démuté*' });
             } catch (error) {
                 console.error(error);
                   }
         }, unmuteDelay);
-        sock.sendMessage(from, { text: `Auto-mute has been set: _The group will be muted at ${mute_hr}:${mute_mun} and unmuted at ${unmute_hr}:${unmute_min}` });
+        sock.sendMessage(from, { text: `Auto-mute défini: _Le groupe sera mis en sourdine à ${mute_hr}:${mute_mun} et démuté à ${unmute_hr}:${unmute_min}` });
     }
 });
           
 Meta({
   command: 'online_mem',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message) => {
     const { from } = message;
 
@@ -303,11 +303,11 @@ Meta({
       }
     });
     const caption = 
-      '*Group: ' + groupMetadata.subject + '*\n' + '\n' +
-      '*🟢 Online Mems:*\n' + 
-      (meander_neck.length > 0 ? meander_neck.join('\n') : 'None') + '\n' + '\n' +
-      '*🔴 Offline Mems:*\n' + 
-      (exotic.length > 0 ? exotic.join('\n') : '_All_membs are online_') + '\n';
+      '*Groupe: ' + groupMetadata.subject + '*\n' + '\n' +
+      '*🟢 Membres en ligne:*\n' + 
+      (meander_neck.length > 0 ? meander_neck.join('\n') : 'Aucun') + '\n' + '\n' +
+      '*🔴 Membres hors ligne:*\n' + 
+      (exotic.length > 0 ? exotic.join('\n') : '_Tous les membres sont en ligne_') + '\n';
     await sock.sendMessage(from, { text: caption });
   }
 });   
@@ -315,7 +315,7 @@ Meta({
 const moment = require('moment');
 Meta({
     command: 'group_stats',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, message, args, author) => {
         const { from } = message;
       let msg_log = {};
@@ -354,16 +354,16 @@ Meta({
         });
         let most_gays = Object.keys(msoon).sort((a, b) => msoon[b] - msoon[a])[0];
         let most_dicks = `${most_gays}:00 - ${parseInt(most_gays) + 1}:00`;
-        let stats = `*📊 Group Stats: ${groupMetadata.subject} 📊*\n\n`;
-        stats += `*🔵 Total Members:* ${participants.length}\n`;
-        stats += `*💬 Total Messages_S:* ${msg_log[from].length}\n\n`;
-        stats += `*🥇 Most Active Members:*\n`;
+        let stats = `*📊 Statistiques du groupe: ${groupMetadata.subject} 📊*\n\n`;
+        stats += `*🔵 Total des membres:* ${participants.length}\n`;
+        stats += `*💬 Total des messages envoyés:* ${msg_log[from].length}\n\n`;
+        stats += `*🥇 Membres les plus actifs:*\n`;
         for (let i = 0; i < active_hrs.length; i++) {
             let rank = ['🥇', '🥈', '🥉'][i];
             let name = participants.find(p => p.id === active_hrs[i].jid).notify || active_hrs[i].jid.split('@')[0];
             stats += `${rank} ${name} - ${active_hrs[i].count} messages\n`;
         }
-        stats += `\n*🕒 Most Active Time:*\n${most_dicks}`;
+        stats += `\n*🕒 Heure la plus active:*\n${most_dicks}`;
         await sock.sendMessage(from, {
             caption: stats,
             image: { url: gc_icon }
@@ -388,12 +388,12 @@ sock.on('message-new', async (message) => {
 
 Meta({
     command: 'admin_list',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, message) => {
         const { from } = message;
         const groupMetadata = await sock.groupMetadata(from);
         const admins = groupMetadata.participants.filter(participant => participant.admin);
-        let adminz = '*Group Admins:* \n\n';
+        let adminz = '*Admins du groupe:* \n\n';
         admins.forEach(admin => {
             adminz += `@${admin.id.split('@')[0]}\n`;
         });
@@ -405,17 +405,17 @@ Meta({
 });
 
 const axios = require('axios');
-function xastralh(){const A=['2836944MwbMKo','720286viojka','60aWTXwX','Good\x20morning\x20everyone\x20🌞','2197305QZEaSz','75640ckGhLb','1919976hjHSCb','170228ltAYZK','5230008OTdASr','https://api.quotable.io/random','24uKHBGZ'];xastralh=function(){return A;};return xastralh();}function xastrall(h,l){const a=xastralh();return xastrall=function(o,r){o=o-0x131;let L=a[o];return L;},xastrall(h,l);}const xastralc=xastrall;(function(h,l){const L=xastrall,a=h();while(!![]){try{const o=parseInt(L(0x131))/0x1*(parseInt(L(0x136))/0x2)+-parseInt(L(0x13b))/0x3+-parseInt(L(0x133))/0x4*(parseInt(L(0x139))/0x5)+parseInt(L(0x134))/0x6+-parseInt(L(0x138))/0x7+-parseInt(L(0x132))/0x8+parseInt(L(0x137))/0x9;if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x7c286));const QUOTE_API=xastralc(0x135);let morning_str=null,night_str=null,morning_msg=xastralc(0x13a),night_msg='Good\x20night\x20everyone\x20🌙';
+function xastralh(){const A=['2836944MwbMKo','720286viojka','60aWTXwX','Bonjour tout le monde 🌞','2197305QZEaSz','75640ckGhLb','1919976hjHSCb','170228ltAYZK','5230008OTdASr','https://api.quotable.io/random','24uKHBGZ'];xastralh=function(){return A;};return xastralh();}function xastrall(h,l){const a=xastralh();return xastrall=function(o,r){o=o-0x131;let L=a[o];return L;},xastrall(h,l);}const xastralc=xastrall;(function(h,l){const L=xastrall,a=h();while(!![]){try{const o=parseInt(L(0x131))/0x1*(parseInt(L(0x136))/0x2)+-parseInt(L(0x13b))/0x3+-parseInt(L(0x133))/0x4*(parseInt(L(0x139))/0x5)+parseInt(L(0x134))/0x6+-parseInt(L(0x138))/0x7+-parseInt(L(0x132))/0x8+parseInt(L(0x137))/0x9;if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x7c286));const QUOTE_API=xastralc(0x135);let morning_str=null,night_str=null,morning_msg=xastralc(0x13a),night_msg='Bonne nuit tout le monde 🌙';
 Meta({
     command: 'set_daily',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, message, args) => {
         const { from, participant } = message;
         const isAdmin = participant.isAdmin;
         if (!isAdmin) {
-            return sock.sendMessage(from, { text: 'Only admins can use this command' });
+            return sock.sendMessage(from, { text: 'Seuls les admins peuvent utiliser cette commande' });
         }     if (args.length < 2) {
-            return sock.sendMessage(from, { text: 'use: *set_daily* <morning_time> <night_time> [morning_message] [night_message]' });
+            return sock.sendMessage(from, { text: 'utilisation: *set_daily* <heure_matin> <heure_soir> [message_matin] [message_soir]' });
         }
 
         morning_str = args[0];
@@ -424,22 +424,22 @@ Meta({
         morning_msg = args[2] || morning_msg; 
         night_msg = args[3] || night_msg; 
 
-        await sock.sendMessage(from, { text: `Daily messages set:\n- Morning at ${morning_str}: "${morning_msg}"\n- Night at ${night_str}: "${night_msg}"` });
+        await sock.sendMessage(from, { text: `Messages quotidiens définis:\n- Matin à ${morning_str}: "${morning_msg}"\n- Soir à ${night_str}: "${night_msg}"` });
     }
 });
 
 Meta({
     command: 'clear_msg',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, message) => {
         const { from, participant } = message;
         const isAdmin = participant.isAdmin;
 
         if (!isAdmin) {
-            return sock.sendMessage(from, { text: 'Only admins can use this command' });
+            return sock.sendMessage(from, { text: 'Seuls les admins peuvent utiliser cette commande' });
         }
-        function xastralh(){var A=['87TaNkro','1530496lsgGGL','59863OXTPXR','225228OsRSMn','253nfCyDg','19315mzyKkd','6BngyKD','140HQucVl','1524439ukvhWx','Good\x20night\x20everyone\x20🌙','150ehdNHh','Good\x20morning\x20everyone\x20🌞','31668nPNxOH','111906wBTMIU'];xastralh=function(){return A;};return xastralh();}function xastrall(h,l){var a=xastralh();return xastrall=function(o,r){o=o-0x113;var L=a[o];return L;},xastrall(h,l);}var xastralc=xastrall;(function(h,l){var L=xastrall,a=h();while(!![]){try{var o=-parseInt(L(0x11a))/0x1*(-parseInt(L(0x11e))/0x2)+-parseInt(L(0x118))/0x3*(-parseInt(L(0x116))/0x4)+parseInt(L(0x11d))/0x5*(-parseInt(L(0x114))/0x6)+parseInt(L(0x120))/0x7+parseInt(L(0x119))/0x8+parseInt(L(0x117))/0x9*(-parseInt(L(0x11f))/0xa)+-parseInt(L(0x11c))/0xb*(parseInt(L(0x11b))/0xc);if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x1c4dd),morning_str=null,night_str=null,morning_msg=xastralc(0x115),night_msg=xastralc(0x113));
-        await sock.sendMessage(from, { text: 'Daily messages cleared' });
+        function xastralh(){var A=['87TaNkro','1530496lsgGGL','59863OXTPXR','225228OsRSMn','253nfCyDg','19315mzyKkd','6BngyKD','140HQucVl','1524439ukvhWx','Bonne nuit tout le monde 🌙','150ehdNHh','Bonjour tout le monde 🌞','31668nPNxOH','111906wBTMIU'];xastralh=function(){return A;};return xastralh();}function xastrall(h,l){var a=xastralh();return xastrall=function(o,r){o=o-0x113;var L=a[o];return L;},xastrall(h,l);}var xastralc=xastrall;(function(h,l){var L=xastrall,a=h();while(!![]){try{var o=-parseInt(L(0x11a))/0x1*(-parseInt(L(0x11e))/0x2)+-parseInt(L(0x118))/0x3*(-parseInt(L(0x116))/0x4)+parseInt(L(0x11d))/0x5*(-parseInt(L(0x114))/0x6)+parseInt(L(0x120))/0x7+parseInt(L(0x119))/0x8+parseInt(L(0x117))/0x9*(-parseInt(L(0x11f))/0xa)+-parseInt(L(0x11c))/0xb*(parseInt(L(0x11b))/0xc);if(o===l)break;else a['push'](a['shift']());}catch(r){a['push'](a['shift']());}}}(xastralh,0x1c4dd),morning_str=null,night_str=null,morning_msg=xastralc(0x115),night_msg=xastralc(0x113));
+        await sock.sendMessage(from, { text: 'Messages quotidiens effacés' });
     }
 });
 
@@ -457,7 +457,7 @@ sock.ev.on('messages.upsert', async () => {
         } catch (error) {
             await sock.sendMessage(from, {
                 image: { url: 'https://ik.imagekit.io/eypz/1725719155620_rvfPmh1lL.png' },
-                caption: `*${morning_msg}*\n\nStay positive and keep moving forward`
+                caption: `*${morning_msg}*\n\nRestez positif et continuez d'avancer`
             });
         }
     }
@@ -474,7 +474,7 @@ sock.ev.on('messages.upsert', async () => {
         } catch (error) {
             await sock.sendMessage(from, {
                 image: { url: 'https://ik.imagekit.io/eypz/1725719170035_t13SGIUYv.png' },
-                caption: `*${night_msg}*\n\nRest well and recharge`
+                caption: `*${night_msg}*\n\nReposez-vous bien et rechargez-vous`
             });
         }
     }
@@ -482,35 +482,35 @@ sock.ev.on('messages.upsert', async () => {
 
 Meta({
   command: 'warn',
-  category: 'groups',
+  category: 'groupes',
   handler: async (sock, message, args, isGroup, author) => {
     if (!isGroup) return; 
 
     const { from } = message;
     const pushname = args[0]; 
-    const reason = args.slice(1).join(' ') || '*No reason*';
+    const reason = args.slice(1).join(' ') || '*Aucune raison*';
     const to_three = 3; 
     if (!pushname) {
-      await sock.sendMessage(from, { text: 'specify a user to warn*' });
+      await sock.sendMessage(from, { text: 'spécifiez un utilisateur à avertir*' });
       return;
     }   const pikachu = await WeAreGays(sock, from, pushname);
     const count = pikachu + 1;
     await sock.sendMessage(from, {
       text: `┏━━━━━━━━━━━━━━━━━━━━━┓\n` +
-            `┃      ⚠️ *Warning* ⚠️     \n` +
+            `┃      ⚠️ *Avertissement* ⚠️     \n` +
             `┣━━━━━━━━━━━━━━━━━━━━━┫\n` +
-            `┃ *▢ Number:* ${pushname}\n` +
-            `┃ *▢ Name:* ${pushname}\n` +
-            `┃ *▢ Count:* ${count}/${to_three}\n` +
-            `┃ *▢ Reason:* ${reason}\n` +
+            `┃ *▢ Numéro:* ${pushname}\n` +
+            `┃ *▢ Nom:* ${pushname}\n` +
+            `┃ *▢ Compteur:* ${count}/${to_three}\n` +
+            `┃ *▢ Raison:* ${reason}\n` +
             `┗━━━━━━━━━━━━━━━━━━━━━┛\n\n` +
             `┏━━━━━━━━━━━━━━━━━━━━━┓\n` +
-            `┃ *Please be cautious*\n` +
+            `┃ *Veuillez être prudent*\n` +
             `┗━━━━━━━━━━━━━━━━━━━━━┛`
     });
     if (count >= to_three) {
       await sock.groupParticipantsUpdate(from, [pushname], 'remove');
-      await sock.sendMessage(from, { text: `*${pushname} has been removed*` });
+      await sock.sendMessage(from, { text: `*${pushname} a été retiré*` });
     }
   }
 });
@@ -521,11 +521,10 @@ async function WeAreGays(sock, gcID, pushNama) {
   history.forEach(msg => {
     if (msg.message && msg.message.conversation) {
       const content = msg.message.conversation;
-      if (content.includes(`▢ Number: ${pushNama}`) && content.includes('⚠️ *Warning* ⚠️')) {
+      if (content.includes(`▢ Numéro: ${pushNama}`) && content.includes('⚠️ *Avertissement* ⚠️')) {
         count += 1;
       }
     }
   });
   return count;
-                 }
-        
+        }
