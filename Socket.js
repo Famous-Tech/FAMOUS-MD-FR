@@ -34,7 +34,7 @@ async function startBot() {
         auth: state,
         getMessage: async () => {
             return {
-                conversation: 'owner is diego call me naxor'
+                conversation: 'FAMOUS-TECH'
             }
         }
     });
@@ -51,7 +51,7 @@ async function startBot() {
                     const group_name = (await sock.groupMetadata(remoteJid)).subject;
                     const gender = store.contacts[participant]?.name || participant.split('@')[0];
                     if (Content_pdate) {
-                        const anti_del = `🔴 *Anti-Delete Alert* 🔴\n\n` +
+                        const anti_del = `🔴 *Alerte message supprimé détecté* 🔴\n\n` +
                             `👤 *Sender*: @${gender}\n` +
                             `⌚ *Time*: [${new Date().toLocaleString()}]`\n +
                             `📜 *Message*: ${Content_pdate}\n` +
@@ -84,7 +84,7 @@ async function startBot() {
     };
     const msgType = msg.messageType;
     const body = messageMapping[msgType]?.() || '';
-    const creator = config.MODS;
+    const creator = FAMOUS-TECH;
      const from = msg.key.remoteJid;
       const isGroup = from.endsWith('@g.us');
       if (isGroup) {
@@ -107,8 +107,8 @@ async function startBot() {
         ptt: true,
         contextInfo: {
             externalAdReply: {
-                title: '*_mentioned_x-astral_*',
-                body: '*_notification_naxor_*',
+                title: '*_mentioned_FAMOUS-MD_*',
+                body: '*_notification_*',
                 thumbnail: await axios.get(thumbnail, { responseType: 'arraybuffer' }).then(res => Buffer.from(res.data, 'binary')),
                 mediaType: 2,
               }
@@ -125,11 +125,11 @@ async function startBot() {
                         .map(admin => admin.id);
                     if (!groupAdmins.includes(msg.sender)) { 
                         if (cd_code[0] !== gc_code) {
-                            const Mzg_code = `*<===Alert===>*\n\n` +
+                            const Mzg_code = `*<===Alerte===>*\n\n` +
                                 `@${msg.sender.split('@')[0]}: not_allowed\n\n` +
-                                `🔗 *Link*: ${cd_code[0]}\n\n` +
-                                `⚠️ *Note*: unauthorized links will lead to removal\n` +
-                                `Adhere to gc_rules.`;                                   
+                                `🔗 *Lien*: ${cd_code[0]}\n\n` +
+                                `⚠️ *Note*: Les liens non autorisés seront suppripé\n` +
+                                `Attention aux conditions du groupe.`;                                   
 
                             await sock.sendMessage(from, { text: Mzg_code, mentions: [msg.sender] });
                             await sock.groupParticipantsUpdate(from, [msg.sender], 'remove');
@@ -163,7 +163,7 @@ async function startBot() {
                 const command_Type = body.charAt(config.PREFIX.length); 
                 const code_Eval = body.slice(config.PREFIX.length + 2).trim();
                 if (code_Eval === '') {
-                    await sock.sendMessage(from, { text: 'Provide_code to evaluate Example: !eval 2 + 2' });
+                    await sock.sendMessage(from, { text: 'Donne les chiffre à calculer Example: !eval 2 + 2' });
                     return;
                 } if (msg.sender === sock.user.id || config.MODS.includes(msg.sender)) {
                     try {
