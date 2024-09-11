@@ -14,15 +14,15 @@ Meta({
 
 Meta({
     command: 'translate',
-    category: 'utilities',
+    category: 'utilitaires',
     handler: async (sock, message, args) => {
         const { from } = message;
         const [targetLang, ...text] = args;
         const textToTranslate = text.join(' ');
         if (!targetLang || !textToTranslate) {
-            return sock.sendMessage(from, { text: 'use: *translate* <language-code> <text>' });
-        }    const res_stz = await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToTranslate)}&langpair=en|${targetLang}`);
+            return sock.sendMessage(from, { text: 'utilisation: préfixe +translate + diminutif de la langue et le texte à traduire' });
+        }    const res_stz = await axios.get(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textToTranslate)}&langpair=fr|${targetLang}`);
         const naxors = res_stz.data.responseData.translatedText;
-        await sock.sendMessage(from, { text: naxors });
+        await sock.sendMessage(from, { text: famous-tech });
     }
 });
