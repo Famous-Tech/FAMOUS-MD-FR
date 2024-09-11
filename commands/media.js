@@ -17,7 +17,7 @@ const speechClient = new SpeechClient();
 
 Meta({
     command: 'removebg',
-    category: 'media',
+    category: 'média',
     filename: 'removebg',
     handler: async (sock, message, author, args, quoted, languages) => {
         const { from } = message;
@@ -32,7 +32,7 @@ Meta({
                 headers: { 'Api-Key': config.DEEPAI_KEY, ...formData.getHeaders() }
             }); if (data.output_url) {
                  const res_str = await axios.get(data.output_url, { responseType: 'arraybuffer' });
-                await sock.sendMessage(from, { image: res_str.data, caption: '*Made with love*' }, MessageType.image);
+                await sock.sendMessage(from, { image: res_str.data, caption: '*Fait avec amour*' }, MessageType.image);
             } else {}
         } catch (error) {
             console.error(error);
@@ -42,7 +42,7 @@ Meta({
 
 Meta({
     command: 'video2gif',
-    category: 'media',
+    category: 'média',
     handler: async (sock, args, message, languages) => {
         const { from } = message;
         if (!message.message || !message.message.videoMessage) {
@@ -58,7 +58,7 @@ Meta({
             .save(gif_naxor)
             .on('end', async () => {
                 const gif_naxors = fs.readFileSync(gif_naxor);
-                await sock.sendMessage(from, { video: gif_naxors, caption: '*Made with love*', gifPlayback: true }, MessageType.video);
+                await sock.sendMessage(from, { video: gif_naxors, caption: '*MADE WITH 🤍 BY FAMOUS-TECH*', gifPlayback: true }, MessageType.video);
          fs.unlinkSync(video_);
                 fs.unlinkSync(gif_naxor);
             })
@@ -70,12 +70,12 @@ Meta({
 
 Meta({
     command: 'resize',
-    category: 'media',
+    category: 'média',
     handler: async (sock, args, message, languages) => {
       const { from } = message;
         const [width, height] = args;
         if (!width || !height || isNaN(width) || isNaN(height)) {
-            return sock.sendMessage(from, { text: 'Please specify valid width and height Usage: /resize 300 300' }, MessageType.text);
+            return sock.sendMessage(from, { text: 'Veuillez spécifier une largeur et une hauteur valides. Utilisation: /resize 300 300' }, MessageType.text);
         }     if (!message.message || !message.message.imageMessage) {
             return sock.sendMessage(from, { text: languages[config.LANGUAGE].IMAGE_MSG }, MessageType.text);
         }      const image_imgz = await sock.downloadMediaMessage(message);
@@ -83,7 +83,7 @@ Meta({
             const to_harzad = await sharp(image_imgz)
                 .resize(parseInt(width), parseInt(height))
                 .toBuffer();
-            await sock.sendMessage(from, { image: to_harzad, caption: '*Made with love*' }, MessageType.image);
+            await sock.sendMessage(from, { image: to_harzad, caption: '*Fait avec amour*' }, MessageType.image);
         } catch (err) {
             console.error(err);
             }
@@ -92,7 +92,7 @@ Meta({
             
 Meta({
   command: 'sticker',
-  category: 'media',
+  category: 'média',
   handler: async (sock, message, args, languages) => {
     const { from, message: msg } = message;
     const media = msg.imageMessage || msg.videoMessage || msg.stickerMessage;
@@ -115,7 +115,7 @@ Meta({
       ptt: false,
       contextInfo: {
         externalAdReply: {
-          title: '🤓 X-Astral',
+          title: 'FAMOUS-MD,
           body: packName,
           sourceUrl: '',
         }
@@ -128,7 +128,7 @@ Meta({
 let polls = {};
 Meta({
   command: 'vote',
-  category: 'group',
+  category: 'groupe',
   handler: async (sock, message, isGroup, args, languages) => {
     const { key, from, message: msg } = message;
     const input = args;
@@ -137,22 +137,22 @@ Meta({
         text: languages[config.LANGUAGE].GROUP_MSG }, { quoted: message });
     }if (!input) {
       return await sock.sendMessage(from, { 
-        text: 'Usage: !vote <topic> to create a poll, !vote <option> to vote' }, { quoted: message });
+        text: 'Utilisation: !vote <sujet> pour créer un sondage, !vote <option> pour voter' }, { quoted: message });
     } if (!polls[from]) {
       polls[from] = {
         topic: input,
         options: {},
         voters: []
       };
-      await sock.sendMessage(from, { text: `Poll created: ${input}\n\nTo vote, use: !vote <option>` }, { quoted: message });
+      await sock.sendMessage(from, { text: `Sondage créé: ${input}\n\nPour voter, utilisez: !vote <option>` }, { quoted: message });
     } else {
       const poll = polls[from];
       if (poll.voters.includes(key.participant)) {
-        return await sock.sendMessage(from, { text: 'You have already voted in this poll' }, { quoted: message });
+        return await sock.sendMessage(from, { text: 'Vous avez déjà voté dans ce sondage' }, { quoted: message });
       }
       poll.options[input] = (poll.options[input] || 0) + 1;
       poll.voters.push(key.participant);
-      let result = `*Poll:* ${poll.topic}\n\n`;
+      let result = `*Sondage:* ${poll.topic}\n\n`;
       for (let option in poll.options) {
         result += `*${option}:* ${poll.options[option]} votes\n`;
       }
@@ -163,7 +163,7 @@ Meta({
   
 Meta({
     command: 'animsticker',
-    category: 'media',
+    category: 'média',
     handler: async (sock, args, message, languages) => {
       const { from } = message;
         if (!message.message || (!message.message.videoMessage && !message.message.imageMessage)) {
@@ -204,7 +204,7 @@ Meta({
 
 Meta({
     command: 'transcribe',
-    category: 'media',
+    category: 'média',
     handler: async (sock, args, message, languages) => {
       const { from } = message;
         if (!message.message || !message.message.audioMessage) {
@@ -221,7 +221,7 @@ Meta({
             config: {
                 encoding: 'OGG_OPUS',
                 sampleRateHertz: 16000,
-                languageCode: 'en-US',
+                languageCode: 'fr-FR',
             },
         };
         try {
@@ -235,5 +235,3 @@ Meta({
             } fs.unlinkSync(audio_cn);
     }
 });
-                                    
-      
