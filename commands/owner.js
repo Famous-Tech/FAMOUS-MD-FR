@@ -6,7 +6,7 @@ const { MessageType } = require('@whiskeysockets/baileys');
 
 Meta({
   command: 'exe',
-  category: 'owner',
+  category: 'propriétaire',
   filename: __filename,
   handler: async (sock, message, args, author, languages) => {
     const { from } = message;
@@ -14,14 +14,14 @@ Meta({
       return sock.sendMessage(from, { text: languages[config.LANGUAGE].OWNER_MSG}, MessageType.text);
     const [Ext] = args;
     if (!Ext) {
-      return sock.sendMessage(from, { text: 'Please provide a filename\n naxor.js' }, { quoted: message });
+      return sock.sendMessage(from, { text: 'Veuillez fournir un nom de fichier\n naxor.js' }, { quoted: message });
     }   const fileExt = path.extname(Ext);
     if (fileExt !== '.js') {
-      return sock.sendMessage(from, { text: '*Only .js files*' }, { quoted: message });
+      return sock.sendMessage(from, { text: '*Seulement les fichiers .js*' }, { quoted: message });
     }   const filePath = path.join(__dirname, Ext);
       try {
       if (!fs.existsSync(filePath)) {
-        return sock.sendMessage(from, { text: '*_File not found_*' }, { quoted: message });
+        return sock.sendMessage(from, { text: '*_Fichier non trouvé_*' }, { quoted: message });
       } const code = fs.readFileSync(filePath, 'utf8');
       const sandbox = { sock, from, console, require };
       const func = new Function('sandbox', 'with (sandbox) { ' + code + ' }');
@@ -34,28 +34,28 @@ Meta({
 
 Meta({
   command: 'lang',
-  category: 'owner',
+  category: 'propriétaire',
   filename: __filename,
   handler: async (sock, message, args, author, languages) => {
     const { from } = message;
 if(!author){
 return sock.sendMessage(from,{text: languages[config.LANGUAGE].OWNER_MSG});
     if (!args.length) {
-      await sock.sendMessage(from, { text: `languages: en, sn, ml, zu` });
+      await sock.sendMessage(from, { text: `langues: en, sn, ml, zu` });
       return;
     }
     const newLang = args[0].toLowerCase();
     if (!['en', 'sn', 'ml', 'zu'].includes(newLang)) {
-      await sock.sendMessage(from, { text: 'Please choose from: en, sn, ml, zu' });
+      await sock.sendMessage(from, { text: 'Veuillez choisir parmi: en, sn, ml, zu' });
       return;
     } config.LANGUAGE = newLang;
-    await sock.sendMessage(from, { text: `Language changed:${newLang}` });
+    await sock.sendMessage(from, { text: `Langue changée:${newLang}` });
   },
 });
 
 Meta({
   command: 'cmd',
-  category: 'owner',
+  category: 'propriétaire',
   filename: __filename,
   handler: async (sock, message, args, author, languages) => {
     
@@ -69,23 +69,23 @@ commands.forEach(cmd => {
     if (!author) {
       return sock.sendMessage(from, { text: languages[config.LANGUAGE].OWNER_MSG });
     } if (args.length < 2) {
-      return sock.sendMessage(from, { text: "*cmd* <enable|disable> <command_name>" });
+      return sock.sendMessage(from, { text: "*cmd* <enable|disable> <nom_commande>" });
     } const action = args[0].toLowerCase();
     const cmd_naxor = args[1].toLowerCase();
 const toggle_cmd = commands.find(cmd => cmd.command === cmd_naxor);
     if (!toggle_cmd) {
-      return sock.sendMessage(from, { text: `"${cmd_naxor}" not found` });
+      return sock.sendMessage(from, { text: `"${cmd_naxor}" non trouvé` });
     }
 if (action === 'enable') {
       toggle_cmd.enabled = true;
       toggle_cmd.get_time = null;
-      sock.sendMessage(from, { text: `"${cmd_naxor}" has been enabled` });
+      sock.sendMessage(from, { text: `"${cmd_naxor}" a été activé` });
     } else if (action === 'disable') {
       toggle_cmd.enabled = false;
       toggle_cmd.get_time = new Date();
-      sock.sendMessage(from, { text: `"${cmd_naxor}" has been disabled` });
+      sock.sendMessage(from, { text: `"${cmd_naxor}" a été désactivé` });
     } else {
-      sock.sendMessage(from, { text: "*use* 'enable' or 'disable'" });
+      sock.sendMessage(from, { text: "*utilisez* 'enable' ou 'disable'" });
     }
   }
 });
@@ -97,7 +97,7 @@ sock.on('message', async message => {
   if (!command) return; 
   if (!command.enabled) {
     const get_time = command.get_time ? command.get_time.toLocaleString() : "";
-    const x_astral_cn = `*Command:* ${command.command}_disabled_\n*Time:* _${get_time}_\n*Category:* _${command.category}_`;
+    const x_astral_cn = `*Commande:* ${command.command}_désactivée_\n*Heure:* _${get_time}_\n*Catégorie:* _${command.category}_`;
     return sock.sendMessage(from, { text: x_astral_cn });
   }  if (typeof command.handler === 'function') {
     await command.handler(sock, message, args);
@@ -106,32 +106,32 @@ sock.on('message', async message => {
 
 Meta({
   command: 'status',
-  category: 'owner',
+  category: 'propriétaire',
   filename: __filename,
   handler: async (sock, message, args, author, languages) => {
     const { from } = message;
     if (!author) {
       return sock.sendMessage(from, { text: languages[config.LANGUAGE].OWNER_MSG });
     }   if (args.length < 1) {
-      return sock.sendMessage(from, { text: "*status* <command_name>" });
+      return sock.sendMessage(from, { text: "*status* <nom_commande>" });
     }   const naxors = args[0].toLowerCase();
     const command = commands.find(cmd => cmd.command === naxors);
-    const str_z = `*CMD:* ${command.command}\n*Status:* ${command.enabled ? 'Enabled' : 'Disabled'}\n${command.get_time ? '*Time:* ' + command.get_time.toLocaleString() : ''}`;
+    const str_z = `*CMD:* ${command.command}\n*Statut:* ${command.enabled ? 'Activé' : 'Désactivé'}\n${command.get_time ? '*Heure:* ' + command.get_time.toLocaleString() : ''}`;
     return sock.sendMessage(from, { text: str_z});
   }
 });
 
 Meta({
     command: 'antilink ?(*)',
-    category: 'group',
+    category: 'groupe',
     handler: async (sock, args, message, isGroup, author) => {
         const { from } = message;
 
       if (!isGroup) {
-            await sock.sendMessage(from, { text: 'This command can be used in a group' });
+            await sock.sendMessage(from, { text: 'Cette commande ne peut être utilisée que dans un groupe' });
             return;
         } if (!author) {
-            await sock.sendMessage(from, { text: 'Youre not allowed' });
+            await sock.sendMessage(from, { text: 'désolé mais Vous n\'êtes pas autorisé' });
             return;
          } if (!config.antilink) {
             config.antilink = {};
@@ -140,24 +140,23 @@ Meta({
         const Cmd = ['info'];
         if (enableCmd.includes(args[0])) {
             if (config.antilink[from]) {
-                await sock.sendMessage(from, { text: 'Antilink is already enabled' });
+                await sock.sendMessage(from, { text: 'Antilink est déjà activé' });
             } else {
                 config.antilink[from] = true;
-                await sock.sendMessage(from, { text: 'Antilink has been enabled' });
+                await sock.sendMessage(from, { text: 'Antilink a été activé' });
             }
         } else if (disableCmd.includes(args[0])) {
             if (!config.antilink[from]) {
-                await sock.sendMessage(from, { text: 'Antilink is already disabled' });
+                await sock.sendMessage(from, { text: 'Antilink est déjà désactivé' });
             } else {
                 config.antilink[from] = false;
-                await sock.sendMessage(from, { text: 'Antilink has been disabled' });
+                await sock.sendMessage(from, { text: 'Antilink a été désactivé' });
             } } else if (Cmd.includes(args[0])) {
             const status = config.antilink[from] ? 'ON' : 'OFF';
-            const footer = `*ANTILINK MANAGER*\nStatus: ${status}`;
+            const footer = `*GESTIONNAIRE ANTILINK*\nStatut: ${status}`;
             await sock.sendMessage(from, { text: footer });
         } else {
-            await sock.sendMessage(from, { text: `${config.PREFIX}antilink "on", "off", "enable", "disable", or "info"` });
+            await sock.sendMessage(from, { text: `${config.PREFIX}antilink "on", "off", "enable", "disable", ou "info"` });
         }
     }
 });
-                                   
