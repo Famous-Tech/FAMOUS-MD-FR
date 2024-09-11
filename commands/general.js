@@ -43,7 +43,6 @@ Meta({
             acc[category].push({ command, description });
             return acc;
         }, {});
-
         let menu_str = `╭───╼〔 𝐗-𝐀𝐒𝐓𝐑𝐀𝐋 〕\n`;
         menu_str += `┃ ✦ ${Unicode('Owner')} : ${config.OWNER}\n`;
         menu_str += `┃ ✦ ${Unicode('User')} : ${author}\n`;
@@ -59,7 +58,6 @@ Meta({
             });
             menu_str += `╰──────────╼\n`;
         });
-
         await sock.sendMessage(from, { text: menu_str });
     }
 });
