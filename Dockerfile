@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/Diegoson/X-Astral.git /X-Astral
-WORKDIR /X-Astral
+RUN git clone https://github.com/Famous-Tech/FAMOUS-MD.git /FAMOUS-MD 
+WORKDIR /FAMOUS-MD
 RUN npm install
-CMD ["node", "Socket.js"]
+CMD ["node", "famous.js"]
