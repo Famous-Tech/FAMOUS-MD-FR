@@ -1,47 +1,47 @@
-class connect_four {
-  constructor(player1, gun_man = false) {
-    this.boardWidth = 7;
-    this.boardHeight = 6;
-    this.board = this.createBoard();
-    this.players = [{ name: player1, disc: '🟥' }]; 
+class PuissanceQuatre {
+  constructor(joueur1, gun_man = false) {
+    this.largeurPlateau = 7;
+    this.hauteurPlateau = 6;
+    this.plateau = this.creerPlateau();
+    this.joueurs = [{ nom: joueur1, pion: '🟥' }]; 
     if (gun_man) {
-      this.players.push({ name: 'Bot', disc: '🟧' }); 
+      this.joueurs.push({ nom: 'Bot', pion: '🟧' }); 
       this.gun_man = true;
     } else {
-      this.players.push({ name: 'Player 2', disc: '🟧' }); 
+      this.joueurs.push({ nom: 'Joueur 2', pion: '🟧' }); 
       this.gun_man = false;
     }
-    this.currentPlayerIndex = 0;
-    this.isGameActive = true;
+    this.indiceJoueurActuel = 0;
+    this.partieActive = true;
   }
 
-  createBoard() {
-    return Array.from({ length: this.boardHeight }, () => Array(this.boardWidth).fill('⬜')); 
+  creerPlateau() {
+    return Array.from({ length: this.hauteurPlateau }, () => Array(this.largeurPlateau).fill('⬜')); 
   }
-  renderBoard() {
-    return this.board.map(row => row.join(' ')).join('\n');
+  afficherPlateau() {
+    return this.plateau.map(ligne => ligne.join(' ')).join('\n');
   }
-  isValidMove(col) {
-    return col >= 0 && col < this.boardWidth && this.board[0][col] === '⬜';
+  estCoupValide(colonne) {
+    return colonne >= 0 && colonne < this.largeurPlateau && this.plateau[0][colonne] === '⬜';
   }
-  dropDisc(col) {
-    for (let row = this.boardHeight - 1; row >= 0; row--) {
-      if (this.board[row][col] === '⬜') {
-        this.board[row][col] = this.players[this.currentPlayerIndex].disc;
-        return row;
+  lacherPion(colonne) {
+    for (let ligne = this.hauteurPlateau - 1; ligne >= 0; ligne--) {
+      if (this.plateau[ligne][colonne] === '⬜') {
+        this.plateau[ligne][colonne] = this.joueurs[this.indiceJoueurActuel].pion;
+        return ligne;
       }
     }
     return -1;
   }
 
-  checkWin(disc) {
-    for (let row = 0; row < this.boardHeight; row++) {
-      for (let col = 0; col < this.boardWidth; col++) {
+  verifierVictoire(pion) {
+    for (let ligne = 0; ligne < this.hauteurPlateau; ligne++) {
+      for (let colonne = 0; colonne < this.largeurPlateau; colonne++) {
         if (
-          (col <= this.boardWidth - 4 && this.board[row][col] === disc && this.board[row][col + 1] === disc && this.board[row][col + 2] === disc && this.board[row][col + 3] === disc) || 
-          (row <= this.boardHeight - 4 && this.board[row][col] === disc && this.board[row + 1][col] === disc && this.board[row + 2][col] === disc && this.board[row + 3][col] === disc) ||
-          (row <= this.boardHeight - 4 && col <= this.boardWidth - 4 && this.board[row][col] === disc && this.board[row + 1][col + 1] === disc && this.board[row + 2][col + 2] === disc && this.board[row + 3][col + 3] === disc) ||
-          (row >= 3 && col <= this.boardWidth - 4 && this.board[row][col] === disc && this.board[row - 1][col + 1] === disc && this.board[row - 2][col + 2] === disc && this.board[row - 3][col + 3] === disc) 
+          (colonne <= this.largeurPlateau - 4 && this.plateau[ligne][colonne] === pion && this.plateau[ligne][colonne + 1] === pion && this.plateau[ligne][colonne + 2] === pion && this.plateau[ligne][colonne + 3] === pion) || 
+          (ligne <= this.hauteurPlateau - 4 && this.plateau[ligne][colonne] === pion && this.plateau[ligne + 1][colonne] === pion && this.plateau[ligne + 2][colonne] === pion && this.plateau[ligne + 3][colonne] === pion) ||
+          (ligne <= this.hauteurPlateau - 4 && colonne <= this.largeurPlateau - 4 && this.plateau[ligne][colonne] === pion && this.plateau[ligne + 1][colonne + 1] === pion && this.plateau[ligne + 2][colonne + 2] === pion && this.plateau[ligne + 3][colonne + 3] === pion) ||
+          (ligne >= 3 && colonne <= this.largeurPlateau - 4 && this.plateau[ligne][colonne] === pion && this.plateau[ligne - 1][colonne + 1] === pion && this.plateau[ligne - 2][colonne + 2] === pion && this.plateau[ligne - 3][colonne + 3] === pion) 
         ) {
           return true;
         }
@@ -49,26 +49,25 @@ class connect_four {
     }
     return false;
   }
-  nextPlayer() {
-    this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
+  prochainJoueur() {
+    this.indiceJoueurActuel = this.indiceJoueurActuel === 0 ? 1 : 0;
   }
-  getCurrentPlayer() {
-    return this.players[this.currentPlayerIndex];
+  getJoueurActuel() {
+    return this.joueurs[this.indiceJoueurActuel];
   }
-  botMove() {
-    let col;
+  coupBot() {
+    let colonne;
     do {
-      col = Math.floor(Math.random() * this.boardWidth);
-    } while (!this.isValidMove(col));
-    return col;
+      colonne = Math.floor(Math.random() * this.largeurPlateau);
+    } while (!this.estCoupValide(colonne));
+    return colonne;
   }
 
-  resetGame() {
-    this.board = this.createBoard();
-    this.currentPlayerIndex = 0;
-    this.isGameActive = true;
+  reinitialiserPartie() {
+    this.plateau = this.creerPlateau();
+    this.indiceJoueurActuel = 0;
+    this.partieActive = true;
   }
 }
 
-module.exports = connect_four;
-                      
+module.exports = PuissanceQuatre;
