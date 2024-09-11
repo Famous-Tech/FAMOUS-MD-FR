@@ -38,23 +38,23 @@ const soccer_table = (slots) => {
 
 Meta({
   command: 'slot',
-  category: 'games',
+  category: 'jeux',
   filename: 'slot.js',
   handler: async (sock, message, args, author) => {
     const { from } = message;
     const slot_str = ['🍒', '🍋', '🍉', '🍇', '🔔', '⭐', '7️⃣'];
     if (args.length === 0) {
-      await sock.sendMessage(from, { text: 'Please specify the amount of points to bet\nUsage: slot [points]' });
+      await sock.sendMessage(from, { text: 'Veuillez spécifier le montant de points à parier\nUtilisation: slot [points]' });
       return;
     }
     const seck_mone = parseInt(args[0], 10);
     if (isNaN(seck_mone) || seck_mone <= 0) {
-      await sock.sendMessage(from, { text: 'Invalid points: Please enter a valid points' });
+      await sock.sendMessage(from, { text: 'Points invalides: Veuillez entrer un nombre de points valide' });
       return;
     }
     if (!cent_xp(author, seck_mone)) {
       const currents = get_Points(author);
-      await sock.sendMessage(from, { text: `_You do not have enough points_` });
+      await sock.sendMessage(from, { text: `_Vous n'avez pas assez de points_` });
       return;
     }
     const x_ser = () => slot_str[Math.floor(Math.random() * slot_str.length)];
@@ -69,14 +69,14 @@ Meta({
     if (slots[0].every((val, i) => val === slots[1][i] && val === slots[2][i])) {
       if (slots[0][0] === '7️⃣') {
         multi_winner = 100;
-        uwubani = 'Diamond';
+        uwubani = 'Diamant';
       } else {
         multi_winner = 50;
-        uwubani = 'Gold';
+        uwubani = 'Or';
       }
     } else if (slots.flat().some((val, i) => (val === slots[0][i % 3] && val === slots[1][i % 3]) || (val === slots[1][i % 3] && val === slots[2][i % 3]))) {
       multi_winner = 25;
-      uwubani = 'Silver';
+      uwubani = 'Argent';
     } else {
       multi_winner = -1;
     }
@@ -88,9 +88,9 @@ Meta({
       changed = seck_mone;
     } else {
       changed = seck_mone * multi_winner;
-      if (uwubani === 'Diamond') {
+      if (uwubani === 'Diamant') {
         diamonds_str = 1;  
-      } else if (uwubani === 'Gold') {
+      } else if (uwubani === 'Or') {
         gold_str = 1;  
       }
     }
@@ -99,15 +99,15 @@ Meta({
     const wayiwayi = get_Diamonds(author);
     const magolide = get_Gold(author);
     const naxor_ser = `
-*🎰 Slot Machine 🎰*
+*🎰 Machine à Sous 🎰*
 ${naxors}
 ${multi_winner > 0 
-      ? `🎉 Congrats won _${changed}_,earned ${diamonds_str ? '1 Diamond' : gold_str ? '1 Gold' : ''}` 
-      : `😢 Sorry, lost _${seck_mone} p_`}
+      ? `🎉 Félicitations, vous avez gagné _${changed}_, gagné ${diamonds_str ? '1 Diamant' : gold_str ? '1 Or' : ''}` 
+      : `😢 Désolé, vous avez perdu _${seck_mone} p_`}
       
-*💰 Bank Balance*: _${ama_points} p_
-*💎 Diamonds*: _${wayiwayi}_
-*🏆 Gold*: _${magolide}_
+*💰 Solde Bancaire*: _${ama_points} p_
+*💎 Diamants*: _${wayiwayi}_
+*🏆 Or*: _${magolide}_
     `;
 await sock.sendMessage(from, { text: naxor_ser });
   },
@@ -115,7 +115,7 @@ await sock.sendMessage(from, { text: naxor_ser });
 
 Meta({
   command: 'spin',
-  category: 'games',
+  category: 'jeux',
   filename: 'spin.js',
   handler: async (sock, message, author) => {
     const { from } = message;
@@ -124,8 +124,8 @@ Meta({
     update_eco(author, xps);
     const str_cs = get_Points(author);
     const spun = `
-      *🎉 You earn:* _${xps} p_
-      *💰 Balance_is:* _${str_cs} p&
+      *🎉 Vous avez gagné:* _${xps} p_
+      *💰 Votre solde est de:* _${str_cs} p_
     `;
     await sock.sendMessage(from, { text: spun });
   },
