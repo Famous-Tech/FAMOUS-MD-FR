@@ -52,10 +52,10 @@ async function startBot() {
                     const gender = store.contacts[participant]?.name || participant.split('@')[0];
                     if (Content_pdate) {
                         const anti_del = `🔴 *Alerte message supprimé détecté* 🔴\n\n` +
-                            `👤 *Sender*: @${gender}\n` +
-                            `⌚ *Time*: [${new Date().toLocaleString()}]`\n +
+                            `👤 *Expéditeur*: @${gender}\n` +
+                            `⌚ *Heure*: [${new Date().toLocaleString()}]\n` +
                             `📜 *Message*: ${Content_pdate}\n` +
-                            `🚨 *Note*: Deleted`;
+                            `🚨 *Note*: Supprimé`;
                         await sock.sendMessage(remoteJid, {
                             text: anti_del,
                             mentions: [participant]
@@ -84,12 +84,12 @@ async function startBot() {
     };
     const msgType = msg.messageType;
     const body = messageMapping[msgType]?.() || '';
-    const creator = FAMOUS-TECH;
+    const creator = 'FAMOUS-TECH';
      const from = msg.key.remoteJid;
       const isGroup = from.endsWith('@g.us');
       if (isGroup) {
          const groupMetadata = await sock.groupMetadata(from);
-         console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Group: ${groupMetadata.subject}, Message: ${body}, Sender: ${msg.sender}`));
+         console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Groupe: ${groupMetadata.subject}, Message: ${body}, Expéditeur: ${msg.sender}`));
     if (msg.message.extendedTextMessage && msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.mentionedJid) {
       const mentionedJid = msg.message.extendedTextMessage.contextInfo.mentionedJid;
         const mentionedJidList = await Promise.all(
@@ -107,7 +107,7 @@ async function startBot() {
         ptt: true,
         contextInfo: {
             externalAdReply: {
-                title: '*_mentioned_FAMOUS-MD_*',
+                title: '*_mention_FAMOUS-MD_*',
                 body: '*_notification_*',
                 thumbnail: await axios.get(thumbnail, { responseType: 'arraybuffer' }).then(res => Buffer.from(res.data, 'binary')),
                 mediaType: 2,
@@ -126,9 +126,9 @@ async function startBot() {
                     if (!groupAdmins.includes(msg.sender)) { 
                         if (cd_code[0] !== gc_code) {
                             const Mzg_code = `*<===Alerte===>*\n\n` +
-                                `@${msg.sender.split('@')[0]}: not_allowed\n\n` +
+                                `@${msg.sender.split('@')[0]}: non_autorisé\n\n` +
                                 `🔗 *Lien*: ${cd_code[0]}\n\n` +
-                                `⚠️ *Note*: Les liens non autorisés seront suppripé\n` +
+                                `⚠️ *Note*: Les liens non autorisés seront supprimés\n` +
                                 `Attention aux conditions du groupe.`;                                   
 
                             await sock.sendMessage(from, { text: Mzg_code, mentions: [msg.sender] });
@@ -138,7 +138,7 @@ async function startBot() {
                 }
             }
         } else {
-            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Sender: ${msg.sender}`));
+            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Expéditeur: ${msg.sender}`));
         }
         const isBotAdmin = msg.sender === sock.user.id;
         const mode_locked = config.MODS.includes(msg.sender);
@@ -163,7 +163,7 @@ async function startBot() {
                 const command_Type = body.charAt(config.PREFIX.length); 
                 const code_Eval = body.slice(config.PREFIX.length + 2).trim();
                 if (code_Eval === '') {
-                    await sock.sendMessage(from, { text: 'Donne les chiffre à calculer Example: !eval 2 + 2' });
+                    await sock.sendMessage(from, { text: 'Donnez les chiffres à calculer. Exemple: !eval 2 + 2' });
                     return;
                 } if (msg.sender === sock.user.id || config.MODS.includes(msg.sender)) {
                     try {
@@ -247,9 +247,9 @@ if (new_level > before) {
         const message_cap = 
             `🌟 *Level Up* 🌟\n` +
             `╭─────\n` +
-            `│ *Congrats*: @${wats_user.split('@')[0]}\n` +
-            `│ *Youve reached level*: ${new_level}\n` +
-            `│ *Keep it up* 💪\n` +
+            `│ *Félicitations*: @${wats_user.split('@')[0]}\n` +
+            `│ *Vous avez atteint le niveau*: ${new_level}\n` +
+            `│ *Continuez comme ça* 💪\n` +
             `╰─────`;
         await sock.sendMessage(from, {
             image: level_card,
@@ -263,19 +263,19 @@ if (new_level > before) {
                     }
     if (body.startsWith(`${config.PREFIX}mute`)) {
                 if (!isGroup) {
-                    await sock.sendMessage(from, { text: 'This command can only be used in groups' });
+                    await sock.sendMessage(from, { text: 'Cette commande ne peut être utilisée que dans des groupes' });
                     return;
                 }
                 const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
                 const isBotAdmin = msg.sender === sock.user.id;
                 const mode_locked = config.MODS.includes(msg.sender);
                 if (!isBotAdmin && !mode_locked && !isAdmin) {
-                    await sock.sendMessage(from, { text: '*_You need to be an admin to use this command_*' });
+                    await sock.sendMessage(from, { text: '*_Vous devez être un administrateur pour utiliser cette commande_*' });
                     return;
                 } const args = body.split(' ');
                 const mute_dt = parseInt(args[1]);
                 if (isNaN(mute_dt) || mute_dt <= 0) {
-                    await sock.sendMessage(from, { text: 'Specify a valid duration in minutes' });
+                    await sock.sendMessage(from, { text: 'Spécifiez une durée valide en minutes' });
                     return;
                 } const announcement_dt = 'announcement';
                 const mute_ms = mute_dt * 60000;
@@ -284,26 +284,26 @@ if (new_level > before) {
                         announcement: announcement_dt,
                         mute: mute_ms
                     });
-                    await sock.sendMessage(from, { text: `*Group muted*: ${args[1]} *_minutes_*` });
+                    await sock.sendMessage(from, { text: `*Groupe muet*: ${args[1]} *_minutes_*` });
                 } catch (error) {
                   }
             } else if (body.startsWith(`${config.PREFIX}unmute`)) {
                 if (!isGroup) {
-                    await sock.sendMessage(from, { text: 'Cette commande peut être seulement utilisé dans des groupes.' });
+                    await sock.sendMessage(from, { text: 'Cette commande ne peut être utilisée que dans des groupes.' });
                     return;
                 }
                 const isAdmin = groupMetadata.participants.some(participant => participant.id === msg.sender && participant.admin !== null);
                 const isBotAdmin = msg.sender === sock.user.id;
                 const mode_locked = config.MODS.includes(msg.sender);
                 if (!isBotAdmin && !mode_locked && !isAdmin) {
-                    await sock.sendMessage(from, { text: '*_désolé mais il faut être un admin pour utiliser cette commande_*' });
+                    await sock.sendMessage(from, { text: '*_Désolé, mais vous devez être un administrateur pour utiliser cette commande_*' });
                     return;
                 } try {
                     await sock.groupUpdate(from, { 
                         announcement: 'not_announcement',
                         mute: 0 
                     });
-                    await sock.sendMessage(from, { text: '*Group ouvert!✅*' });
+                    await sock.sendMessage(from, { text: '*Groupe ouvert!✅*' });
                 } catch (error) {
                 }
             }
@@ -334,7 +334,7 @@ for (let participant of participants) {
         naxorz = await canvafy.createImage(600, 300)
             .setBackgroundColor('#1A1A1A')
             .drawCircleImage(profile_pik, { x: 100, y: 150, radius: 75 })
-            .setText('Welcome!', {
+            .setText('Bienvenue!', {
                 x: 250, y: 50, fontSize: 40, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 3
             })
@@ -342,27 +342,27 @@ for (let participant of participants) {
                 x: 250, y: 150, fontSize: 30, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 2
             })
-            .setText(`Group: ${groupName}`, {
+            .setText(`Groupe: ${groupName}`, {
                 x: 250, y: 200, fontSize: 25, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 2
             })
-            .setText(`Time: ${time}`, {
+            .setText(`Heure: ${time}`, {
                 x: 250, y: 250, fontSize: 20, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 2
             })
             .toBuffer();
         message = `┌────\n` +
             `│ 👋 *Bienvenue à vous* @${name}\n` +
-            `│ 🏡 *Nous sommes enchanté de vous accueillir dans*: ${groupName}\n` +
-            `│ 🕒 *Vous êtes venus à*: ${time}\n` +
-            `│ 🤗 *Nous sommes très content de ta venue*\n` +
+            `│ 🏡 *Nous sommes enchantés de vous accueillir dans*: ${groupName}\n` +
+            `│ 🕒 *Vous êtes arrivé à*: ${time}\n` +
+            `│ 🤗 *Nous sommes très content de votre venue*\n` +
             `└─────────────┘`;
         console.log(chalk.rgb(0, 255, 0)(`[${time}] ${groupName}: @${name}`));
     } else if (action === 'remove') {
         naxorz = await canvafy.createImage(600, 300)
             .setBackgroundColor('#1A1A1A')
             .drawCircleImage(profile_pik, { x: 100, y: 150, radius: 75 })
-            .setText('Goodbye!', {
+            .setText('Au revoir!', {
                 x: 250, y: 50, fontSize: 40, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 3
             })
@@ -370,18 +370,18 @@ for (let participant of participants) {
                 x: 250, y: 150, fontSize: 30, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 2
             })
-            .setText(`Group: ${groupName}`, {
+            .setText(`Groupe: ${groupName}`, {
                 x: 250, y: 200, fontSize: 25, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 2
             })
-            .setText(`Time: ${time}`, {
+            .setText(`Heure: ${time}`, {
                 x: 250, y: 250, fontSize: 20, color: 'white',
                 align: 'left', stroke: 'black', strokeWidth: 2
             })
             .toBuffer();
         message = `┌────\n` +
             `│ 😔 *Au revoir*, @${name}\n` +
-            `│ 🏡 *Tu nous manqueras tous içi à*: ${groupName}\n` +
+            `│ 🏡 *Tu nous manqueras tous ici à*: ${groupName}\n` +
             `│ 🕒 *Tu es parti à*: ${time}\n` +
             `│ 💔 *Tu vas nous manquer 😭😢*\n` +
             `└─────────────┘`;
@@ -410,18 +410,18 @@ for (let participant of participants) {
 
         if (connection === 'close') {
             if (lastDisconnect.error?.output?.statusCode === DisconnectReason.loggedOut) {
-                console.log(chalk.red('Connection closed => Logged out'));
+                console.log(chalk.red('Connexion fermée => Déconnecté'));
             } else {
-                console.log(chalk.red('Connection closed => Reconnecting...'));
+                console.log(chalk.red('Connexion fermée => Reconnexion en cours...'));
                 startBot();
             }
         } else if (connection === 'open') {     
-        console.log("⬇️ Installations des Plugins...");
+        console.log("⬇️ Installation des Plugins...");
         fs.readdirSync(`${__dirname}/commmands`)
            .filter(file => file.endsWith('.js'))
            .forEach(file => require(`${__dirname}/commands/${file}`));
-        console.log("✅  Cool ! les plugins ont étés installés avec succès");          
-            console.log(chalk.magenta('_Connected_'));
+        console.log("✅  Cool ! Les plugins ont été installés avec succès");          
+            console.log(chalk.magenta('Connecté avec succès'));
         }
     });
 }
@@ -434,4 +434,4 @@ sock.ev.on('call', async (update) => {
     }
 });
 
-startBot();       
+startBot();
