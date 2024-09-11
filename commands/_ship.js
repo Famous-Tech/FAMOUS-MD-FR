@@ -10,15 +10,15 @@ Meta({
     const { from } = message;
     const mentioned = mentionedJid || [];
         if (mentioned.length !== 2) {
-      await sock.sendMessage(from, { text: "Please mention_two users" });
+      await sock.sendMessage(from, { text: "Veuillez mentionner deux utilisateurs" });
       return;
     } try {
       const pro_ur = await Promise.all(mentioned.map(jid => sock.profilePictureUrl(jid)));
       const avatars = await Promise.all(pro_ur.map(url => fetch(url).then(res => res.buffer())));
       const percentage = Math.floor(Math.random() * 101);
       const ratings = [
-        'Awful', 'Very Bad', 'Poor', 'Average', 'Good',
-        'Great', 'Amazing', 'XAstral', 'Virgin', 'Loser'
+        'Horrible', 'Très Mauvais', 'Médiocre', 'Moyen', 'Bon',
+        'Génial', 'Incroyable', 'Xastral', 'Vierge', 'Perdant'  // thanks to diegoson for the base bot 🤍 very good
       ];
       const rating = ratings[Math.floor(percentage / 10)];
       const ship_Card = await canvafy.createImage(500, 250)  
@@ -34,8 +34,8 @@ Meta({
           align: 'center', stroke: 'black', strokeWidth: 2
         })  
         .toBuffer();
-      const mention_Tags = mentioned.map(jid => `@${jid.split('@')[0]}`).join(' and ');
-      const caption = `*Ship Result*\n${percentage}% Compatibility\n${mention_Tags}\n*Rating*: *${rating}*`;
+      const mention_Tags = mentioned.map(jid => `@${jid.split('@')[0]}`).join(' et ');
+      const caption = `*Résultat du Couplage*\n${percentage}% de Compatibilité\n${mention_Tags}\n*Évaluation*: *${rating}*`;
       await sock.sendMessage(from, {
         image: ship_Card,
         caption,
@@ -46,4 +46,3 @@ Meta({
         }
     }
 });
-                                               
