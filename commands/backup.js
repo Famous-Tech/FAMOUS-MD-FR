@@ -4,7 +4,7 @@ const path = require('path');
 
 Meta({
   command: 'backup',
-  category: 'utility',
+  category: 'utilitaire',
   handler: async (sock, message, args) => {
     const { from } = message;
 
@@ -12,7 +12,7 @@ Meta({
       const groupMetadata = await sock.groupMetadata(from);
       const participants = groupMetadata.participants.map(p => ({
         jid: p.jid,
-        pushName: p.pushName || 'No Name',
+        pushName: p.pushName || 'Pas de nom',
         isAdmin: p.isAdmin
       }));
       const messages = await sock.getChatHistory(from);
@@ -35,7 +35,7 @@ Meta({
       }
       const filePath = path.join(backupDir, `backup-${from}-${Date.now()}.json`);
       fs.writeFileSync(filePath, JSON.stringify(backupData, null, 2), 'utf8');
-      await sock.sendMessage(from, { text: `Data saved to ${filePath}.` }, { quoted: message });
+      await sock.sendMessage(from, { text: `Données enregistrées dans ${filePath}.` }, { quoted: message });
     } catch (error) {
       console.error(error);
       }
