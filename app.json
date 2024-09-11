@@ -1,26 +1,26 @@
 {
-  "name": "x-astral@3.0.0",
-  "description": "",
+  "name": "famous-md@1.0.0",
+  "description": "famous-md bot whattsappen Français",
   "keywords": ["baileys"],
   "env": {
       "PREFIX": {
-      "description": "Command prefix handler",
+      "description": "Préfixe du bot c’est avec ce symbole qui chaque commande que vous envoyez au bot doit commencer",
       "required": true,
-      "value": "!"
+      "value": "."
     },
     "SESSION_ID": {
-      "description": "Session key for your qr",
+      "description": "session pour le bot",
       "required": true,
     },
     "MODE": {
-      "description": "self mode_for bot_X_public",
+      "description": "Mode pour le bot (privé ou public)",
       "required": true,
       "value": "private"
     },
     "MODS": {
-      "description": "Admin of moderator to ur bot",
+      "description": "Administrateurs ou modérateurs de votre bot",
       "required": true,
-      "value": "['27686881509@s.whatsapp.net']"
+      "value": "['50943782508@s.whatsapp.net']"
     }
   },
   "formation": {
@@ -40,4 +40,3 @@
     }
   ]
 }
-
