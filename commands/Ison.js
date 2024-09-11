@@ -4,7 +4,7 @@ const { jidDecode } = require('@whiskeysockets/baileys');
 
 Meta({
   command: 'ison',
-  category: 'utility',
+  category: 'utilitaire',
   handler: async (sock, message, args) => {
     const { key, from, isGroup } = message;
     const { remoteJid } = key;
@@ -12,12 +12,12 @@ Meta({
     const numbers = args.input.trim().split(' ').slice(1);
     if (numbers.length === 0) {
         return await sock.sendMessage(remoteJid, {
-        text: `*Usage:* ${config.PREFIX}ison 27686881×××`,
+        text: `*Utilisation:* ${config.PREFIX}ison 5094378×××`,
         quoted: message
       });
     }
 
-    let res_matched = '*WhatsApp Num Ison:*\n\n';
+    let res_matched = '*Numéros WhatsApp Ison:*\n\n';
     const results = [];
 
     for (const number of numbers) {
@@ -33,27 +33,27 @@ Meta({
           results.push({
             jid: parsedJid.user + '@' + parsedJid.server,
             number: parsedJid.user,
-            about: about || 'No status',
+            about: about || 'Pas de statut',
             date: statusTimestamp ? Date_Jid : '_Non_',
           });
 
-          res_matched += `*Number:* ${parsedJid.user}\n`;
+          res_matched += `*Numéro:* ${parsedJid.user}\n`;
           res_matched += `*WhatsApp_JID:* ${parsedJid.user + '@' + parsedJid.server}\n`;
-          res_matched += `*About:* ${about || 'No status'}\n`;
-          res_matched += `*Status_On:* ${Date_Jid}\n`;
+          res_matched += `*À propos:* ${about || 'Pas de statut'}\n`;
+          res_matched += `*Statut_On:* ${Date_Jid}\n`;
           res_matched += `─────────────────────\n`;
         } else {
-          res_matched += `- ${number}: Not Registered on WhatsApp\n`;
+          res_matched += `- ${number}: Non enregistré sur WhatsApp\n`;
         }
       } catch (error) {
-        res_matched += `- ${number}: Error\n`;
+        res_matched += `- ${number}: Erreur\n`;
       }
     }
 
     if (results.length > 0) {
       res_matched += `\n*Total:* ${results.length}`;
     } else {
-      res_matched = 'No WhatsApp accounts found for the provided *num*';
+      res_matched = 'Aucun compte WhatsApp trouvé pour les *numéros* fournis';
     }
     await sock.sendMessage(remoteJid, { text: res_matched }, { quoted: message });
   }
