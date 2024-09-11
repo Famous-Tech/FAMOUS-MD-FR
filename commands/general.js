@@ -3,7 +3,6 @@ const config = require('../config');
 
 Meta({
     command: 'menu',
-    category: 'utility',
     handler: async (sock, args, message, author) => {
         const { from } = message;
       
