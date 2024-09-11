@@ -10,16 +10,16 @@ Meta({
   handler: async (sock, message, args) => {
     const { from } = message;
       if (!args) {
-      return await sock.sendMessage(from, { text: 'Usage: !youtube [search query]' }, { quoted: message });
+      return await sock.sendMessage(from, { text: 'Utilisation: .youtube [recherche]' }, { quoted: message });
     }
     try {
       const results = await YT_SEARCH(args);
       if (results.length === 0) {
-        return await sock.sendMessage(from, { text: 'No results found' }, { quoted: message });
+        return await sock.sendMessage(from, { text: 'Aucun résultat trouvé' }, { quoted: message });
       } const res = results.map((video, index) => 
-        `${index + 1}. ${video.title}\n${video.url}\n${video.description}\n*Duration*: ${video.duration}\n`
+        `${index + 1}. ${video.title}\n${video.url}\n${video.description}\n*Durée*: ${video.duration}\n`
       ).join('\n');
-      await sock.sendMessage(from, { text: `**YouTube Search:**\n\n${res}` }, { quoted: message });
+      await sock.sendMessage(from, { text: `**Recherche YouTube:**\n\n${res}` }, { quoted: message });
     } catch (error) {
         }
   }
@@ -32,14 +32,14 @@ Meta({
     const { from } = message;
     const query_url = args.join(' ').trim();
     if(query_url) {
-    return await sock.sendMessage(from, { text: 'Provide YouTube url/song mame' });
+    return await sock.sendMessage(from, { text: 'Fournir une URL YouTube/nom de la chanson' });
         }
     const outP_kg = path.join(__dirname, 'temp_audio.mp3');
     try {
       if (query_url.startsWith('http')) {
         await downloadYouTubeAudio(query_url, outP_kg);
       } else {
-        await searchAndDownload(query_url, outP_kg 'audio');
+        await searchAndDownload(query_url, outP_kg, 'audio');
         }
       if (fs.existsSync(outP_kg)) {
         const stats = fs.statSync(outP_kg);
@@ -49,10 +49,10 @@ Meta({
         await sock.sendMessage(from, {
           audio: { url: outP_kg },
           mimetype: 'audio/mp4',
-          caption: `*_Name_*: ${path.basename(outP_kg)}\n*_Size*_: ${fileSize}\n*_Bytes_*: ${stats.size}\n*_ID_*: ${audioId}`,
+          caption: `*_Nom_*: ${path.basename(outP_kg)}\n*_Taille_*: ${fileSize}\n*_Octets_*: ${stats.size}\n*_ID_*: ${audioId}`,
           externalAdReply: {
-            title: 'Mp3_Down',
-            body: 'Downloaded',
+            title: 'Téléchargement Mp3',
+            body: 'Téléchargé',
             thumbnail: { url: thumbnail_id }
           }
         });
@@ -72,7 +72,7 @@ Meta({
     const { from } = message;
     const audio_url = args.join(' ').trim();
     if(audio_url) {
-    return await sock.sendMessage(from, { text: 'Provide YouTube url/' });
+    return await sock.sendMessage(from, { text: 'Fournir une URL YouTube/' });
       }
     const Path_str = path.join(__dirname, 'temp_audio.mp3');
     try {
@@ -85,10 +85,10 @@ Meta({
         await sock.sendMessage(from, {
           audio: { url: Path_str },
           mimetype: 'audio/mp4',
-          caption: `*_Name_*: ${path.basename(Path_str)}\n*_Size_*: ${fileSize}\n*_Bytes_*: ${stats.size}\n*_ID_*: ${audioId}`,
+          caption: `*_Nom_*: ${path.basename(Path_str)}\n*_Taille_*: ${fileSize}\n*_Octets_*: ${stats.size}\n*_ID_*: ${audioId}`,
           externalAdReply: {
-            title: 'Audio_Mp3',
-            body: 'Done',
+            title: 'Audio Mp3',
+            body: 'Terminé',
             thumbnail: { url: thumbnail_cn }
           }
         });
@@ -108,7 +108,7 @@ Meta({
     const { from } = message;
     const video_url = args.join(' ').trim();
     if(video_url) {
-    return await sock.sendMessage(from, { text: 'Provide YouTube url/' });
+    return await sock.sendMessage(from, { text: 'Fournir une URL YouTube/' });
     }
     const exit = path.join(__dirname, 'temp_video.mp4');
     try {
@@ -120,7 +120,7 @@ Meta({
         await sock.sendMessage(from, {
           video: { url: exit },
           mimetype: 'video/mp4',
-          caption: `✗ *V I D - D O W N*\n\n*Name*: ${path.basename(exit)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
+          caption: `✗ *V I D - D O W N*\n\n*Nom*: ${path.basename(exit)}\n*Taille*: ${fileSize}\n*Octets*: ${stats.size}\n*ID*: ${videoId}`
         });
         fs.unlinkSync(exit); 
       } else {
@@ -138,7 +138,7 @@ Meta({
     const { from } = message;
     const search = args.join(' ').trim();
     if(search) {
-    return await sock.sendMessage(from, { text: 'Provide name/url' });
+    return await sock.sendMessage(from, { text: 'Fournir un nom/URL' });
      }
     const naxor = path.join(__dirname, 'temp_video.mp4');
     try {
@@ -154,7 +154,7 @@ Meta({
         await sock.sendMessage(from, {
           video: { url: naxor },
           mimetype: 'video/mp4',
-          caption: `✗ *V I D - D O W N*\n\n*Name*: ${path.basename(naxor)}\n*Size*: ${fileSize}\n*Bytes*: ${stats.size}\n*ID*: ${videoId}`
+          caption: `*_TÉLECHARGÉ PAR FAMOUS-MD🤍_*\n\n*Nom*: ${path.basename(naxor)}\n*Taille*: ${fileSize}\n*Octets*: ${stats.size}\n*ID*: ${videoId}`
         });
 
         fs.unlinkSync(naxor); 
