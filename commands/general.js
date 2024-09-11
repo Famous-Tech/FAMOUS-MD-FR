@@ -8,7 +8,7 @@ Meta({
       
         const text = args.join(' ');
         if (text.startsWith(`${config.PREFIX}list`)) {
-            let list_str = '𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐬 𝐋𝐢𝐬𝐭:\n';
+            let list_str = '𝐋𝐢𝐬𝐭𝐞 𝐝𝐞𝐬 𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐞𝐬:\n';
             commands.forEach(cmd => {
                 list_str += `- ${Unicode(cmd.command)}\n`;
             });
@@ -22,9 +22,9 @@ Meta({
             const cmd = commands.find(cmd => cmd.command === command_name);
             if (cmd) {
                 const { category, description } = cmd;
-                const details_str = `✦ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝: ${Unicode(command_name)}\n` +
-                                    `✦ 𝐅𝐢𝐥𝐞𝐧𝐚𝐦𝐞: ${filename}\n` +
-                                    `✦ 𝐂𝐚𝐭𝐞𝐠𝐨𝐫𝐲: ${Unicode(category)}\n` +
+                const details_str = `✦ 𝐂𝐨𝐦𝐦𝐚𝐧𝐝𝐞: ${Unicode(command_name)}\n` +
+                                    `✦ 𝐅𝐢𝐜𝐡𝐢𝐞𝐫: ${filename}\n` +
+                                    `✦ 𝐂𝐚𝐭é𝐠𝐨𝐫𝐢𝐞: ${Unicode(category)}\n` +
                                     `✦ 𝐃𝐞𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧: ${Unicode(description)}`;
 
                 await sock.sendMessage(from, { text: details_str });
@@ -43,11 +43,12 @@ Meta({
             acc[category].push({ command, description });
             return acc;
         }, {});
-        let menu_str = `╭───╼〔 𝐗-𝐀𝐒𝐓𝐑𝐀𝐋 〕\n`;
-        menu_str += `┃ ✦ ${Unicode('Owner')} : ${config.OWNER}\n`;
-        menu_str += `┃ ✦ ${Unicode('User')} : ${author}\n`;
+        let menu_str = `╭───╼〔 *_FAMOUS-MD_* 〕\n`;
+        menu_str += `┃ ✦ ${Unicode('Propriétaire')} : ${config.OWNER}\n`;
+        menu_str += `┃ ✦ ${Unicode('Utilisateur')} : ${author}\n`;
         menu_str += `┃ ✦ ${Unicode('Mode')} : ${config.MODE}\n`;
         menu_str += `┃ ✦ ${Unicode('Version')} : ${config.VERSION}\n`;
+        menu_str += `┃ ✦ ${Unicode('Développeur')} : FAMOUS-TECH 💫`;
         menu_str += `╰──────────╼\n`;
 
         Object.keys(cmd_str).forEach(category => {
@@ -64,18 +65,17 @@ Meta({
 
 Meta({
     command: 'alive',
-    category: 'utility',
+    category: 'utilitaire',
     handler: async (sock, args, message) => {
         const { from } = message;
         const alive_str = `
-╭───╼〔*Bot Status*〕
+╭───╼〔*Statut du Bot*〕
             
-🟢 *Bot is Alive*
-🕒 *Time:* ${new Date().toLocaleTimeString()}
+🟢 *Bot en ligne*
+🕒 *Heure:* ${new Date().toLocaleTimeString()}
 📅 *Date:* ${new Date().toLocaleDateString()}
 
 ╰──────────╼
-`; await sock.sendMessage(from, { image: 'https://f.uguu.se/BuFAPRQO.jpg'{ text: alive_str }});
+`; await sock.sendMessage(from, { image: '', text: alive_str });
     }
 });
-               
