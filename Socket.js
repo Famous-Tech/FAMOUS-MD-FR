@@ -92,7 +92,12 @@ async function startBot() {
          console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Group: ${groupMetadata.subject}, Message: ${body}, Sender: ${msg.sender}`));
     if (msg.message.extendedTextMessage && msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.mentionedJid) {
       const mentionedJid = msg.message.extendedTextMessage.contextInfo.mentionedJid;
-      let thumbnail = './lib/media/default_img.png';
+        const mentionedJidList = await Promise.all(
+    msg.message.extendedTextMessage.contextInfo.mentionedJid.map(async (jid) => {
+        const contact = await sock.onWhatsApp(jid);
+        return contact && contact[0] && contact[0].notify ? contact[0].notify : jid.split('@')[0];
+    })
+);    let thumbnail = './lib/media/default_img.png';
     try { thumbnail = await sock.profilePictureUrl(msg.sender, 'image');
       } catch (err) {
     } const audio_ptt = fs.readFileSync('./lib/media/audio.mp3');
@@ -198,7 +203,7 @@ async function startBot() {
          if (command) {
             const args = body.slice(config.PREFIX.length + cmd_str.length).trim().split(' ');
             try {
-                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, groupAdmins, languages, reacts,
+                await command.handler({sock, msg, args, isGroup, author, creator, groupMetadata, mentionedJid, mentionedJidList, groupAdmins, languages, reacts,
                     command: cmd_str,
                 });
             } catch (error) {}
