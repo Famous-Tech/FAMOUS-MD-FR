@@ -1,14 +1,14 @@
 {
-  "name": "x-astral",
-  "version": "3.0.0",
+  "name": "famous-md",
+  "version": "1.0.0",
   "description": "_",
-  "main": "Socket.js",
+  "main": "famous.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node socket.js",
+    "start": "node famous.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "FAMOUS-TECH",
   "license": "MIT",
   "dependencies": {
     "@whiskeysockets/baileys": "6.6.0",             
