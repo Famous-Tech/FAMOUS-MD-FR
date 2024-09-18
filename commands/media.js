@@ -203,7 +203,7 @@ Meta({
 });
 
 Meta({
-    command: 'transcribe',
+    command: 'trt',
     category: 'média',
     handler: async (sock, args, message, languages) => {
       const { from } = message;
@@ -229,7 +229,7 @@ Meta({
             const transcription = response.results
                 .map(result => result.alternatives[0].transcript)
                 .join('\n');
-            await sock.sendMessage(from, { text: `*X*\n${transcription}` }, MessageType.text);
+            await sock.sendMessage(from, { text: `*FAMOUS-MD*\n${transcription}` }, MessageType.text);
         } catch (err) {
             console.error(err);
             } fs.unlinkSync(audio_cn);
