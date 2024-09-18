@@ -29,5 +29,15 @@ const languages = {
     DOWNLOAD_MSG: 'Nikeza umbuzo wokusesha',
     URL_MSG: 'Sicela unikeze i-URL ye-YouTube',
   },
+  fr: {
+    OWNER_MSG: 'Cette commande est réservée à mon propriétaire uniquement',
+    GROUP_MSG: 'Cette commande est réservée aux groupes uniquement',
+    DOWNLOAD_MSG: 'Fournissez une requête de recherche',
+    URL_MSG: 'Veuillez fournir une URL YouTube',
+    IMAGE_MSG: 'Veuillez envoyer une image/Répondre à',
+    VIDEO_MSG: 'Veuillez envoyer une vidéo/GIF',
+    AUDIOS_MSG: 'Veuillez envoyer un message audio',
+  },
 };
-module.exports = {languages};
+
+module.exports = { languages };
