@@ -1,19 +1,19 @@
 {
   "name": "famous-md@1.0.0",
-  "description": "famous-md bot whattsappen Français",
+  "description": "famous-md bot whattsapp en Français",
   "keywords": ["baileys"],
   "env": {
       "PREFIX": {
-      "description": "Préfixe du bot c’est avec ce symbole qui chaque commande que vous envoyez au bot doit commencer",
+      "description": "Préfixe du bot c’est avec ce symbole que chaque commande que vous envoyez au bot doit commencer",
       "required": true,
       "value": "."
     },
     "SESSION_ID": {
-      "description": "session pour le bot",
+      "description": "sessionID pour le bot",
       "required": true,
     },
     "MODE": {
-      "description": "Mode pour le bot (privé ou public)",
+      "description": "Mode pour le bot (private ou public)",
       "required": true,
       "value": "private"
     },
