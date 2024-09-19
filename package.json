@@ -2,10 +2,10 @@
   "name": "famous-md",
   "version": "1.0.0",
   "description": "_",
-  "main": "famous.js",
+  "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node famous.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "FAMOUS-TECH",
