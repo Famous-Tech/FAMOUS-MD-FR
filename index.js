@@ -1,6 +1,5 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, Browsers } = require('@whiskeysockets/baileys');
 const P = require('pino');
-const chalk = require('chalk');
 const fs = require('fs');
 const axios = require('axios');
 const canvafy = require('canvafy');
@@ -90,7 +89,7 @@ async function startBot() {
         const isGroup = from.endsWith('@g.us');
         if (isGroup) {
             const groupMetadata = await sock.groupMetadata(from);
-            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Groupe: ${groupMetadata.subject}, Message: ${body}, Expéditeur: ${msg.sender}`));
+            console.log(`[${new Date().toLocaleString()}] Groupe: ${groupMetadata.subject}, Message: ${body}, Expéditeur: ${msg.sender}`);
             if (msg.message.extendedTextMessage && msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.mentionedJid) {
                 const mentionedJid = msg.message.extendedTextMessage.contextInfo.mentionedJid;
                 const mentionedJidList = await Promise.all(
@@ -143,7 +142,7 @@ async function startBot() {
                 }
             }
         } else {
-            console.log(chalk.rgb(0, 255, 255)(`[${new Date().toLocaleString()}] Chat: ${body}, Expéditeur: ${msg.sender}`));
+            console.log(`[${new Date().toLocaleString()}] Chat: ${body}, Expéditeur: ${msg.sender}`);
         }
         const isBotAdmin = msg.sender === sock.user.id;
         const mode_locked = config.MODS.includes(msg.sender);
@@ -369,7 +368,7 @@ async function startBot() {
                     `│ 🕒 *Vous êtes arrivé à*: ${time}\n` +
                     `│ 🤗 *Nous sommes très content de votre venue*\n` +
                     `└─────────────┘`;
-                console.log(chalk.rgb(0, 255, 0)(`[${time}] ${groupName}: @${name}`));
+                console.log(`[${time}] ${groupName}: @${name}`);
             } else if (action === 'remove') {
                 naxorz = await canvafy.createImage(600, 300)
                     .setBackgroundColor('#1A1A1A')
@@ -424,9 +423,9 @@ async function startBot() {
 
         if (connection === 'close') {
             if (lastDisconnect.error?.output?.statusCode === DisconnectReason.loggedOut) {
-                console.log(chalk.red('Connexion fermée => Déconnecté'));
+                console.log('Connexion fermée => Déconnecté');
             } else {
-                console.log(chalk.red('Connexion fermée => Reconnexion en cours...'));
+                console.log('Connexion fermée => Reconnexion en cours...');
                 startBot();
             }
         } else if (connection === 'open') {
@@ -435,7 +434,7 @@ async function startBot() {
                 .filter(file => file.endsWith('.js'))
                 .forEach(file => require(`${__dirname}/commands/${file}`));
             console.log("✅  Cool ! Les plugins ont été installés avec succès");
-            console.log(chalk.magenta('Connecté avec succès'));
+            console.log('Connecté avec succès');
         }
     });
 }
