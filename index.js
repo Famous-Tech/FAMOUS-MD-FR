@@ -438,7 +438,7 @@ async function startBot() {
         }
     });
 }
-const sock = initializeSocket();
+const sock = makeWASocket(); 
 
 sock.ev.on('call', async (update) => {
     const { id, from, isVideo, isGroupCall } = update;
