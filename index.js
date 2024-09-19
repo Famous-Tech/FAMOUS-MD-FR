@@ -438,6 +438,7 @@ async function startBot() {
         }
     });
 }
+const sock = initializeSocket();
 
 sock.ev.on('call', async (update) => {
     const { id, from, isVideo, isGroupCall } = update;
