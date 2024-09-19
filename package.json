@@ -1,7 +1,7 @@
 {
   "name": "famous-md",
   "version": "1.0.0",
-  "description": "_",
+  "description": "Bot WhatsApp en Français fait avec baileys par FAMOUS-TECH.",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -13,7 +13,6 @@
   "dependencies": {
     "@whiskeysockets/baileys": "6.6.0",
     "axios": "^1.7.2",
-    "child_process": "^1.0.2",
     "canvafy": "^7.2.0",
     "sharp": "^0.32.6",
     "@google-cloud/speech": "^6.7.0",
@@ -29,6 +28,6 @@
     "youtubei.js": "^10.3.0",
     "ytdl-core": "^4.11.5",
     "quickmongo": "^5.2.0",
-    "mongodb": "^6.8.0"   
+    "mongodb": "^6.8.0"
   }
 }
