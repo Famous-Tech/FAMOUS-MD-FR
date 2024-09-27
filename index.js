@@ -15,7 +15,7 @@ let brainshop_private = config.BRAINSHOP_PRIVATE || false;
 
 async function Connect_Session() {
     if (fs.existsSync(SESSION_FILE)) return;
-    const sessionId = config.SESSION_IDconfig.SESSION_ID.replace("A-S-W-I-N-S-P-A-R-K-Y:", "");
+    const sessionId = config.SESSION_IDconfig.replace("FAMOUS-MD;;;", "");
     let sessionData = sessionId;
     if (sessionId.length < 30) {
         const { data } = await axios.get(`https://pastebin.com/raw/${sessionId}`);
