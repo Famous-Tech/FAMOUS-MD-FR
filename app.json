@@ -10,7 +10,7 @@
     },
     "SESSION_ID": {
       "description": "sessionID pour le bot",
-      "required": true,
+      "required": false,
     },
     "MODE": {
       "description": "Mode pour le bot (private ou public)",
