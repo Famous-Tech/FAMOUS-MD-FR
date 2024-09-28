@@ -395,7 +395,7 @@ async function startBot() {
                         `│ 😔 *Au revoir*, @${name}\n` +
                         `│ 🏡 *Tu nous manqueras tous ici à*: ${groupName}\n` +
                         `│ 🕒 *Tu es parti à*: ${time}\n` +
-                        `│ 💔 *Tu vas nous manquer*\n` +
+                        `│ 💔 *Tu vas nous manquer 😭😢*\n` +
                         `└─────────────┘`;
                 }
                 await bot.sendMessage(id, {
