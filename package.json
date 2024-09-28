@@ -1,7 +1,7 @@
 {
   "name": "famous-md",
   "version": "1.0.0",
-  "description": "Bot WhatsApp en Français fait avec baileys par FAMOUS-TECH.",
+  "description": "FAMOUS-MD est un bot WhatsApp en Français fait avec baileys par FAMOUS-TECH.",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
