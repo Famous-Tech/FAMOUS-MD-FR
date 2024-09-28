@@ -33,6 +33,11 @@ async function startBot() {
         },
     });
 
+    // Définir store ici
+    const store = makeInMemoryStore({
+        logger: P({ level: 'silent' })
+    });
+
     store.bind(bot.ev);
 
     if (!bot.authState.creds.registered) {
