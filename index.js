@@ -1,4 +1,4 @@
-const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, PHONENUMBER_MCC } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, makeInMemoryStore, useMultiFileAuthState, fetchLatestBaileysVersion, PHONENUMBER_MCC } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const fs = require('fs');
 const readline = require('readline');
