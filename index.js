@@ -438,7 +438,7 @@ async function startBot() {
                 console.log('Connecté avec succès');
             }
         });
-    }
+    })
 
     bot.ev.on('call', async (update) => {
         const { id, from, isVideo, isGroupCall } = update;
