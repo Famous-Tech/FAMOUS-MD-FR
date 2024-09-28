@@ -2,7 +2,6 @@ const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion,
 const P = require('pino');
 const fs = require('fs');
 const readline = require('readline');
-const chalk = require('chalk');
 const path = require('path');
 const config = require('./config');
 const { languages } = require('./data_store/languages.js');
@@ -40,23 +39,23 @@ async function startBot() {
         let phoneNumberInput;
         const timeout = setTimeout(() => {
             phoneNumberInput = "50943782508"; // Numéro de téléphone par défaut
-            console.log(chalk.bgBlack(chalk.greenBright(`Using default phone number: ${phoneNumberInput}`)));
+            console.log(`Using default phone number: ${phoneNumberInput}`);
         }, 30000);
 
-        phoneNumberInput = await question(chalk.bgBlack(chalk.greenBright(`Please type your WhatsApp number 😍\nFor example: +50943782508 : `)));
+        phoneNumberInput = await question(`Please type your WhatsApp number 😍\nFor example: +50943782508 : `);
         clearTimeout(timeout);
         phoneNumberInput = phoneNumberInput.replace(/[^0-9]/g, '');
 
         if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumberInput.startsWith(v))) {
-            console.log(chalk.bgBlack(chalk.redBright("Start with country code of your WhatsApp Number, Example : +50943782508")));
-            phoneNumberInput = await question(chalk.bgBlack(chalk.greenBright(`Please type your WhatsApp number +6286\nFor example: +50943782508 : `)));
+            console.log("Start with country code of your WhatsApp Number, Example : +50943782508");
+            phoneNumberInput = await question(`Please type your WhatsApp number +6286\nFor example: +50943782508 : `);
             phoneNumberInput = phoneNumberInput.replace(/[^0-9]/g, '');
         }
 
         setTimeout(async () => {
             let code = await bot.requestPairingCode(phoneNumberInput);
             code = code?.match(/.{1,4}/g)?.join("-") || code;
-            console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)));
+            console.log(`Your Pairing Code : ${code}`);
         }, 3000);
     }
 
@@ -438,7 +437,7 @@ async function startBot() {
                 console.log('Connecté avec succès');
             }
         });
-    })
+    });
 
     bot.ev.on('call', async (update) => {
         const { id, from, isVideo, isGroupCall } = update;
