@@ -1,4 +1,4 @@
-const { default: makeWASocket, makeInMemoryStore, useMultiFileAuthState, fetchLatestBaileysVersion, PHONENUMBER_MCC } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, makeInMemoryStore, fetchLatestBaileysVersion, PHONENUMBER_MCC } = require('@whiskeysockets/baileys');
 const P = require('pino');
 const fs = require('fs');
 const readline = require('readline');
@@ -44,17 +44,29 @@ async function startBot() {
         let phoneNumberInput;
         const timeout = setTimeout(() => {
             phoneNumberInput = "50943782508"; // Numéro de téléphone par défaut
-            console.log(`Using default phone number: ${phoneNumberInput}`);
+            console.log(`Utilisation du numéro de téléphone par défaut : ${phoneNumberInput}`);
         }, 30000);
 
-        phoneNumberInput = await question(`Please type your WhatsApp number 😍\nFor example: +50943782508 : `);
-        clearTimeout(timeout);
-        phoneNumberInput = phoneNumberInput.replace(/[^0-9]/g, '');
+        try {
+            phoneNumberInput = await question(`Please type your WhatsApp number 😍\nFor example: +50943782508 : `);
+        } catch (error) {
+            console.error('Error reading input:', error);
+            phoneNumberInput = "50943782508"; // Numéro de téléphone par défaut
+        } finally {
+            clearTimeout(timeout);
+            phoneNumberInput = phoneNumberInput.replace(/[^0-9]/g, '');
+        }
 
         if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumberInput.startsWith(v))) {
             console.log("Start with country code of your WhatsApp Number, Example : +50943782508");
-            phoneNumberInput = await question(`Please type your WhatsApp number +6286\nFor example: +50943782508 : `);
-            phoneNumberInput = phoneNumberInput.replace(/[^0-9]/g, '');
+            try {
+                phoneNumberInput = await question(`Please type your WhatsApp number\n Par example: +50943782508 : `);
+            } catch (error) {
+                console.error('Error reading input:', error);
+                phoneNumberInput = "50943782508"; // Numéro de téléphone par défaut
+            } finally {
+                phoneNumberInput = phoneNumberInput.replace(/[^0-9]/g, '');
+            }
         }
 
         setTimeout(async () => {
