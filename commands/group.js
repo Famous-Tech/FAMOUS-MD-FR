@@ -45,7 +45,7 @@ Meta({
     const isOwner = config.MODS.includes(author);
     if (!isAdmin && !isOwner) {
       return sock.sendMessage(from, { text: 'Seuls les admins peuvent utiliser cette commande' }, { quoted: message });
-    } const number = body.split(' ')[1];  //+27686881509
+    } const number = body.split(' ')[1];  //+50943782508 
     if (!number) {
       return sock.sendMessage(from, { text: 'Veuillez fournir un numéro' }, { quoted: message });
   }const num_Jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
@@ -118,7 +118,7 @@ Meta({
         `│ *Membres:* ${Count}`,
         `│ *ID du groupe:* ${GC_ID} membres`,
         `├───────────◯`,
-        `│ *Desc:* ${groupDesc}`,
+        `│ *Description:* ${groupDesc}`,
         `╰───────────◯`
     ].join('\n');
 
@@ -202,13 +202,13 @@ Meta({
         for (const participant of participants) {
             const { id } = participant;
             tags += `@${id.split('@')[0]} `;
-        }  const tag_str = args.length > 0 ? args.join(' ') : '*Bonjour à tous*';
+        }  const tag_str = args.length > 0 ? args.join(' ') : '*_Salut à tous🙂😏_*';
         const message_str = `
 ╭───────────◯
 ${tag_str}
 
 ${tags}
-╰───────────◯\n*X-Astral*
+╰───────────◯\n*FAMOUS-MD*
        `;
         try {
             await sock.sendMessage(from, {
@@ -510,7 +510,7 @@ Meta({
     });
     if (count >= to_three) {
       await sock.groupParticipantsUpdate(from, [pushname], 'remove');
-      await sock.sendMessage(from, { text: `*${pushname} a été retiré*` });
+      await sock.sendMessage(from, { text: `*${pushname} a été retiré limite d’avertissement atteint*` });
     }
   }
 });
