@@ -2,7 +2,7 @@ const { commands, Meta, Unicode } = require('../lib/');
 const config = require('../config');
 
 Meta({
-    command: 'menu',
+    command: 'menu', // FAMOUS-MD MENU commande du menu🙂
     handler: async (sock, args, message, author) => {
         const { from } = message;
       
@@ -59,7 +59,7 @@ Meta({
             });
             menu_str += `╰──────────╼\n`;
         });
-        await sock.sendMessage(from, { text: menu_str });
+        await sock.sendMessage(from, { image: 'https://telegra.ph/file/1d083f2cc089db688a191.jpg', text: menu_str });
     }
 });
 
@@ -76,6 +76,6 @@ Meta({
 📅 *Date:* ${new Date().toLocaleDateString()}
 
 ╰──────────╼
-`; await sock.sendMessage(from, { image: '', text: alive_str });
+`; await sock.sendMessage(from, { image: 'https://telegra.ph/file/1d083f2cc089db688a191.jpg', text: alive_str });
     }
 });
